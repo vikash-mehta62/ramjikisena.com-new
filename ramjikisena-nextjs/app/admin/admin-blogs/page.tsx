@@ -36,8 +36,9 @@ export default function AllBlogs() {
       if (filter === 'pending') url += '?status=pending';
 
       const response = await api.get(url);
-      if (response.data.success) {
-        setBlogs(response.data.blogs);
+      const data = await response.json();
+      if (data.success) {
+        setBlogs(data.blogs);
       }
     } catch (error) {
       console.error('Error fetching blogs:', error);
@@ -51,7 +52,8 @@ export default function AllBlogs() {
 
     try {
       const response = await api.delete(`/api/admin/blogs/${blogId}`);
-      if (response.data.success) {
+      const data = await response.json();
+      if (data.success) {
         alert('Blog deleted successfully');
         setBlogs(blogs.filter(b => b._id !== blogId));
       }

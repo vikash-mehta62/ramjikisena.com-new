@@ -33,8 +33,9 @@ export default function PendingBlogs() {
   const fetchPendingBlogs = async () => {
     try {
       const response = await api.get('/api/admin/blogs/pending');
-      if (response.data.success) {
-        setBlogs(response.data.blogs);
+      const data = await response.json();
+      if (data.success) {
+        setBlogs(data.blogs);
       }
     } catch (error: any) {
       console.error('Error fetching blogs:', error);
@@ -53,7 +54,8 @@ export default function PendingBlogs() {
     setProcessing(true);
     try {
       const response = await api.post(`/api/admin/blogs/${blogId}/approve`);
-      if (response.data.success) {
+      const data = await response.json();
+      if (data.success) {
         alert('Blog approved successfully!');
         setBlogs(blogs.filter(b => b._id !== blogId));
         setSelectedBlog(null);
@@ -72,7 +74,8 @@ export default function PendingBlogs() {
     setProcessing(true);
     try {
       const response = await api.post(`/api/admin/blogs/${blogId}/reject`);
-      if (response.data.success) {
+      const data = await response.json();
+      if (data.success) {
         alert('Blog rejected and deleted successfully');
         setBlogs(blogs.filter(b => b._id !== blogId));
         setSelectedBlog(null);
