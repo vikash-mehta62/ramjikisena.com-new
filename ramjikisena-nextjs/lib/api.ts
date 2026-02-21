@@ -1,9 +1,32 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
 
+// Helper to get token from localStorage
+const getToken = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('token');
+  }
+  return null;
+};
+
+// Helper to get headers with token
+const getAuthHeaders = (isFormData: boolean = false): HeadersInit => {
+  const token = getToken();
+  const headers: HeadersInit = isFormData ? {} : {
+    'Content-Type': 'application/json',
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
+};
+
 const api = {
   get: async (url: string) => {
     const res = await fetch(`${API_URL}${url}`, {
       method: 'GET',
+      headers: getAuthHeaders(),
       credentials: 'include',
     });
     return res;
@@ -14,7 +37,7 @@ const api = {
     
     const res = await fetch(`${API_URL}${url}`, {
       method: 'POST',
-      headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(isFormData),
       credentials: 'include',
       body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
       ...options
@@ -25,7 +48,7 @@ const api = {
   put: async (url: string, data?: any) => {
     const res = await fetch(`${API_URL}${url}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       credentials: 'include',
       body: data ? JSON.stringify(data) : undefined,
     });
@@ -35,6 +58,7 @@ const api = {
   delete: async (url: string) => {
     const res = await fetch(`${API_URL}${url}`, {
       method: 'DELETE',
+      headers: getAuthHeaders(),
       credentials: 'include',
     });
     return res;
@@ -70,6 +94,7 @@ const api = {
   logout: async () => {
     const res = await fetch(`${API_URL}/logout`, {
       method: 'GET',
+      headers: getAuthHeaders(),
       credentials: 'include',
     });
     return res;
@@ -79,6 +104,7 @@ const api = {
   getProfile: async () => {
     const res = await fetch(`${API_URL}/`, {
       method: 'GET',
+      headers: getAuthHeaders(),
       credentials: 'include',
     });
     return res;
@@ -87,7 +113,7 @@ const api = {
   saveCount: async (currentCount: number, totalCount: number, malaCount: number) => {
     const res = await fetch(`${API_URL}/save`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       credentials: 'include',
       body: JSON.stringify({ currentCount, totalCount, malaCount }),
     });
@@ -97,6 +123,7 @@ const api = {
   getAllDevotees: async () => {
     const res = await fetch(`${API_URL}/allDevotees`, {
       method: 'GET',
+      headers: getAuthHeaders(),
       credentials: 'include',
     });
     return res;
@@ -105,6 +132,7 @@ const api = {
   searchUser: async (name: string) => {
     const res = await fetch(`${API_URL}/user/${name}`, {
       method: 'GET',
+      headers: getAuthHeaders(),
       credentials: 'include',
     });
     return res;
@@ -113,6 +141,7 @@ const api = {
   getLekhanHistory: async () => {
     const res = await fetch(`${API_URL}/lekhanHistory`, {
       method: 'GET',
+      headers: getAuthHeaders(),
       credentials: 'include',
     });
     return res;

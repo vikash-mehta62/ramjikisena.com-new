@@ -279,15 +279,32 @@ router.post('/api/forgot', async function (req, res) {
 
     if (user) {
       const token = await user.generateToken();
-      res.cookie('token', token, { 
-        httpOnly: true,
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        sameSite: 'lax'
-      });
+      
+      // Try to set cookie (optional - if it fails, token is still in response)
+      try {
+        const isProduction = process.env.NODE_ENV === 'production';
+        const cookieOptions = {
+          httpOnly: true,
+          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          path: '/'
+        };
+        
+        // Only add secure and sameSite in production
+        if (isProduction) {
+          cookieOptions.secure = true;
+          cookieOptions.sameSite = 'none';
+        }
+        
+        res.cookie('token', token, cookieOptions);
+      } catch (cookieError) {
+        console.log('Cookie setting failed (not critical):', cookieError.message);
+      }
 
+      // ALWAYS send token in response (main authentication method)
       return res.json({ 
         success: true, 
         message: 'Login successful',
+        token: token, // Send token in response
         user: {
           _id: user._id,
           username: user.username,
@@ -945,22 +962,46 @@ function isLoggedIn(req, res, next) {
 
 // API Middleware (returns JSON instead of redirect)
 function isLoggedInAPI(req, res, next) {
-  const token = req.cookies.token;
+  console.log('=== isLoggedInAPI Middleware Called ===');
+  
+  // Try to get token from cookie first
+  let token = req.cookies.token;
+  console.log('Token from cookie:', token ? 'FOUND' : 'NOT FOUND');
+  
+  // If not in cookie, check Authorization header
+  if (!token) {
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+    console.log('Authorization header:', authHeader ? 'FOUND' : 'NOT FOUND');
+    
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+      console.log('Token extracted from header:', token ? 'SUCCESS' : 'FAILED');
+    }
+  }
 
-  if (token == null) {
+  if (!token) {
+    console.log('❌ No token found - returning 401');
     return res.status(401).json({ 
       success: false, 
-      message: 'Not authenticated' 
+      message: 'Not authenticated',
+      debug: {
+        cookiePresent: !!req.cookies.token,
+        authHeaderPresent: !!(req.headers.authorization || req.headers.Authorization)
+      }
     });
   }
 
+  console.log('Verifying token...');
   jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
     if (err) {
+      console.log('❌ Token verification failed:', err.message);
       return res.status(403).json({ 
         success: false, 
-        message: 'Invalid token' 
+        message: 'Invalid token',
+        error: err.message
       });
     }
+    console.log('✅ Token verified for user:', user._id);
     req.user = user;
     next();
   });

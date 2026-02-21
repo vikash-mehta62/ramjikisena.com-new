@@ -33,6 +33,11 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (data.success) {
+        // Save token to localStorage if received
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        
         // Redirect based on role
         if (data.redirect) {
           router.push(data.redirect);

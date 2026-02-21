@@ -32,6 +32,42 @@ export interface RegisterResponse {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
 
+// Helper to get token from localStorage
+const getToken = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('token');
+  }
+  return null;
+};
+
+// Helper to set token in localStorage
+const setToken = (token: string): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('token', token);
+  }
+};
+
+// Helper to remove token from localStorage
+const removeToken = (): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('token');
+  }
+};
+
+// Helper to get headers with token
+const getAuthHeaders = (): HeadersInit => {
+  const token = getToken();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
+};
+
 export const authApi = {
   // Login
   login: async (username: string, password: string): Promise<LoginResponse> => {
@@ -39,11 +75,17 @@ export const authApi = {
       const res = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        credentials: 'include', // Still try cookies
         body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
+      
+      // If login successful and token received, save it
+      if (data.success && data.token) {
+        setToken(data.token);
+      }
+      
       return data;
     } catch (error) {
       return { success: false, message: 'Network error' };
@@ -62,11 +104,17 @@ export const authApi = {
       const res = await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        credentials: 'include', // Still try cookies
         body: JSON.stringify(formData),
       });
 
       const data = await res.json();
+      
+      // If registration successful and token received, save it
+      if (data.success && data.token) {
+        setToken(data.token);
+      }
+      
       return data;
     } catch (error) {
       return { success: false, message: 'Network error' };
@@ -78,6 +126,7 @@ export const authApi = {
     try {
       const res = await fetch(`${API_URL}/api/me`, {
         method: 'GET',
+        headers: getAuthHeaders(), // Send token in header
         credentials: 'include',
       });
 
@@ -95,11 +144,16 @@ export const authApi = {
     try {
       const res = await fetch(`${API_URL}/api/logout`, {
         method: 'GET',
+        headers: getAuthHeaders(), // Send token in header
         credentials: 'include',
       });
 
+      // Remove token from localStorage
+      removeToken();
+      
       return res.ok;
     } catch (error) {
+      removeToken(); // Remove even on error
       return false;
     }
   },
@@ -109,7 +163,7 @@ export const authApi = {
     try {
       const res = await fetch(`${API_URL}/api/save`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(), // Send token in header
         credentials: 'include',
         body: JSON.stringify({ currentCount, totalCount, malaCount }),
       });
