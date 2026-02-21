@@ -29,11 +29,17 @@ router.post('/login', async function (req, res) {
     
     if (isPasswordValid) {
       const token = await userExist.generateToken();
-      res.cookie('token', token, { 
+      
+      // Cookie settings for production (cross-domain)
+      const cookieOptions = {
         httpOnly: true,
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        sameSite: 'lax'
-      });
+        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Cross-site for production
+        path: '/'
+      };
+      
+      res.cookie('token', token, cookieOptions);
 
       return res.json({ 
         success: true, 
