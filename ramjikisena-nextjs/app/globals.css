@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ram Naam Background Pattern */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(255, 107, 53, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(255, 107, 53, 0.8), 0 0 30px rgba(255, 107, 53, 0.6); }
+}
+
+.ram-naam-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.ram-naam-bg::before {
+  content: 'राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 3rem;
+  font-weight: bold;
+  color: rgba(255, 107, 53, 0.08);
+  line-height: 4rem;
+  word-wrap: break-word;
+  pointer-events: none;
+  z-index: 0;
+  padding: 2rem;
+  animation: float 6s ease-in-out infinite;
+}
+
+.divine-glow {
+  animation: glow 3s ease-in-out infinite;
+}
+
+.om-symbol {
+  font-size: 8rem;
+  color: rgba(255, 107, 53, 0.1);
+  position: absolute;
+  animation: float 8s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(to bottom, #fff5f0, #ffe5d9);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #ff6b35, #ff4500);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #ff4500, #cc3700);
+}
+
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Divine border animation */
+@keyframes border-glow {
+  0%, 100% { border-color: rgba(255, 107, 53, 0.5); box-shadow: 0 0 10px rgba(255, 107, 53, 0.3); }
+  50% { border-color: rgba(255, 107, 53, 1); box-shadow: 0 0 20px rgba(255, 107, 53, 0.6); }
+}
+
+.divine-border {
+  animation: border-glow 2s ease-in-out infinite;
+}
