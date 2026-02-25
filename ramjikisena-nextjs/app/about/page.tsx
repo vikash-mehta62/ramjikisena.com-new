@@ -1,24 +1,11 @@
 import Link from 'next/link';
+import Navbar from '@/components/Navbar';
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <span className="text-2xl">ℹ️</span>
-              </div>
-              <h1 className="text-2xl font-bold">About Us</h1>
-            </div>
-            <Link href="/" className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition">
-              ← Home
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navbar showAuthButtons={true} />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">

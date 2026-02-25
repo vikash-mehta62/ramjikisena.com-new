@@ -29,6 +29,31 @@ interface Mandir {
     website?: string;
   };
   photos?: string[];
+  // NEW FIELDS
+  deity?: {
+    main?: string;
+    others?: string[];
+  };
+  visitInfo?: {
+    bestTimeToVisit?: string;
+    dressCode?: string;
+    entryFee?: string;
+    photographyAllowed?: boolean;
+  };
+  facilities?: {
+    parking?: boolean;
+    prasad?: boolean;
+    accommodation?: boolean;
+    wheelchairAccessible?: boolean;
+    restrooms?: boolean;
+    drinkingWater?: boolean;
+  };
+  socialMedia?: {
+    facebook?: string;
+    instagram?: string;
+    youtube?: string;
+    twitter?: string;
+  };
   averageRating: number;
   reviews: any[];
   createdAt: string;
@@ -55,7 +80,24 @@ export default function AdminMandirs() {
     'contact.phone': '',
     'contact.email': '',
     'contact.website': '',
-    photos: [] as string[]
+    photos: [] as string[],
+    // NEW FIELDS
+    'deity.main': '',
+    'deity.others': '',
+    'visitInfo.bestTimeToVisit': '',
+    'visitInfo.dressCode': '',
+    'visitInfo.entryFee': '',
+    'visitInfo.photographyAllowed': true,
+    'facilities.parking': false,
+    'facilities.prasad': false,
+    'facilities.accommodation': false,
+    'facilities.wheelchairAccessible': false,
+    'facilities.restrooms': false,
+    'facilities.drinkingWater': false,
+    'socialMedia.facebook': '',
+    'socialMedia.instagram': '',
+    'socialMedia.youtube': '',
+    'socialMedia.twitter': ''
   });
   const [photoUrl, setPhotoUrl] = useState('');
 
@@ -88,6 +130,12 @@ export default function AdminMandirs() {
         .map(time => time.trim())
         .filter(time => time.length > 0);
 
+      // Convert deity others string to array
+      const deityOthers = formData['deity.others']
+        .split(',')
+        .map(deity => deity.trim())
+        .filter(deity => deity.length > 0);
+
       // Convert flat form data to nested object
       const mandirData: any = {
         name: formData.name,
@@ -112,7 +160,32 @@ export default function AdminMandirs() {
           email: formData['contact.email'],
           website: formData['contact.website']
         },
-        photos: formData.photos
+        photos: formData.photos,
+        // NEW FIELDS
+        deity: {
+          main: formData['deity.main'],
+          others: deityOthers
+        },
+        visitInfo: {
+          bestTimeToVisit: formData['visitInfo.bestTimeToVisit'],
+          dressCode: formData['visitInfo.dressCode'],
+          entryFee: formData['visitInfo.entryFee'],
+          photographyAllowed: formData['visitInfo.photographyAllowed']
+        },
+        facilities: {
+          parking: formData['facilities.parking'],
+          prasad: formData['facilities.prasad'],
+          accommodation: formData['facilities.accommodation'],
+          wheelchairAccessible: formData['facilities.wheelchairAccessible'],
+          restrooms: formData['facilities.restrooms'],
+          drinkingWater: formData['facilities.drinkingWater']
+        },
+        socialMedia: {
+          facebook: formData['socialMedia.facebook'],
+          instagram: formData['socialMedia.instagram'],
+          youtube: formData['socialMedia.youtube'],
+          twitter: formData['socialMedia.twitter']
+        }
       };
 
       const url = editingId ? `/api/admin/mandirs/${editingId}` : '/api/admin/mandirs';
@@ -153,7 +226,23 @@ export default function AdminMandirs() {
       'contact.phone': '',
       'contact.email': '',
       'contact.website': '',
-      photos: []
+      photos: [],
+      'deity.main': '',
+      'deity.others': '',
+      'visitInfo.bestTimeToVisit': '',
+      'visitInfo.dressCode': '',
+      'visitInfo.entryFee': '',
+      'visitInfo.photographyAllowed': true,
+      'facilities.parking': false,
+      'facilities.prasad': false,
+      'facilities.accommodation': false,
+      'facilities.wheelchairAccessible': false,
+      'facilities.restrooms': false,
+      'facilities.drinkingWater': false,
+      'socialMedia.facebook': '',
+      'socialMedia.instagram': '',
+      'socialMedia.youtube': '',
+      'socialMedia.twitter': ''
     });
     setPhotoUrl('');
   };
@@ -175,7 +264,24 @@ export default function AdminMandirs() {
       'contact.phone': mandir.contact?.phone || '',
       'contact.email': mandir.contact?.email || '',
       'contact.website': mandir.contact?.website || '',
-      photos: mandir.photos || []
+      photos: mandir.photos || [],
+      // NEW FIELDS
+      'deity.main': mandir.deity?.main || '',
+      'deity.others': mandir.deity?.others?.join(', ') || '',
+      'visitInfo.bestTimeToVisit': mandir.visitInfo?.bestTimeToVisit || '',
+      'visitInfo.dressCode': mandir.visitInfo?.dressCode || '',
+      'visitInfo.entryFee': mandir.visitInfo?.entryFee || '',
+      'visitInfo.photographyAllowed': mandir.visitInfo?.photographyAllowed ?? true,
+      'facilities.parking': mandir.facilities?.parking || false,
+      'facilities.prasad': mandir.facilities?.prasad || false,
+      'facilities.accommodation': mandir.facilities?.accommodation || false,
+      'facilities.wheelchairAccessible': mandir.facilities?.wheelchairAccessible || false,
+      'facilities.restrooms': mandir.facilities?.restrooms || false,
+      'facilities.drinkingWater': mandir.facilities?.drinkingWater || false,
+      'socialMedia.facebook': mandir.socialMedia?.facebook || '',
+      'socialMedia.instagram': mandir.socialMedia?.instagram || '',
+      'socialMedia.youtube': mandir.socialMedia?.youtube || '',
+      'socialMedia.twitter': mandir.socialMedia?.twitter || ''
     });
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -188,9 +294,18 @@ export default function AdminMandirs() {
       const formData = new FormData();
       formData.append('image', file);
 
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+      const headers: any = {};
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       // Don't set Content-Type header - let browser set it with boundary
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload/image?folder=mandirs`, {
         method: 'POST',
+        headers,
         credentials: 'include',
         body: formData
       });
@@ -572,6 +687,208 @@ export default function AdminMandirs() {
                   <p className="text-sm text-pink-800">
                     💡 <strong>Tip:</strong> You can either upload images directly (recommended) or paste image URLs from external sources.
                   </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Deity Information */}
+            <div className="bg-yellow-50 rounded-xl p-6 border-2 border-yellow-200">
+              <h3 className="text-xl font-bold text-yellow-700 mb-4">🕉️ Deity Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-gray-700 font-semibold mb-2">Main Deity</label>
+                  <input
+                    type="text"
+                    value={formData['deity.main']}
+                    onChange={(e) => setFormData({...formData, 'deity.main': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    placeholder="e.g., Shri Ram, Shri Krishna, Shiv Ji"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-gray-700 font-semibold mb-2">Other Deities (comma separated)</label>
+                  <input
+                    type="text"
+                    value={formData['deity.others']}
+                    onChange={(e) => setFormData({...formData, 'deity.others': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    placeholder="e.g., Sita Mata, Lakshman Ji, Hanuman Ji"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Visit Information */}
+            <div className="bg-indigo-50 rounded-xl p-6 border-2 border-indigo-200">
+              <h3 className="text-xl font-bold text-indigo-700 mb-4">ℹ️ Visit Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Best Time to Visit</label>
+                  <input
+                    type="text"
+                    value={formData['visitInfo.bestTimeToVisit']}
+                    onChange={(e) => setFormData({...formData, 'visitInfo.bestTimeToVisit': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="e.g., Morning 6-8 AM, Evening 5-7 PM"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Entry Fee</label>
+                  <input
+                    type="text"
+                    value={formData['visitInfo.entryFee']}
+                    onChange={(e) => setFormData({...formData, 'visitInfo.entryFee': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="e.g., Free, ₹50, ₹100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Dress Code</label>
+                  <input
+                    type="text"
+                    value={formData['visitInfo.dressCode']}
+                    onChange={(e) => setFormData({...formData, 'visitInfo.dressCode': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="e.g., Traditional attire preferred, Modest clothing"
+                  />
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-indigo-100 rounded-xl">
+                  <input
+                    type="checkbox"
+                    id="photographyAllowed"
+                    checked={formData['visitInfo.photographyAllowed']}
+                    onChange={(e) => setFormData({...formData, 'visitInfo.photographyAllowed': e.target.checked})}
+                    className="w-5 h-5 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <label htmlFor="photographyAllowed" className="text-gray-700 font-semibold cursor-pointer">
+                    📸 Photography Allowed
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Facilities */}
+            <div className="bg-teal-50 rounded-xl p-6 border-2 border-teal-200">
+              <h3 className="text-xl font-bold text-teal-700 mb-4">🏢 Facilities Available</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-teal-100">
+                  <input
+                    type="checkbox"
+                    id="parking"
+                    checked={formData['facilities.parking']}
+                    onChange={(e) => setFormData({...formData, 'facilities.parking': e.target.checked})}
+                    className="w-5 h-5 text-teal-600 rounded focus:ring-2 focus:ring-teal-500"
+                  />
+                  <label htmlFor="parking" className="text-gray-700 font-semibold cursor-pointer">
+                    🅿️ Parking
+                  </label>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-teal-100">
+                  <input
+                    type="checkbox"
+                    id="prasad"
+                    checked={formData['facilities.prasad']}
+                    onChange={(e) => setFormData({...formData, 'facilities.prasad': e.target.checked})}
+                    className="w-5 h-5 text-teal-600 rounded focus:ring-2 focus:ring-teal-500"
+                  />
+                  <label htmlFor="prasad" className="text-gray-700 font-semibold cursor-pointer">
+                    🍬 Prasad
+                  </label>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-teal-100">
+                  <input
+                    type="checkbox"
+                    id="accommodation"
+                    checked={formData['facilities.accommodation']}
+                    onChange={(e) => setFormData({...formData, 'facilities.accommodation': e.target.checked})}
+                    className="w-5 h-5 text-teal-600 rounded focus:ring-2 focus:ring-teal-500"
+                  />
+                  <label htmlFor="accommodation" className="text-gray-700 font-semibold cursor-pointer">
+                    🏨 Accommodation
+                  </label>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-teal-100">
+                  <input
+                    type="checkbox"
+                    id="wheelchair"
+                    checked={formData['facilities.wheelchairAccessible']}
+                    onChange={(e) => setFormData({...formData, 'facilities.wheelchairAccessible': e.target.checked})}
+                    className="w-5 h-5 text-teal-600 rounded focus:ring-2 focus:ring-teal-500"
+                  />
+                  <label htmlFor="wheelchair" className="text-gray-700 font-semibold cursor-pointer">
+                    ♿ Wheelchair Access
+                  </label>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-teal-100">
+                  <input
+                    type="checkbox"
+                    id="restrooms"
+                    checked={formData['facilities.restrooms']}
+                    onChange={(e) => setFormData({...formData, 'facilities.restrooms': e.target.checked})}
+                    className="w-5 h-5 text-teal-600 rounded focus:ring-2 focus:ring-teal-500"
+                  />
+                  <label htmlFor="restrooms" className="text-gray-700 font-semibold cursor-pointer">
+                    🚻 Restrooms
+                  </label>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-teal-100">
+                  <input
+                    type="checkbox"
+                    id="drinkingWater"
+                    checked={formData['facilities.drinkingWater']}
+                    onChange={(e) => setFormData({...formData, 'facilities.drinkingWater': e.target.checked})}
+                    className="w-5 h-5 text-teal-600 rounded focus:ring-2 focus:ring-teal-500"
+                  />
+                  <label htmlFor="drinkingWater" className="text-gray-700 font-semibold cursor-pointer">
+                    💧 Drinking Water
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Media */}
+            <div className="bg-cyan-50 rounded-xl p-6 border-2 border-cyan-200">
+              <h3 className="text-xl font-bold text-cyan-700 mb-4">📱 Social Media Links</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Facebook</label>
+                  <input
+                    type="url"
+                    value={formData['socialMedia.facebook']}
+                    onChange={(e) => setFormData({...formData, 'socialMedia.facebook': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    placeholder="https://facebook.com/mandir"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Instagram</label>
+                  <input
+                    type="url"
+                    value={formData['socialMedia.instagram']}
+                    onChange={(e) => setFormData({...formData, 'socialMedia.instagram': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    placeholder="https://instagram.com/mandir"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">YouTube</label>
+                  <input
+                    type="url"
+                    value={formData['socialMedia.youtube']}
+                    onChange={(e) => setFormData({...formData, 'socialMedia.youtube': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    placeholder="https://youtube.com/@mandir"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2">Twitter</label>
+                  <input
+                    type="url"
+                    value={formData['socialMedia.twitter']}
+                    onChange={(e) => setFormData({...formData, 'socialMedia.twitter': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    placeholder="https://twitter.com/mandir"
+                  />
                 </div>
               </div>
             </div>

@@ -3,261 +3,153 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, MapPin, Clock, Star, Navigation, FilterX, ArrowRight } from 'lucide-react';
 
-interface Mandir {
-  _id: string;
-  name: string;
-  description: string;
-  location: {
-    city: string;
-    state: string;
-    coordinates?: {
-      lat: number;
-      lng: number;
-    };
-  };
-  photos: string[];
-  averageRating: number;
-  timing?: {
-    opening: string;
-    closing: string;
-  };
-}
-
-export default function PublicMandirListing() {
-  const [mandirs, setMandirs] = useState<Mandir[]>([]);
+export default function CompactMandirListing() {
+  const [mandirs, setMandirs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [cityFilter, setCityFilter] = useState('');
-  const [stateFilter, setStateFilter] = useState('');
 
   useEffect(() => {
     fetchMandirs();
-  }, [search, cityFilter, stateFilter]);
+  }, [search, cityFilter]);
 
   const fetchMandirs = async () => {
     try {
-      let url = '/api/mandirs?';
-      if (search) url += `search=${search}&`;
-      if (cityFilter) url += `city=${cityFilter}&`;
-      if (stateFilter) url += `state=${stateFilter}&`;
-
+      let url = `/api/mandirs?search=${search}&city=${cityFilter}`;
       const response = await api.get(url);
       const data = await response.json();
-      
-      if (data.success) {
-        setMandirs(data.mandirs);
-      }
-    } catch (error) {
-      console.error('Error fetching mandirs:', error);
-    } finally {
-      setLoading(false);
-    }
+      if (data.success) setMandirs(data.mandirs);
+    } catch (error) { console.error(error); } 
+    finally { setLoading(false); }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-bounce">🛕</div>
-          <p className="text-xl text-orange-700">Loading Mandirs...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="h-screen flex items-center justify-center bg-[#FAF9F6]">
+      <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-red-50 relative ram-naam-bg">
-      {/* Decorative Om Symbols */}
-      <div className="om-symbol" style={{ top: '10%', left: '5%' }}>ॐ</div>
-      <div className="om-symbol" style={{ top: '60%', right: '5%' }}>ॐ</div>
+    <div className="min-h-screen bg-[#FAF9F6] text-slate-800 antialiased">
+      <Navbar showAuthButtons={true} />
 
-      {/* Header */}
-      <header className="bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 text-white py-6 shadow-lg relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-3xl">🛕</span>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold divine-glow">Mandir Directory</h1>
-                <p className="text-sm text-orange-100">Discover temples across India</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition"
-              >
-                🏠 Home
-              </Link>
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition"
-              >
-                📊 Dashboard
-              </Link>
-            </div>
+      <main className="max-w-6xl mx-auto px-4 pt-20 pb-12">
+        {/* --- HEADER SECTION (Compact) --- */}
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black tracking-tight text-slate-900">पावन <span className="text-orange-600">दर्शन</span></h1>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Explore Divine Destinations</p>
+          </div>
+          <div className="text-right">
+             <span className="text-[10px] font-black bg-orange-100 text-orange-700 px-2 py-1 rounded-md uppercase tracking-tighter">
+               Total: {mandirs.length} Mandirs
+             </span>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          {/* Search and Filters */}
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-6 mb-8 border-4 divine-border">
-            <h2 className="text-2xl font-bold text-orange-700 mb-4 flex items-center gap-2">
-              <span>🔍</span> Search Mandirs
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl">🛕</span>
-                <input
-                  type="text"
-                  placeholder="Search mandirs..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-14 pr-4 py-3 border-2 border-orange-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
-              <input
-                type="text"
-                placeholder="Filter by city..."
-                value={cityFilter}
-                onChange={(e) => setCityFilter(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-orange-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              />
-              <input
-                type="text"
-                placeholder="Filter by state..."
-                value={stateFilter}
-                onChange={(e) => setStateFilter(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-orange-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              />
-            </div>
-            {(search || cityFilter || stateFilter) && (
-              <button
-                onClick={() => {
-                  setSearch('');
-                  setCityFilter('');
-                  setStateFilter('');
-                }}
-                className="mt-4 px-6 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:shadow-lg transition font-semibold"
+        {/* --- SEARCH BAR (Mini & Sharp) --- */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mb-10">
+          <div className="md:col-span-5 relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-500 transition-colors" size={16} />
+            <input
+              type="text"
+              placeholder="मंदिर का नाम..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+            />
+          </div>
+          <div className="md:col-span-4 relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <input
+              type="text"
+              placeholder="शहर चुनें..."
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+            />
+          </div>
+          <button 
+            onClick={() => {setSearch(''); setCityFilter('');}}
+            className="md:col-span-3 flex items-center justify-center gap-2 bg-slate-900 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-600 transition-colors active:scale-95"
+          >
+            <FilterX size={16} /> Reset Filters
+          </button>
+        </div>
+
+        {/* --- GRID (Responsive & Tight) --- */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <AnimatePresence>
+            {mandirs.map((mandir) => (
+              <motion.div
+                layout
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                key={mandir._id}
+                className="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-orange-900/5 transition-all duration-300"
               >
-                Clear Filters
-              </button>
-            )}
-          </div>
-
-          {/* Stats */}
-          <div className="bg-gradient-to-r from-orange-100 to-red-100 rounded-2xl p-6 mb-8 border-2 border-orange-300 shadow-lg">
-            <p className="text-orange-800 text-lg flex items-center gap-2">
-              <span className="text-3xl">🛕</span>
-              <span className="font-bold text-2xl">{mandirs.length}</span> 
-              <span>mandir{mandirs.length !== 1 ? 's' : ''} found</span>
-            </p>
-          </div>
-
-          {/* Mandir Grid */}
-          {mandirs.length === 0 ? (
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-12 text-center border-4 divine-border">
-              <span className="text-8xl mb-4 block">🛕</span>
-              <h3 className="text-3xl font-bold text-gray-800 mb-3">No Mandirs Found</h3>
-              <p className="text-gray-600 text-lg">Try adjusting your search criteria.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mandirs.map((mandir) => (
-                <div key={mandir._id} className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl transition-all border-2 border-orange-200 hover:border-orange-400 overflow-hidden group">
-                  {/* Mandir Image */}
-                  {mandir.photos && mandir.photos.length > 0 ? (
-                    <div className="relative h-48 w-full overflow-hidden">
-                      <img 
-                        src={mandir.photos[0]} 
-                        alt={mandir.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <div className="absolute top-2 right-2 bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1">
-                        <span className="text-yellow-600">⭐</span>
-                        <span className="font-bold text-yellow-700">
-                          {mandir.averageRating > 0 ? mandir.averageRating.toFixed(1) : 'New'}
-                        </span>
-                      </div>
-                    </div>
+                {/* Compact Image */}
+                <div className="relative h-44 overflow-hidden">
+                  {mandir.photos?.[0] ? (
+                    <img src={mandir.photos[0]} alt={mandir.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   ) : (
-                    <div className="relative h-48 w-full bg-gradient-to-br from-orange-200 to-red-200 flex items-center justify-center">
-                      <span className="text-8xl">🛕</span>
-                      <div className="absolute top-2 right-2 bg-yellow-100 px-3 py-1 rounded-full flex items-center gap-1">
-                        <span className="text-yellow-600">⭐</span>
-                        <span className="font-bold text-yellow-700">
-                          {mandir.averageRating > 0 ? mandir.averageRating.toFixed(1) : 'New'}
-                        </span>
-                      </div>
-                    </div>
+                    <div className="w-full h-full bg-slate-100 flex items-center justify-center text-4xl grayscale opacity-50">🛕</div>
                   )}
+                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm border border-slate-100">
+                    <Star size={12} className="fill-orange-500 text-orange-500" />
+                    <span className="text-[11px] font-black text-slate-800">{mandir.averageRating > 0 ? mandir.averageRating.toFixed(1) : 'New'}</span>
+                  </div>
+                </div>
+
+                {/* Content (Small & Focused) */}
+                <div className="p-4">
+                  <h3 className="text-md font-bold text-slate-900 mb-1 group-hover:text-orange-600 transition-colors truncate">
+                    {mandir.name}
+                  </h3>
                   
-                  {/* Mandir Details */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-orange-700 mb-2 group-hover:text-orange-600">
-                      {mandir.name}
-                    </h3>
+                  <div className="flex items-center gap-1.5 text-slate-500 mb-4">
+                    <MapPin size={12} className="shrink-0" />
+                    <span className="text-[11px] font-medium truncate">{mandir.location.city}, {mandir.location.state}</span>
+                  </div>
 
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                      {mandir.description || 'A sacred place of worship'}
-                    </p>
-
-                    <div className="space-y-2 text-sm mb-4">
-                      <div className="flex items-center gap-2 text-gray-700">
-                        <span>📍</span>
-                        <span>{mandir.location.city}, {mandir.location.state}</span>
-                      </div>
-                      {mandir.timing && (
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <span>🕐</span>
-                          <span>{mandir.timing.opening} - {mandir.timing.closing}</span>
-                        </div>
-                      )}
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-50">
+                    <div className="flex items-center gap-1 text-slate-400">
+                      <Clock size={12} />
+                      <span className="text-[10px] font-bold uppercase">{mandir.timing?.opening || 'Dawn'} - {mandir.timing?.closing || 'Dusk'}</span>
                     </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-2">
-                      <Link 
-                        href={`/mandirs/${mandir._id}`}
-                        className="flex-1 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-semibold text-center hover:shadow-lg transition"
-                      >
-                        View Details
-                      </Link>
+                    
+                    <div className="flex gap-1">
                       {mandir.location.coordinates && (
-                        <a
-                          href={`https://www.google.com/maps/dir/?api=1&destination=${mandir.location.coordinates.lat},${mandir.location.coordinates.lng}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition flex items-center justify-center"
-                          title="Get Directions"
-                        >
-                          🗺️
-                        </a>
+                         <a href={`http://google.com/maps?q=${mandir.location.coordinates.lat},${mandir.location.coordinates.lng}`} 
+                            className="p-2 bg-slate-50 text-slate-400 rounded-lg hover:text-orange-600 transition-colors border border-slate-100">
+                           <Navigation size={14} />
+                         </a>
                       )}
+                      <Link href={`/mandirs/${mandir._id}`} className="flex items-center gap-1 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-lg text-[11px] font-black hover:bg-orange-600 hover:text-white transition-all group/btn">
+                        VIEW <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                      </Link>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
+
+        {/* --- EMPTY STATE --- */}
+        {mandirs.length === 0 && (
+          <div className="text-center py-20 border-2 border-dashed border-slate-200 rounded-3xl">
+            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No Results Found</p>
+          </div>
+        )}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 text-white py-8 mt-16 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-3">
-            <p className="text-2xl font-bold divine-glow">🕉️ राम राम 🕉️</p>
-            <p className="text-sm">© 2024 Ramji Ki Sena - All Rights Reserved</p>
-            <p className="text-xs text-orange-200">जय श्री राम | जय हनुमान</p>
-          </div>
-        </div>
+      <footer className="py-8 text-center border-t border-slate-100">
+        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">जय श्री राम</p>
       </footer>
     </div>
   );

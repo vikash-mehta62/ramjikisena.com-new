@@ -4,7 +4,22 @@ const userModel = require('../users');
 
 const adminAuth = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    // Try to get token from cookie first
+    let token = req.cookies.token;
+    
+    // If not in cookie, check Authorization header
+    if (!token) {
+      const authHeader = req.headers.authorization || req.headers.Authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+
+    console.log('Admin Auth - Token check:', {
+      hasCookie: !!req.cookies.token,
+      hasAuthHeader: !!(req.headers.authorization || req.headers.Authorization),
+      hasToken: !!token
+    });
 
     if (!token) {
       return res.status(401).json({ 
@@ -16,6 +31,7 @@ const adminAuth = async (req, res, next) => {
     // Verify token
     jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, user) => {
       if (err) {
+        console.log('Admin Auth - Token verification failed:', err.message);
         return res.status(403).json({ 
           success: false, 
           message: 'Invalid token' 
@@ -39,6 +55,7 @@ const adminAuth = async (req, res, next) => {
         });
       }
 
+      console.log('Admin Auth - Success for user:', user._id);
       req.user = user;
       next();
     });

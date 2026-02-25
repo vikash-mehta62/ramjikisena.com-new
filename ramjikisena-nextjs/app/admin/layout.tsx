@@ -64,6 +64,7 @@ export default function AdminLayout({
     { href: '/admin/admin-blogs', label: 'All Blogs', icon: '📚' },
     { href: '/admin/users', label: 'Users', icon: '👥' },
     { href: '/admin/admin-mandirs', label: 'Mandirs', icon: '🛕' },
+    { href: '/admin/admin-katha-vachaks', label: 'Katha Vachak', icon: '📿' },
   ];
 
   return (

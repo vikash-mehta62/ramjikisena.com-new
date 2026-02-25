@@ -4,6 +4,7 @@ const router = express.Router();
 const userModel = require('./users');
 const blogModel = require('./blog');
 const Mandir = require('../models/Mandir');
+const KathaVachak = require('../models/KathaVachak');
 const adminAuth = require('./middleware/adminAuth');
 
 // All routes require admin authentication
@@ -428,3 +429,103 @@ router.get('/announcements', async (req, res) => {
 });
 
 module.exports = router;
+
+
+// ============================================
+// KATHA VACHAK MANAGEMENT
+// ============================================
+
+// Get all katha vachaks
+router.get('/katha-vachaks', async (req, res) => {
+  try {
+    const kathaVachaks = await KathaVachak.find()
+      .sort({ createdAt: -1 });
+    
+    res.json({
+      success: true,
+      kathaVachaks
+    });
+  } catch (error) {
+    console.error('Get katha vachaks error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// Create katha vachak
+router.post('/katha-vachaks', async (req, res) => {
+  try {
+    const kathaVachakData = req.body;
+    
+    const kathaVachak = await KathaVachak.create(kathaVachakData);
+    
+    res.json({
+      success: true,
+      message: 'Katha Vachak created successfully',
+      kathaVachak
+    });
+  } catch (error) {
+    console.error('Create katha vachak error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// Update katha vachak
+router.put('/katha-vachaks/:id', async (req, res) => {
+  try {
+    const kathaVachak = await KathaVachak.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    if (!kathaVachak) {
+      return res.status(404).json({
+        success: false,
+        message: 'Katha Vachak not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Katha Vachak updated successfully',
+      kathaVachak
+    });
+  } catch (error) {
+    console.error('Update katha vachak error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// Delete katha vachak
+router.delete('/katha-vachaks/:id', async (req, res) => {
+  try {
+    const kathaVachak = await KathaVachak.findByIdAndDelete(req.params.id);
+
+    if (!kathaVachak) {
+      return res.status(404).json({
+        success: false,
+        message: 'Katha Vachak not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Katha Vachak deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete katha vachak error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+});

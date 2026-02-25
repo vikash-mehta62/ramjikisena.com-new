@@ -38,6 +38,42 @@ const mandirSchema = mongoose.Schema({
     email: String,
     website: String
   },
+  // NEW FIELDS
+  deity: {
+    main: String, // Main deity name
+    others: [String] // Other deities
+  },
+  festivals: [{
+    name: String,
+    month: String,
+    description: String
+  }],
+  facilities: {
+    parking: { type: Boolean, default: false },
+    prasad: { type: Boolean, default: false },
+    accommodation: { type: Boolean, default: false },
+    wheelchairAccessible: { type: Boolean, default: false },
+    restrooms: { type: Boolean, default: false },
+    drinkingWater: { type: Boolean, default: false }
+  },
+  visitInfo: {
+    bestTimeToVisit: String, // e.g., "Morning 6-8 AM"
+    dressCode: String, // e.g., "Traditional attire preferred"
+    entryFee: String, // e.g., "Free" or "₹50"
+    photographyAllowed: { type: Boolean, default: true }
+  },
+  nearbyAttractions: [{
+    name: String,
+    distance: String, // e.g., "2 km"
+    type: String // e.g., "Temple", "Market", "Tourist Spot"
+  }],
+  socialMedia: {
+    facebook: String,
+    instagram: String,
+    youtube: String,
+    twitter: String
+  },
+  // EXISTING FIELDS
   reviews: [{
     user: {
       type: mongoose.Schema.Types.ObjectId,

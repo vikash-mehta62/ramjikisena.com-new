@@ -1,203 +1,243 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import Navbar from '@/components/Navbar';
+
+const slides = [
+  {
+    title: "🚩 जय श्री राम",
+    subtitle: "राम नाम का लिखित जाप",
+    desc: "कलियुग में नाम ही आधार है। अपनी आध्यात्मिक यात्रा को डिजिटल माध्यम से नई ऊंचाइयों पर ले जाएं।",
+    img: "/ramji.jpg",
+    color: "from-orange-500 to-red-600",
+    glow: "rgba(255, 100, 0, 0.3)"
+  },
+  {
+    title: "🙏 जय श्री हनुमान",
+    subtitle: "भक्ति की पराकाष्ठा",
+    desc: "संकट कटे मिटे सब पीरा, जो सुमिरै हनुमत बलबीरा। भक्ति की शक्ति से जुड़ें।",
+    img: "/hanumanji.jpg",
+    color: "from-red-600 to-orange-700",
+    glow: "rgba(220, 38, 38, 0.3)"
+  }
+];
 
 export default function HomePage() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen ram-naam-bg bg-gradient-to-br from-orange-50 via-amber-50 to-red-50 relative">
-      {/* Decorative Om Symbols */}
-      <div className="om-symbol" style={{ top: '10%', left: '5%' }}>ॐ</div>
-      <div className="om-symbol" style={{ top: '60%', right: '5%' }}>ॐ</div>
+    <div className="min-h-screen bg-[#FFFAF3] overflow-x-hidden selection:bg-orange-200">
+      <Navbar showAuthButtons={true} />
+
+      {/* Spacer for fixed navbar */}
+      <div className="h-16 md:h-20"></div>
+
+      {/* --- HERO SECTION --- */}
+  <section className="relative h-[90vh] max-h-[900px] flex items-center overflow-hidden">
+  
+  {/* Dynamic Background Elements */}
+  <AnimatePresence mode="wait">
+    <motion.div
+      key={currentSlide}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="absolute inset-0 -z-10"
+    >
+      <div className={`absolute inset-0 bg-gradient-to-br ${slides[currentSlide].color} opacity-[0.03]`} />
       
-      {/* Header */}
-      <header className="bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 text-white py-4 shadow-lg relative z-10 sticky top-0">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-3xl">🚩</span>
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold divine-glow">Ramji Ki Sena</h1>
-                <p className="text-xs text-orange-100">राम नाम सत्य है</p>
-              </div>
-            </Link>
-            <nav className="flex gap-4 items-center">
-              <Link href="/about" className="hidden md:block hover:text-yellow-200 transition font-semibold">About</Link>
-              <Link href="/mandirs" className="hidden md:flex hover:text-yellow-200 transition font-semibold items-center gap-1">
-                <span>🛕</span> Mandirs
-              </Link>
-              <Link href="/gallery" className="hidden md:block hover:text-yellow-200 transition font-semibold">Gallery</Link>
-              <Link href="/contact" className="hidden md:block hover:text-yellow-200 transition font-semibold">Contact</Link>
-              <Link 
-                href="/login"
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition font-semibold"
-              >
-                Login
-              </Link>
-              <Link 
-                href="/register"
-                className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition font-semibold shadow-lg"
-              >
-                Sign Up
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <motion.div 
+        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-1/4 -right-20 text-[18rem] font-bold text-orange-600/5 select-none pointer-events-none"
+      >
+        ॐ
+      </motion.div>
+    </motion.div>
+  </AnimatePresence>
 
-      {/* Hero Section */}
-      <main className="container mx-auto px-4 py-8 md:py-16 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          {/* Hero Banner with Images */}
-          <div className="bg-gradient-to-r from-orange-100 via-red-100 to-yellow-100 rounded-3xl p-8 md:p-12 mb-12 shadow-2xl border-4 divine-border relative overflow-hidden">
-            <div className="absolute top-0 right-0 text-9xl text-orange-200 opacity-20">🕉️</div>
-            <div className="absolute bottom-0 left-0 text-9xl text-orange-200 opacity-20">🚩</div>
+  <div className="container mx-auto px-6 relative z-10">
+    <div className="grid lg:grid-cols-2 gap-10 items-center">
+      
+      {/* Left Content */}
+      <div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold tracking-widest uppercase mb-3">
+              {slides[currentSlide].subtitle}
+            </span>
+
+            {/* Smaller Heading */}
+            <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight mb-4">
+              {slides[currentSlide].title.split(' ').map((word, i) => (
+                <span key={i} className={i === 1 ? "text-orange-600" : ""}>
+                  {word}{" "}
+                </span>
+              ))}
+            </h1>
+
+            {/* Smaller Description */}
+            <p className="text-base md:text-lg text-slate-600 max-w-md mb-6 leading-relaxed">
+              {slides[currentSlide].desc}
+            </p>
             
-            <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
-              {/* Left Side - Text */}
-              <div className="space-y-6">
-                <h1 className="text-4xl md:text-6xl font-bold text-orange-700 divine-glow">
-                  🚩 जय श्री राम 🚩
-                </h1>
-                <h2 className="text-2xl md:text-4xl font-semibold text-red-600 divine-glow">
-                  जय श्री हनुमान
-                </h2>
-                <p className="text-lg md:text-xl text-gray-800 leading-relaxed font-medium">
-                  राम नाम का लिखित जाप - आध्यात्मिक यात्रा की शुरुआत करें
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link 
-                    href="/register"
-                    className="px-8 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-center"
-                  >
-                    ✨ अभी शुरू करें
-                  </Link>
-                  <Link 
-                    href="/login"
-                    className="px-8 py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-center"
-                  >
-                    🙏 लॉगिन करें
-                  </Link>
-                </div>
-              </div>
+            {/* Smaller Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/register" className="px-6 py-3 bg-orange-600 text-white font-semibold rounded-xl shadow-lg transition hover:scale-105">
+                अभी शुरू करें ✨
+              </Link>
               
-              {/* Right Side - Divine Images */}
-              <div className="flex items-center justify-center gap-6">
-                {/* Ram Bhagwan */}
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-400 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition"></div>
-                  <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden shadow-2xl border-4 divine-border">
-                    <Image 
-                      src="/images/Ayodhya Ramji Photo.webp"
-                      alt="Ram Bhagwan"
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  </div>
-                  <p className="text-center mt-2 text-lg font-bold text-orange-700">श्री राम</p>
-                </div>
+              <Link href="/login" className="px-6 py-3 bg-white text-slate-800 border border-slate-200 font-semibold rounded-xl hover:bg-slate-50 transition">
+                लॉगिन करें 🙏
+              </Link>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-                {/* Hanuman Ji */}
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-400 to-orange-400 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition"></div>
-                  <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden shadow-2xl border-4 divine-border">
-                    <div className="w-full h-full bg-gradient-to-br from-orange-300 to-red-300 flex items-center justify-center">
-                      <span className="text-8xl">🙏</span>
-                    </div>
-                  </div>
-                  <p className="text-center mt-2 text-lg font-bold text-red-700">हनुमान जी</p>
-                </div>
-              </div>
+      {/* Right Image */}
+      <div className="flex justify-center items-center">
+        <motion.div
+          key={currentSlide}
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative"
+        >
+          <div 
+            className="absolute inset-0 rounded-full blur-[60px] opacity-30 animate-pulse"
+            style={{ backgroundColor: slides[currentSlide].glow }}
+          />
+          
+          <div className="relative w-[240px] h-[240px] md:w-[380px] md:h-[380px]">
+            <div className="relative w-full h-full rounded-3xl overflow-hidden border-8 border-white shadow-xl">
+              <Image 
+                src={slides[currentSlide].img} 
+                alt="Divine Image" 
+                fill 
+                className="object-cover transition-transform duration-700 hover:scale-105"
+                priority
+              />
             </div>
           </div>
+        </motion.div>
+      </div>
 
-          {/* Features Section */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border-2 border-orange-200 text-center">
-              <div className="text-6xl mb-4">📝</div>
-              <h3 className="text-2xl font-bold text-orange-700 mb-2">राम नाम लेखन</h3>
-              <p className="text-gray-600">राम, राधे, हरे कृष्णा - अपनी पसंद का नाम लिखें</p>
-            </div>
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border-2 border-orange-200 text-center">
-              <div className="text-6xl mb-4">📊</div>
-              <h3 className="text-2xl font-bold text-orange-700 mb-2">Count Tracking</h3>
-              <p className="text-gray-600">अपनी प्रगति को ट्रैक करें और माला गिनें</p>
-            </div>
-            <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 shadow-xl border-2 border-orange-200 text-center">
-              <div className="text-6xl mb-4">🏆</div>
-              <h3 className="text-2xl font-bold text-orange-700 mb-2">Leaderboard</h3>
-              <p className="text-gray-600">भक्तों के साथ प्रतिस्पर्धा करें</p>
-            </div>
-          </div>
+    </div>
+  </div>
+</section>
 
-          {/* Description */}
-          <div className="max-w-4xl mx-auto mb-12">
-            <div className="bg-white/90 backdrop-blur-md rounded-3xl p-8 md:p-10 shadow-2xl border-4 divine-border relative overflow-hidden">
-              <div className="absolute top-0 right-0 text-6xl text-orange-200 opacity-30">🕉️</div>
-              <div className="absolute bottom-0 left-0 text-6xl text-orange-200 opacity-30">🕉️</div>
-              <h2 className="text-3xl font-bold text-orange-700 mb-4 text-center">राम नाम की महिमा</h2>
-              <p className="text-lg md:text-xl text-gray-800 leading-relaxed relative z-10 font-medium text-center">
-                कलयुग में न जप है न तप है और न योग ही है। सिर्फ <span className="text-orange-700 font-bold">राम नाम</span> ही इस कलिकाल में प्राणी मात्र का सहारा है। 
-                श्री राम चन्द्र जी सहज ही कृपा करने वाले और परम दयालु हैं उस पर उनका नाम तो प्राणी मात्र को अभय प्रदान करने वाला 
-                और परम कल्याण कारी है। कलयुग में <span className="text-red-700 font-bold">राम नाम का लिखित जाप</span> सभी पापों को नष्ट कर मुक्ति प्रदान करने वाला है।
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-12">
-            <Link href="/mission" className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 border-2 border-orange-200 hover:border-orange-400 group">
-              <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🎯</div>
-              <h3 className="text-xl font-bold text-orange-700">Our Mission</h3>
-              <p className="text-sm text-gray-600 mt-2">हमारा उद्देश्य</p>
-            </Link>
-            <Link href="/glory" className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 border-2 border-orange-200 hover:border-orange-400 group">
-              <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">📖</div>
-              <h3 className="text-xl font-bold text-orange-700">Glory of Ram Naam</h3>
-              <p className="text-sm text-gray-600 mt-2">राम नाम की महिमा</p>
-            </Link>
-            <Link href="/mandirs" className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 border-2 border-orange-200 hover:border-orange-400 group">
-              <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🛕</div>
-              <h3 className="text-xl font-bold text-orange-700">Temple Directory</h3>
-              <p className="text-sm text-gray-600 mt-2">मंदिर खोजें</p>
-            </Link>
-            <Link href="/gallery" className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 border-2 border-orange-200 hover:border-orange-400 group">
-              <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">🖼️</div>
-              <h3 className="text-xl font-bold text-orange-700">Gallery</h3>
-              <p className="text-sm text-gray-600 mt-2">फोटो गैलरी</p>
-            </Link>
-          </div>
-
-          {/* Bhakti Quotes Section */}
-          <div className="grid md:grid-cols-2 gap-6 mt-12">
-            <div className="bg-gradient-to-br from-orange-100 to-red-100 rounded-2xl p-8 shadow-xl border-2 border-orange-300">
-              <div className="text-5xl mb-4 text-center">🙏</div>
-              <p className="text-lg text-gray-800 italic text-center font-medium">
-                "राम नाम मणि दीप धरु जीह देहरीं द्वार।<br/>
-                तुलसी भीतर बाहेरहुँ जौं चाहसि उजिआर।।"
-              </p>
-              <p className="text-sm text-gray-600 text-center mt-3">- तुलसीदास जी</p>
-            </div>
-            <div className="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl p-8 shadow-xl border-2 border-orange-300">
-              <div className="text-5xl mb-4 text-center">📿</div>
-              <p className="text-lg text-gray-800 italic text-center font-medium">
-                "कलियुग केवल नाम अधारा।<br/>
-                सुमिर सुमिर नर उतरहिं पारा।।"
-              </p>
-              <p className="text-sm text-gray-600 text-center mt-3">- रामचरितमानस</p>
-            </div>
+      {/* --- STATS SECTION (Modern Look) --- */}
+      <section className="py-20 relative bg-white">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
+            {[
+              { label: "Total Jaap", val: "1.2Cr+", icon: "📿" },
+              { label: "Active Bhakts", val: "50k+", icon: "👥" },
+              { label: "Daily Malas", val: "25,000", icon: "✨" },
+              { label: "Cities", val: "500+", icon: "📍" },
+            ].map((stat, i) => (
+              <motion.div 
+                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                key={i} 
+                className="flex flex-col items-center"
+              >
+                <span className="text-2xl mb-2">{stat.icon}</span>
+                <h3 className="text-4xl font-black text-slate-900 mb-1">{stat.val}</h3>
+                <p className="text-xs font-bold text-orange-500 uppercase tracking-widest">{stat.label}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
-      </main>
+      </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 text-white py-8 mt-16 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-3">
-            <p className="text-2xl font-bold divine-glow">🕉️ राम राम 🕉️</p>
-            <p className="text-sm">© 2024 Ramji Ki Sena - All Rights Reserved</p>
-            <p className="text-xs text-orange-200">जय श्री राम | जय हनुमान</p>
+      {/* --- FEATURES GRID --- */}
+      <section className="py-32 bg-[#FFFAF3]">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6">राम सेना की विशेषताएं</h2>
+            <div className="h-1.5 w-24 bg-orange-500 mx-auto rounded-full" />
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-10">
+            {[
+              { title: "डिजिटल डायरी", icon: "📝", desc: "कहीं भी, कभी भी नाम लिखें और अपनी आध्यात्मिक प्रगति को ट्रैक करें।" },
+              { title: "लीडरबोर्ड", icon: "🏆", desc: "साप्ताहिक और मासिक रैंकिंग में अपना स्थान बनाकर अन्य भक्तों को प्रेरित करें।" },
+              { title: "मंदिर दर्शन", icon: "🛕", desc: "देश भर के प्रसिद्ध मंदिरों के दर्शन और उनकी महिमा के बारे में जानें।" }
+            ].map((item, i) => (
+              <motion.div 
+                key={i} 
+                whileHover={{ y: -15 }}
+                className="group p-10 bg-white rounded-[3rem] border border-orange-100 shadow-xl shadow-orange-900/5 transition-all"
+              >
+                <div className="text-5xl mb-8 bg-orange-50 w-20 h-20 flex items-center justify-center rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                  {item.icon}
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">{item.title}</h3>
+                <p className="text-slate-500 leading-relaxed text-lg">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- QUOTE SECTION --- */}
+      <section className="py-40 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')]" />
+        <div className="container mx-auto px-6 relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <h2 className="text-3xl md:text-6xl font-serif italic text-orange-400 leading-tight mb-10">
+              "कलियुग केवल नाम अधारा। <br />
+              सुमिर सुमिर नर उतरहिं पारा।।"
+            </h2>
+            <div className="flex items-center justify-center gap-4">
+               <div className="h-[1px] w-12 bg-orange-800" />
+               <p className="text-xl font-bold text-orange-200 uppercase tracking-widest">— श्री रामचरितमानस</p>
+               <div className="h-[1px] w-12 bg-orange-800" />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* --- FOOTER --- */}
+      <footer className="bg-white pt-24 pb-12 border-t border-orange-50">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col items-center">
+            <h2 className="text-2xl font-black text-slate-900 mb-8 tracking-[0.2em] uppercase">
+              Ramji Ki <span className="text-orange-600">Sena</span>
+            </h2>
+            <div className="flex gap-10 mb-12">
+              {['About', 'Mission', 'Contact', 'Privacy'].map((link) => (
+                <Link key={link} href={`/${link.toLowerCase()}`} className="text-sm font-bold text-slate-400 hover:text-orange-600 transition-colors uppercase">
+                  {link}
+                </Link>
+              ))}
+            </div>
+            <p className="text-sm text-slate-400">© 2026 Ramji Ki Sena. Built with Devotion.</p>
           </div>
         </div>
       </footer>
