@@ -7,8 +7,31 @@ import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Clock, Star, Navigation, FilterX, ArrowRight } from 'lucide-react';
 
+interface Mandir {
+  _id: string;
+  name: string;
+  photos: string[];
+  location: {
+    city: string;
+    state: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
+  };
+  averageRating: number;
+  timings?: {
+    opening: string;
+    closing: string;
+  };
+  timing?: {
+    opening: string;
+    closing: string;
+  };
+}
+
 export default function CompactMandirListing() {
-  const [mandirs, setMandirs] = useState([]);
+  const [mandirs, setMandirs] = useState<Mandir[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [cityFilter, setCityFilter] = useState('');
