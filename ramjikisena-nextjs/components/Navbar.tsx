@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 interface NavbarProps {
   showAuthButtons?: boolean;
@@ -12,8 +13,16 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isPanditLoggedIn, setIsPanditLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [panditName, setPanditName] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showLoginDropdown, setShowLoginDropdown] = useState(false);
+  const [showRegisterDropdown, setShowRegisterDropdown] = useState(false);
+  
+  const loginDropdownRef = useRef<HTMLDivElement>(null);
+  const registerDropdownRef = useRef<HTMLDivElement>(null);
 
   // Scroll effect for dynamic styling
   useEffect(() => {
@@ -25,12 +34,60 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   // Check authentication
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const panditToken = localStorage.getItem('panditToken');
+    const user = localStorage.getItem('user');
+    const pandit = localStorage.getItem('pandit');
+    
     setIsLoggedIn(!!token);
+    setIsPanditLoggedIn(!!panditToken);
+    
+    if (user) {
+      try {
+        const userData = JSON.parse(user);
+        setUserName(userData.name || 'User');
+      } catch (e) {
+        setUserName('User');
+      }
+    }
+    
+    if (pandit) {
+      try {
+        const panditData = JSON.parse(pandit);
+        setPanditName(panditData.name || 'Pandit');
+      } catch (e) {
+        setPanditName('Pandit');
+      }
+    }
   }, []);
 
-  const handleLogout = () => {
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (loginDropdownRef.current && !loginDropdownRef.current.contains(event.target as Node)) {
+        setShowLoginDropdown(false);
+      }
+      if (registerDropdownRef.current && !registerDropdownRef.current.contains(event.target as Node)) {
+        setShowRegisterDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleUserLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsLoggedIn(false);
+    setUserName('');
+    router.push('/');
+  };
+
+  const handlePanditLogout = () => {
+    localStorage.removeItem('panditToken');
+    localStorage.removeItem('pandit');
+    setIsPanditLoggedIn(false);
+    setPanditName('');
     router.push('/');
   };
 
@@ -38,6 +95,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
     { href: '/about', label: 'About', icon: '📖' },
     { href: '/mandirs', label: 'Mandirs', icon: '🛕' },
     { href: '/katha-vachaks', label: 'Katha Vachak', icon: '📿' },
+    { href: '/pandits', label: 'Book Pandit', icon: '🕉️' },
     { href: '/gallery', label: 'Gallery', icon: '🖼️' },
     { href: '/contact', label: 'Contact', icon: '📞' },
   ];
@@ -93,29 +151,131 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
           <div className="flex items-center gap-3">
             {showAuthButtons && (
               <div className="hidden sm:flex items-center gap-3">
-                {isLoggedIn ? (
+                {isLoggedIn || isPanditLoggedIn ? (
                   <>
-                    <Link href="/dashboard" className="text-sm font-bold text-white hover:text-yellow-300 transition-colors">
-                      Dashboard
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="px-5 py-2 bg-white text-red-600 rounded-full text-sm font-bold shadow-lg hover:bg-red-50 active:scale-95 transition-all"
-                    >
-                      Logout
-                    </button>
+                    {isLoggedIn && (
+                      <>
+                        {/* User Dropdown */}
+                        <div className="relative" ref={loginDropdownRef}>
+                          <button
+                            onClick={() => {
+                              setShowLoginDropdown(!showLoginDropdown);
+                              setShowRegisterDropdown(false);
+                            }}
+                            className="flex items-center gap-2 text-sm font-bold text-white hover:text-yellow-300 transition-colors"
+                          >
+                            👤 {userName}
+                            <ChevronDown className={`w-4 h-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
+                          </button>
+                          
+                          {showLoginDropdown && (
+                            <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-orange-200 overflow-hidden z-50">
+                              <Link
+                                href="/dashboard"
+                                onClick={() => setShowLoginDropdown(false)}
+                                className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
+                              >
+                                📊 Dashboard
+                              </Link>
+                              <Link
+                                href="/my-bookings"
+                                onClick={() => setShowLoginDropdown(false)}
+                                className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
+                              >
+                                📅 My Bookings
+                              </Link>
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          onClick={handleUserLogout}
+                          className="px-4 py-2 bg-white text-red-600 rounded-full text-sm font-bold shadow-lg hover:bg-red-50 active:scale-95 transition-all"
+                        >
+                          Logout
+                        </button>
+                      </>
+                    )}
+                    {isPanditLoggedIn && (
+                      <>
+                        <Link href="/pandit/dashboard" className="text-sm font-bold text-white hover:text-yellow-300 transition-colors">
+                          🕉️ {panditName}
+                        </Link>
+                        <button
+                          onClick={handlePanditLogout}
+                          className="px-4 py-2 bg-white text-red-600 rounded-full text-sm font-bold shadow-lg hover:bg-red-50 active:scale-95 transition-all"
+                        >
+                          Logout
+                        </button>
+                      </>
+                    )}
                   </>
                 ) : (
                   <>
-                    <Link href="/login" className="text-sm font-bold text-white hover:text-yellow-300 transition-colors">
-                      Login
-                    </Link>
-                    <Link
-                      href="/register"
-                      className="px-5 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 text-orange-950 rounded-full text-sm font-black shadow-xl hover:shadow-yellow-500/40 transition-all hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                      SIGN UP
-                    </Link>
+                    {/* Login Dropdown */}
+                    <div className="relative" ref={loginDropdownRef}>
+                      <button
+                        onClick={() => {
+                          setShowLoginDropdown(!showLoginDropdown);
+                          setShowRegisterDropdown(false);
+                        }}
+                        className="flex items-center gap-1 text-sm font-bold text-white hover:text-yellow-300 transition-colors"
+                      >
+                        Login
+                        <ChevronDown className={`w-4 h-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
+                      </button>
+                      
+                      {showLoginDropdown && (
+                        <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-orange-200 overflow-hidden z-50">
+                          <Link
+                            href="/login"
+                            onClick={() => setShowLoginDropdown(false)}
+                            className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
+                          >
+                            👤 User Login
+                          </Link>
+                          <Link
+                            href="/pandit/login"
+                            onClick={() => setShowLoginDropdown(false)}
+                            className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
+                          >
+                            🕉️ Pandit Login
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Register Dropdown */}
+                    <div className="relative" ref={registerDropdownRef}>
+                      <button
+                        onClick={() => {
+                          setShowRegisterDropdown(!showRegisterDropdown);
+                          setShowLoginDropdown(false);
+                        }}
+                        className="flex items-center gap-1 px-5 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 text-orange-950 rounded-full text-sm font-black shadow-xl hover:shadow-yellow-500/40 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                      >
+                        SIGN UP
+                        <ChevronDown className={`w-4 h-4 transition-transform ${showRegisterDropdown ? 'rotate-180' : ''}`} />
+                      </button>
+                      
+                      {showRegisterDropdown && (
+                        <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-orange-200 overflow-hidden z-50">
+                          <Link
+                            href="/register"
+                            onClick={() => setShowRegisterDropdown(false)}
+                            className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
+                          >
+                            👤 User Register
+                          </Link>
+                          <Link
+                            href="/pandit/register"
+                            onClick={() => setShowRegisterDropdown(false)}
+                            className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
+                          >
+                            🕉️ Pandit Register
+                          </Link>
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </div>
@@ -158,10 +318,46 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
               </Link>
             ))}
             
-            {!isLoggedIn && (
-              <div className="grid grid-cols-2 gap-3 mt-2">
-                <Link href="/login" className="py-4 text-center font-bold text-white bg-white/10 rounded-2xl">Login</Link>
-                <Link href="/register" className="py-4 text-center font-bold bg-yellow-400 text-orange-900 rounded-2xl shadow-lg">Register</Link>
+            {/* Mobile Auth Buttons */}
+            {isLoggedIn || isPanditLoggedIn ? (
+              <div className="space-y-2 mt-2">
+                {isLoggedIn && (
+                  <>
+                    <div className="text-xs font-bold text-yellow-300 px-2 mb-1">User Menu</div>
+                    <Link href="/dashboard" className="block py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      📊 Dashboard
+                    </Link>
+                    <Link href="/my-bookings" className="block py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      📅 My Bookings
+                    </Link>
+                    <button onClick={handleUserLogout} className="w-full py-3 text-center font-bold bg-red-500 text-white rounded-2xl">
+                      Logout
+                    </button>
+                  </>
+                )}
+                {isPanditLoggedIn && (
+                  <>
+                    <Link href="/pandit/dashboard" className="block py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      🕉️ {panditName} Dashboard
+                    </Link>
+                    <button onClick={handlePanditLogout} className="w-full py-3 text-center font-bold bg-red-500 text-white rounded-2xl">
+                      Logout
+                    </button>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2 mt-2">
+                <div className="text-xs font-bold text-yellow-300 px-2 mb-1">User</div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/login" className="py-3 text-center font-bold text-white bg-white/10 rounded-2xl">Login</Link>
+                  <Link href="/register" className="py-3 text-center font-bold bg-yellow-400 text-orange-900 rounded-2xl shadow-lg">Register</Link>
+                </div>
+                <div className="text-xs font-bold text-yellow-300 px-2 mt-3 mb-1">Pandit</div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/pandit/login" className="py-3 text-center font-bold text-white bg-white/10 rounded-2xl">Login</Link>
+                  <Link href="/pandit/register" className="py-3 text-center font-bold bg-yellow-400 text-orange-900 rounded-2xl shadow-lg">Register</Link>
+                </div>
               </div>
             )}
           </div>

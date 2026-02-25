@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authApi, User } from '@/lib/auth';
+import Navbar from '@/components/Navbar';
 
 type NameType = 'RAM' | 'RADHE' | 'HARE_KRISHNA';
 
@@ -194,50 +195,27 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4">🙏</div>
-          <p className="text-xl text-orange-700">Loading...</p>
+      <>
+        <Navbar />
+        <div className="h-20 md:h-20"></div>
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🙏</div>
+            <p className="text-xl text-orange-700">Loading...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <span className="text-2xl">🚩</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">Ramji Ki Sena</h1>
-                <p className="text-sm text-orange-100">Jai Shri Ram</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/mandirs"
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition flex items-center gap-2"
-              >
-                <span>🛕</span> Mandirs
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+    <>
+      <Navbar />
+      <div className="h-20 md:h-20"></div>
+      
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
+        {/* Main Content */}
+        <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Welcome Section */}
           <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-orange-200">
@@ -466,17 +444,18 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Saving Overlay */}
-      {saving && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 text-center shadow-2xl">
-            <div className="text-6xl mb-4 animate-bounce">🚩</div>
-            <p className="text-xl font-semibold text-orange-700">
-              आपका रामनाम धन सेव हो रहा है...
-            </p>
+        {/* Saving Overlay */}
+        {saving && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-8 text-center shadow-2xl">
+              <div className="text-6xl mb-4 animate-bounce">🚩</div>
+              <p className="text-xl font-semibold text-orange-700">
+                आपका रामनाम धन सेव हो रहा है...
+              </p>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
