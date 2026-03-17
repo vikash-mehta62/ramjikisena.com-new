@@ -8,6 +8,7 @@ var logger = require('morgan');
 const expressSession = require('express-session');
 const flash = require('connect-flash');
 const fileUpload = require('express-fileupload');
+const swaggerUi = require('swagger-ui-express');
 
 
 var indexRouter = require('./routes/index');
@@ -29,7 +30,7 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 app.use(cors({
-  origin: ['https://ramjikisena.com', 'http://localhost:3000', 'http://localhost:3001','https://ramjikisena-com-new.vercel.app'],
+  origin: ['https://ramjikisena.com', 'http://localhost:3000', 'http://localhost:3001', 'https://ramjikisena-com-new.vercel.app'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
@@ -57,6 +58,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+console.log(`Current environment ${process.env.NODE_ENV}`);
+
+if (process.env.NODE_ENV !== 'production') {
+  const swaggerOutput = require('./swagger-output.json');
+
+  app.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerOutput, {
+      explorer: true,
+      swaggerOptions: {
+        persistAuthorization: true,   // keeps JWT across page refreshes
+        displayRequestDuration: true, // shows response time in UI
+        filter: true,                 // enables tag/endpoint search bar
+        tryItOutEnabled: true,        // "Try it out" open by default
+      },
+      customSiteTitle: 'Ram Ji Ki Sena Docs',
+    })
+  );
+  console.log(`Swagger UI  → http://localhost:${process.env.PORT || 3000}/api-docs`);
+}
 
 // File upload middleware
 app.use(fileUpload({
