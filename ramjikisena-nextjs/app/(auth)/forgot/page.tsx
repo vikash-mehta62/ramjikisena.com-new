@@ -37,6 +37,10 @@ export default function ForgotPasswordPage() {
         if (data.token) {
           localStorage.setItem('token', data.token);
         }
+        // Save user object so admin layout can check role
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
         
         // Redirect based on role
         if (data.redirect) {

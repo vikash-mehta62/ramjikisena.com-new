@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
+import { Scroll, FileText, Smartphone, Phone, Star, Calendar, Trash2, Pencil, Plus, X, Eye } from 'lucide-react';
 
 interface LiveKatha {
   _id?: string;
@@ -290,8 +291,8 @@ export default function AdminKathaVachaks() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-              <span className="text-4xl">📿</span>
-            </div>
+            <Scroll className="w-8 h-8 text-orange-600" />
+          </div>
             <div>
               <h1 className="text-4xl font-bold mb-2">Katha Vachak Management</h1>
               <p className="text-orange-100">Manage all Katha Vachaks</p>
@@ -301,7 +302,7 @@ export default function AdminKathaVachaks() {
             onClick={() => { resetForm(); setShowForm(!showForm); }}
             className="px-6 py-3 bg-white text-orange-600 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all"
           >
-            {showForm ? '❌ Cancel' : '➕ Add Katha Vachak'}
+            {showForm ? <><X className="w-4 h-4" /> Cancel</> : <><Plus className="w-4 h-4" /> Add Katha Vachak</>}
           </button>
         </div>
       </div>
@@ -309,13 +310,13 @@ export default function AdminKathaVachaks() {
       {/* Form */}
       {showForm && (
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border-2 border-orange-200">
-          <h2 className="text-2xl font-bold text-orange-700 mb-6">
-            {editingId ? '✏️ Edit Katha Vachak' : '➕ Add New Katha Vachak'}
+          <h2 className="text-2xl font-bold text-orange-700 mb-6 flex items-center gap-2">
+            {editingId ? <><Pencil className="w-6 h-6" /> Edit Katha Vachak</> : <><Plus className="w-6 h-6" /> Add New Katha Vachak</>}
           </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Info */}
             <div className="bg-orange-50 rounded-xl p-6 border-2 border-orange-200">
-              <h3 className="text-xl font-bold text-orange-700 mb-4">📝 Basic Information</h3>
+              <h3 className="text-xl font-bold text-orange-700 mb-4 flex items-center gap-2"><FileText className="w-5 h-5" /> Basic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-gray-700 font-semibold mb-2">Name *</label>
@@ -364,12 +365,12 @@ export default function AdminKathaVachaks() {
 
             {/* Photo Upload */}
             <div className="bg-pink-50 rounded-xl p-6 border-2 border-pink-200">
-              <h3 className="text-xl font-bold text-pink-700 mb-4">📸 Photos</h3>
+              <h3 className="text-xl font-bold text-pink-700 mb-4 flex items-center gap-2"><FileText className="w-5 h-5" /> Photos</h3>
               <div className="space-y-4">
                 {/* Cloudinary Upload */}
                 <div className="bg-pink-100 p-4 rounded-lg border-2 border-pink-300">
-                  <label className="block text-pink-800 font-semibold mb-2">
-                    📤 Upload Image (Cloudinary)
+                  <label className="flex items-center gap-2 text-pink-800 font-semibold mb-2">
+                    <FileText className="w-4 h-4" /> Upload Image (Cloudinary)
                   </label>
                   <input
                     type="file"
@@ -380,7 +381,7 @@ export default function AdminKathaVachaks() {
                   />
                   {uploading && (
                     <p className="text-sm text-pink-600 mt-2 flex items-center gap-2">
-                      <span className="animate-spin">⏳</span> Uploading image...
+                      <span className="animate-spin inline-block w-4 h-4 border-2 border-pink-400 border-t-transparent rounded-full"></span> Uploading image...
                     </p>
                   )}
                   <p className="text-xs text-pink-700 mt-2">
@@ -397,9 +398,7 @@ export default function AdminKathaVachaks() {
 
                 {/* Manual URL Input */}
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2">
-                    🔗 Add Image URL Manually
-                  </label>
+                  <label className="block text-gray-700 font-semibold mb-2">Add Image URL Manually</label>
                   <div className="flex gap-2">
                     <input
                       type="url"
@@ -411,9 +410,9 @@ export default function AdminKathaVachaks() {
                     <button
                       type="button"
                       onClick={addPhotoUrl}
-                      className="px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition"
+                      className="inline-flex items-center gap-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition"
                     >
-                      ➕ Add
+                      <Plus className="w-4 h-4" /> Add
                     </button>
                   </div>
                 </div>
@@ -447,7 +446,7 @@ export default function AdminKathaVachaks() {
 
             {/* Contact Info */}
             <div className="bg-purple-50 rounded-xl p-6 border-2 border-purple-200">
-              <h3 className="text-xl font-bold text-purple-700 mb-4">📞 Contact Information</h3>
+              <h3 className="text-xl font-bold text-purple-700 mb-4 flex items-center gap-2"><Phone className="w-5 h-5" /> Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Phone</label>
@@ -485,13 +484,13 @@ export default function AdminKathaVachaks() {
             {/* Live Kathas */}
             <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-green-700">📅 Live Katha Events</h3>
+                <h3 className="text-xl font-bold text-green-700 flex items-center gap-2"><Calendar className="w-5 h-5" /> Live Katha Events</h3>
                 <button
                   type="button"
                   onClick={addLiveKatha}
-                  className="px-4 py-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700"
+                  className="inline-flex items-center gap-1 px-4 py-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700"
                 >
-                  ➕ Add Event
+                  <Plus className="w-4 h-4" /> Add Event
                 </button>
               </div>
               {liveKathas.length === 0 && (
@@ -504,9 +503,9 @@ export default function AdminKathaVachaks() {
                     <button
                       type="button"
                       onClick={() => removeLiveKatha(index)}
-                      className="px-3 py-1 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600"
                     >
-                      🗑️ Remove
+                      <Trash2 className="w-3 h-3" /> Remove
                     </button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -614,7 +613,7 @@ export default function AdminKathaVachaks() {
 
             {/* Social Media */}
             <div className="bg-cyan-50 rounded-xl p-6 border-2 border-cyan-200">
-              <h3 className="text-xl font-bold text-cyan-700 mb-4">📱 Social Media</h3>
+              <h3 className="text-xl font-bold text-cyan-700 mb-4 flex items-center gap-2"><Smartphone className="w-5 h-5" /> Social Media</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Facebook</label>
@@ -664,7 +663,7 @@ export default function AdminKathaVachaks() {
               disabled={uploading}
               className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg hover:scale-105 transition-all disabled:opacity-50"
             >
-              {uploading ? '⏳ Uploading...' : (editingId ? '✅ Update' : '✅ Create')}
+              {uploading ? 'Uploading...' : (editingId ? 'Update' : 'Create')}
             </button>
           </form>
         </div>
@@ -680,7 +679,7 @@ export default function AdminKathaVachaks() {
       {/* List */}
       {kathaVachaks.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-xl p-12 text-center border-2 border-orange-200">
-          <span className="text-8xl mb-4 block">📿</span>
+          <Scroll className="w-20 h-20 text-gray-300 mx-auto mb-4" />
           <h3 className="text-3xl font-bold text-gray-800 mb-3">No Katha Vachaks Yet</h3>
           <p className="text-gray-600 text-lg">Click "Add Katha Vachak" to create your first entry.</p>
         </div>
@@ -697,7 +696,7 @@ export default function AdminKathaVachaks() {
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-2xl font-bold text-orange-700">{kv.name}</h3>
                       <div className="flex items-center gap-1 bg-yellow-100 px-3 py-1 rounded-full">
-                        <span className="text-yellow-600">⭐</span>
+                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                         <span className="font-bold text-yellow-700">
                           {kv.averageRating > 0 ? kv.averageRating.toFixed(1) : 'New'}
                         </span>
@@ -706,30 +705,30 @@ export default function AdminKathaVachaks() {
                     <p className="text-orange-600 font-semibold mb-2">{kv.specialization}</p>
                     <p className="text-gray-600 mb-3">{kv.description || 'No description'}</p>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span>🎯 {kv.experience} years exp</span>
-                      <span>💬 {kv.reviews.length} reviews</span>
-                      <span>📅 {kv.liveKathas.length} events</span>
+                      <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {kv.experience} years exp</span>
+                      <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {kv.reviews.length} reviews</span>
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {kv.liveKathas.length} events</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex gap-3 ml-4">
                   <Link
                     href={`/katha-vachaks/${kv._id}`}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
+                    className="inline-flex items-center gap-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
                   >
-                    👁️ View
+                    <Eye className="w-4 h-4" /> View
                   </Link>
                   <button
                     onClick={() => handleEdit(kv)}
-                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
+                    className="inline-flex items-center gap-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
                   >
-                    ✏️ Edit
+                    <Pencil className="w-4 h-4" /> Edit
                   </button>
                   <button
                     onClick={() => handleDelete(kv._id)}
-                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
+                    className="inline-flex items-center gap-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
                   >
-                    🗑️ Delete
+                    <Trash2 className="w-4 h-4" /> Delete
                   </button>
                 </div>
               </div>

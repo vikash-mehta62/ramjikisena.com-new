@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
+import { Church, FileText, MapPin, Sparkles, Smartphone, Phone, Star, Pencil, Trash2, Plus, X, Eye, Calendar } from 'lucide-react';
+import ImageUploader from '@/components/ImageUploader';
 
 interface Mandir {
   _id: string;
@@ -400,7 +402,7 @@ export default function AdminMandirs() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-              <span className="text-4xl">🛕</span>
+              <Church className="w-8 h-8 text-orange-600" />
             </div>
             <div>
               <h1 className="text-4xl font-bold mb-2">Mandir Management</h1>
@@ -414,7 +416,7 @@ export default function AdminMandirs() {
             }}
             className="px-6 py-3 bg-white text-orange-600 rounded-xl font-bold hover:shadow-lg hover:scale-105 transition-all"
           >
-            {showForm ? '❌ Cancel' : '➕ Add Mandir'}
+            {showForm ? <><X className="w-4 h-4 inline mr-1" />Cancel</> : <><Plus className="w-4 h-4 inline mr-1" />Add Mandir</>}
           </button>
         </div>
       </div>
@@ -422,13 +424,13 @@ export default function AdminMandirs() {
       {/* Add/Edit Mandir Form */}
       {showForm && (
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border-2 border-orange-200">
-          <h2 className="text-2xl font-bold text-orange-700 mb-6">
-            {editingId ? '✏️ Edit Mandir' : '➕ Add New Mandir'}
+          <h2 className="text-2xl font-bold text-orange-700 mb-6 flex items-center gap-2">
+            {editingId ? <><Pencil className="w-6 h-6" /> Edit Mandir</> : <><Plus className="w-6 h-6" /> Add New Mandir</>}
           </h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div className="bg-orange-50 rounded-xl p-6 border-2 border-orange-200">
-              <h3 className="text-xl font-bold text-orange-700 mb-4">📝 Basic Information</h3>
+              <h3 className="text-xl font-bold text-orange-700 mb-4 flex items-center gap-2"><FileText className="w-5 h-5" /> Basic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-gray-700 font-semibold mb-2">Mandir Name *</label>
@@ -466,7 +468,7 @@ export default function AdminMandirs() {
 
             {/* Location Information */}
             <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
-              <h3 className="text-xl font-bold text-blue-700 mb-4">📍 Location Information</h3>
+              <h3 className="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2"><MapPin className="w-5 h-5" /> Location Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-gray-700 font-semibold mb-2">Full Address</label>
@@ -532,7 +534,7 @@ export default function AdminMandirs() {
 
             {/* Timing Information */}
             <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
-              <h3 className="text-xl font-bold text-green-700 mb-4">🕐 Timing Information</h3>
+              <h3 className="text-xl font-bold text-green-700 mb-4 flex items-center gap-2"><Calendar className="w-5 h-5" /> Timing Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Opening Time</label>
@@ -567,7 +569,7 @@ export default function AdminMandirs() {
 
             {/* Contact Information */}
             <div className="bg-purple-50 rounded-xl p-6 border-2 border-purple-200">
-              <h3 className="text-xl font-bold text-purple-700 mb-4">📞 Contact Information</h3>
+              <h3 className="text-xl font-bold text-purple-700 mb-4 flex items-center gap-2"><Phone className="w-5 h-5" /> Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Phone Number</label>
@@ -604,96 +606,18 @@ export default function AdminMandirs() {
 
             {/* Photo URLs */}
             <div className="bg-pink-50 rounded-xl p-6 border-2 border-pink-200">
-              <h3 className="text-xl font-bold text-pink-700 mb-4">📸 Mandir Photos</h3>
-              <div className="space-y-4">
-                {/* Cloudinary Upload */}
-                <div className="bg-pink-100 p-4 rounded-lg border-2 border-pink-300">
-                  <label className="block text-pink-800 font-semibold mb-2">
-                    📤 Upload Image (Cloudinary)
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    disabled={uploading}
-                    className="w-full px-4 py-3 border-2 border-pink-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent bg-white"
-                  />
-                  {uploading && (
-                    <p className="text-sm text-pink-600 mt-2 flex items-center gap-2">
-                      <span className="animate-spin">⏳</span> Uploading image...
-                    </p>
-                  )}
-                  <p className="text-xs text-pink-700 mt-2">
-                    Max size: 5MB | Supported: JPG, PNG, WEBP
-                  </p>
-                </div>
-
-                {/* OR Divider */}
-                <div className="flex items-center gap-4">
-                  <div className="flex-1 border-t-2 border-gray-300"></div>
-                  <span className="text-gray-500 font-semibold">OR</span>
-                  <div className="flex-1 border-t-2 border-gray-300"></div>
-                </div>
-
-                {/* Manual URL Input */}
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-2">
-                    🔗 Add Image URL Manually
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="url"
-                      value={photoUrl}
-                      onChange={(e) => setPhotoUrl(e.target.value)}
-                      className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                      placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
-                    />
-                    <button
-                      type="button"
-                      onClick={addPhoto}
-                      className="px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition"
-                    >
-                      ➕ Add
-                    </button>
-                  </div>
-                </div>
-
-                {/* Photo Gallery */}
-                {formData.photos.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-600 font-semibold">Added Photos ({formData.photos.length}):</p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {formData.photos.map((photo, index) => (
-                        <div key={index} className="relative group">
-                          <img 
-                            src={photo} 
-                            alt={`Photo ${index + 1}`} 
-                            className="w-full h-32 object-cover rounded-lg border-2 border-pink-200"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removePhoto(index)}
-                            className="absolute top-2 right-2 px-2 py-1 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600 transition opacity-0 group-hover:opacity-100"
-                          >
-                            ❌
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="bg-pink-100 p-4 rounded-lg">
-                  <p className="text-sm text-pink-800">
-                    💡 <strong>Tip:</strong> You can either upload images directly (recommended) or paste image URLs from external sources.
-                  </p>
-                </div>
-              </div>
+              <ImageUploader
+                label="📸 Mandir Photos (multiple allowed)"
+                value={formData.photos}
+                onChange={v => setFormData({ ...formData, photos: v as string[] })}
+                multiple
+                folder="mandirs"
+              />
             </div>
 
             {/* Deity Information */}
             <div className="bg-yellow-50 rounded-xl p-6 border-2 border-yellow-200">
-              <h3 className="text-xl font-bold text-yellow-700 mb-4">🕉️ Deity Information</h3>
+              <h3 className="text-xl font-bold text-yellow-700 mb-4 flex items-center gap-2"><Sparkles className="w-5 h-5" /> Deity Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
                   <label className="block text-gray-700 font-semibold mb-2">Main Deity</label>
@@ -769,7 +693,7 @@ export default function AdminMandirs() {
 
             {/* Facilities */}
             <div className="bg-teal-50 rounded-xl p-6 border-2 border-teal-200">
-              <h3 className="text-xl font-bold text-teal-700 mb-4">🏢 Facilities Available</h3>
+              <h3 className="text-xl font-bold text-teal-700 mb-4 flex items-center gap-2"><Church className="w-5 h-5" /> Facilities Available</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-teal-100">
                   <input
@@ -848,7 +772,7 @@ export default function AdminMandirs() {
 
             {/* Social Media */}
             <div className="bg-cyan-50 rounded-xl p-6 border-2 border-cyan-200">
-              <h3 className="text-xl font-bold text-cyan-700 mb-4">📱 Social Media Links</h3>
+              <h3 className="text-xl font-bold text-cyan-700 mb-4 flex items-center gap-2"><Smartphone className="w-5 h-5" /> Social Media Links</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Facebook</label>
@@ -898,7 +822,7 @@ export default function AdminMandirs() {
               disabled={uploading}
               className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {uploading ? '⏳ Uploading...' : (editingId ? '✅ Update Mandir' : '✅ Create Mandir')}
+              {uploading ? 'Uploading...' : (editingId ? 'Update Mandir' : 'Create Mandir')}
             </button>
           </form>
         </div>
@@ -914,7 +838,7 @@ export default function AdminMandirs() {
       {/* Mandirs List */}
       {mandirs.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-xl p-12 text-center border-2 border-orange-200">
-          <span className="text-8xl mb-4 block">🛕</span>
+          <Church className="w-20 h-20 text-gray-300 mx-auto mb-4" />
           <h3 className="text-3xl font-bold text-gray-800 mb-3">No Mandirs Yet</h3>
           <p className="text-gray-600 text-lg">Click "Add Mandir" to create your first mandir.</p>
         </div>
@@ -927,7 +851,7 @@ export default function AdminMandirs() {
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-2xl font-bold text-orange-700">{mandir.name}</h3>
                     <div className="flex items-center gap-1 bg-yellow-100 px-3 py-1 rounded-full">
-                      <span className="text-yellow-600">⭐</span>
+                      <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                       <span className="font-bold text-yellow-700">
                         {mandir.averageRating > 0 ? mandir.averageRating.toFixed(1) : 'New'}
                       </span>
@@ -935,29 +859,29 @@ export default function AdminMandirs() {
                   </div>
                   <p className="text-gray-600 mb-3">{mandir.description || 'No description'}</p>
                   <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span>📍 {mandir.location.city}, {mandir.location.state}</span>
-                    <span>💬 {mandir.reviews.length} reviews</span>
-                    <span>📅 {new Date(mandir.createdAt).toLocaleDateString()}</span>
+                    <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {mandir.location.city}, {mandir.location.state}</span>
+                    <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {mandir.reviews.length} reviews</span>
+                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(mandir.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
                 <div className="flex gap-3 ml-4">
                   <Link
                     href={`/mandirs/${mandir._id}`}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
+                    className="inline-flex items-center gap-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
                   >
-                    👁️ View
+                    <Eye className="w-4 h-4" /> View
                   </Link>
                   <button
                     onClick={() => handleEdit(mandir)}
-                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
+                    className="inline-flex items-center gap-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
                   >
-                    ✏️ Edit
+                    <Pencil className="w-4 h-4" /> Edit
                   </button>
                   <button
                     onClick={() => handleDelete(mandir._id)}
-                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
+                    className="inline-flex items-center gap-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
                   >
-                    🗑️ Delete
+                    <Trash2 className="w-4 h-4" /> Delete
                   </button>
                 </div>
               </div>

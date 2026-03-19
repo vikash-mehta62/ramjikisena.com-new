@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, BookOpen, Church, Scroll, User as UserIcon, Image as ImageIcon, Phone, Calendar, BarChart3, Flag, Crown, Sparkles, ShoppingBag, Users, HelpCircle } from 'lucide-react';
 
 interface NavbarProps {
   showAuthButtons?: boolean;
@@ -92,12 +92,15 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   };
 
   const navLinks = [
-    { href: '/about', label: 'About', icon: '📖' },
-    { href: '/mandirs', label: 'Mandirs', icon: '🛕' },
-    { href: '/katha-vachaks', label: 'Katha Vachak', icon: '📿' },
-    { href: '/pandits', label: 'Book Pandit', icon: '🕉️' },
-    { href: '/gallery', label: 'Gallery', icon: '🖼️' },
-    { href: '/contact', label: 'Contact', icon: '📞' },
+    { href: '/about', label: 'About', icon: <BookOpen className="w-4 h-4" /> },
+    { href: '/mandirs', label: 'Mandirs', icon: <Church className="w-4 h-4" /> },
+    { href: '/katha-vachaks', label: 'Katha Vachak', icon: <Scroll className="w-4 h-4" /> },
+    { href: '/pandits', label: 'Book Pandit', icon: <Sparkles className="w-4 h-4" /> },
+    { href: '/samagri', label: 'Samagri', icon: <ShoppingBag className="w-4 h-4" /> },
+    { href: '/community', label: 'Community', icon: <Users className="w-4 h-4" /> },
+    { href: '/forum', label: 'Forum', icon: <HelpCircle className="w-4 h-4" /> },
+    { href: '/gallery', label: 'Gallery', icon: <ImageIcon className="w-4 h-4" /> },
+    { href: '/contact', label: 'Contact', icon: <Phone className="w-4 h-4" /> },
   ];
 
   const isActive = (path: string) => pathname === path;
@@ -118,7 +121,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
             <div className="relative">
               <div className="absolute inset-0 bg-yellow-400 rounded-full blur-md group-hover:blur-lg transition-all opacity-50 scale-110"></div>
               <div className="relative w-10 h-10 md:w-11 md:h-11 bg-white rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-105 group-hover:rotate-[360deg] transition-all duration-700">
-                <span className="text-xl md:text-2xl">🚩</span>
+                <Flag className="w-5 h-5 md:w-6 md:h-6 text-orange-600" />
               </div>
             </div>
             <div className="flex flex-col">
@@ -141,7 +144,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     : 'text-white hover:bg-white/10'
                 }`}
               >
-                <span className={`text-base transition-transform group-hover:scale-125`}>{link.icon}</span>
+                <span className="transition-transform group-hover:scale-125">{link.icon}</span>
                 {link.label}
               </Link>
             ))}
@@ -164,7 +167,8 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                             }}
                             className="flex items-center gap-2 text-sm font-bold text-white hover:text-yellow-300 transition-colors"
                           >
-                            👤 {userName}
+                            <UserIcon className="w-4 h-4" />
+                            {userName}
                             <ChevronDown className={`w-4 h-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
                           </button>
                           
@@ -173,16 +177,50 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                               <Link
                                 href="/dashboard"
                                 onClick={() => setShowLoginDropdown(false)}
-                                className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
+                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
                               >
-                                📊 Dashboard
+                                <BarChart3 className="w-4 h-4" />
+                                Dashboard
                               </Link>
                               <Link
                                 href="/my-bookings"
                                 onClick={() => setShowLoginDropdown(false)}
-                                className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
+                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
                               >
-                                📅 My Bookings
+                                <Calendar className="w-4 h-4" />
+                                My Bookings
+                              </Link>
+                              <Link
+                                href="/samagri"
+                                onClick={() => setShowLoginDropdown(false)}
+                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-t border-orange-100"
+                              >
+                                <ShoppingBag className="w-4 h-4" />
+                                Samagri Shop
+                              </Link>
+                              <Link
+                                href="/samagri/orders"
+                                onClick={() => setShowLoginDropdown(false)}
+                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
+                              >
+                                <span className="text-sm">📦</span>
+                                My Samagri Orders
+                              </Link>
+                              <Link
+                                href="/community"
+                                onClick={() => setShowLoginDropdown(false)}
+                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-t border-orange-100"
+                              >
+                                <Users className="w-4 h-4" />
+                                Community Feed
+                              </Link>
+                              <Link
+                                href="/forum"
+                                onClick={() => setShowLoginDropdown(false)}
+                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
+                              >
+                                <HelpCircle className="w-4 h-4" />
+                                Spiritual Forum
                               </Link>
                             </div>
                           )}
@@ -197,8 +235,9 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     )}
                     {isPanditLoggedIn && (
                       <>
-                        <Link href="/pandit/dashboard" className="text-sm font-bold text-white hover:text-yellow-300 transition-colors">
-                          🕉️ {panditName}
+                        <Link href="/pandit/dashboard" className="flex items-center gap-2 text-sm font-bold text-white hover:text-yellow-300 transition-colors">
+                          <Sparkles className="w-4 h-4" />
+                          {panditName}
                         </Link>
                         <button
                           onClick={handlePanditLogout}
@@ -229,16 +268,18 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                           <Link
                             href="/login"
                             onClick={() => setShowLoginDropdown(false)}
-                            className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
+                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
                           >
-                            👤 User Login
+                            <UserIcon className="w-4 h-4" />
+                            User Login
                           </Link>
                           <Link
                             href="/pandit/login"
                             onClick={() => setShowLoginDropdown(false)}
-                            className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
+                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
                           >
-                            🕉️ Pandit Login
+                            <Sparkles className="w-4 h-4" />
+                            Pandit Login
                           </Link>
                         </div>
                       )}
@@ -262,16 +303,18 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                           <Link
                             href="/register"
                             onClick={() => setShowRegisterDropdown(false)}
-                            className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
+                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
                           >
-                            👤 User Register
+                            <UserIcon className="w-4 h-4" />
+                            User Register
                           </Link>
                           <Link
                             href="/pandit/register"
                             onClick={() => setShowRegisterDropdown(false)}
-                            className="block px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
+                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
                           >
-                            🕉️ Pandit Register
+                            <Sparkles className="w-4 h-4" />
+                            Pandit Register
                           </Link>
                         </div>
                       )}
@@ -311,7 +354,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                 }`}
               >
                 <div className="flex items-center gap-4 font-bold">
-                  <span className="text-xl">{link.icon}</span>
+                  <span>{link.icon}</span>
                   <span>{link.label}</span>
                 </div>
                 <span className="opacity-50">→</span>
@@ -324,11 +367,29 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                 {isLoggedIn && (
                   <>
                     <div className="text-xs font-bold text-yellow-300 px-2 mb-1">User Menu</div>
-                    <Link href="/dashboard" className="block py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      📊 Dashboard
+                    <Link href="/dashboard" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      <BarChart3 className="w-4 h-4" />
+                      Dashboard
                     </Link>
-                    <Link href="/my-bookings" className="block py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      📅 My Bookings
+                    <Link href="/my-bookings" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      <Calendar className="w-4 h-4" />
+                      My Bookings
+                    </Link>
+                    <Link href="/samagri" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      <ShoppingBag className="w-4 h-4" />
+                      Samagri Shop
+                    </Link>
+                    <Link href="/samagri/orders" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      <span>📦</span>
+                      My Samagri Orders
+                    </Link>
+                    <Link href="/community" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      <Users className="w-4 h-4" />
+                      Community Feed
+                    </Link>
+                    <Link href="/forum" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      <HelpCircle className="w-4 h-4" />
+                      Spiritual Forum
                     </Link>
                     <button onClick={handleUserLogout} className="w-full py-3 text-center font-bold bg-red-500 text-white rounded-2xl">
                       Logout
@@ -337,8 +398,9 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                 )}
                 {isPanditLoggedIn && (
                   <>
-                    <Link href="/pandit/dashboard" className="block py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      🕉️ {panditName} Dashboard
+                    <Link href="/pandit/dashboard" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
+                      <Sparkles className="w-4 h-4" />
+                      {panditName} Dashboard
                     </Link>
                     <button onClick={handlePanditLogout} className="w-full py-3 text-center font-bold bg-red-500 text-white rounded-2xl">
                       Logout

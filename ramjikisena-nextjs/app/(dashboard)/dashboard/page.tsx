@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authApi, User } from '@/lib/auth';
+import { Save, Flag, Flower2, Bird, Sparkles } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import MusicPlayer from '@/components/MusicPlayer';
 
 type NameType = 'RAM' | 'RADHE' | 'HARE_KRISHNA';
 
@@ -14,7 +16,7 @@ interface NameConfig {
   hindiName: string;
   pattern: string[];
   hindiChars: string[];
-  emoji: string;
+  emoji: React.ReactNode;
 }
 
 const NAME_CONFIGS: Record<NameType, NameConfig> = {
@@ -24,7 +26,7 @@ const NAME_CONFIGS: Record<NameType, NameConfig> = {
     hindiName: 'राम नाम',
     pattern: ['R', 'A', 'M'],
     hindiChars: ['र', 'ा', 'म'],
-    emoji: '🚩'
+    emoji: <Flag className="w-8 h-8" />
   },
   RADHE: {
     name: 'RADHE',
@@ -32,7 +34,7 @@ const NAME_CONFIGS: Record<NameType, NameConfig> = {
     hindiName: 'राधे नाम',
     pattern: ['RA', 'DHE'],
     hindiChars: ['रा', 'धे'],
-    emoji: '🌺'
+    emoji: <Flower2 className="w-8 h-8" />
   },
   HARE_KRISHNA: {
     name: 'HARE_KRISHNA',
@@ -40,7 +42,7 @@ const NAME_CONFIGS: Record<NameType, NameConfig> = {
     hindiName: 'हरे कृष्णा',
     pattern: ['HA', 'RE', 'KRI', 'SHNA'],
     hindiChars: ['ह', 'रे', 'कृ', 'ष्णा'],
-    emoji: '🦚'
+    emoji: <Bird className="w-8 h-8" />
   }
 };
 
@@ -211,6 +213,7 @@ export default function DashboardPage() {
   return (
     <>
       <Navbar />
+      <MusicPlayer />
       <div className="h-20 md:h-20"></div>
       
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
@@ -227,8 +230,9 @@ export default function DashboardPage() {
 
           {/* Name Selector */}
           <div className="bg-gradient-to-r from-orange-100 to-red-100 rounded-2xl shadow-xl p-6 border-2 border-orange-300">
-            <h3 className="text-lg font-bold text-orange-800 mb-4">
-              🕉️ Select Name for Counting / नाम चुनें
+            <h3 className="text-lg font-bold text-orange-800 mb-4 flex items-center justify-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              Select Name for Counting / नाम चुनें
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <button
@@ -243,7 +247,9 @@ export default function DashboardPage() {
                     : 'bg-white text-orange-700 hover:bg-orange-50 border-2 border-orange-300'
                 }`}
               >
-                <div className="text-3xl mb-2">🚩</div>
+                <div className="flex justify-center mb-2">
+                  <Flag className="w-8 h-8" />
+                </div>
                 <div>राम</div>
                 <div className="text-xs mt-1 opacity-80">RAM</div>
               </button>
@@ -259,7 +265,9 @@ export default function DashboardPage() {
                     : 'bg-white text-pink-700 hover:bg-pink-50 border-2 border-pink-300'
                 }`}
               >
-                <div className="text-3xl mb-2">🌺</div>
+                <div className="flex justify-center mb-2">
+                  <Flower2 className="w-8 h-8" />
+                </div>
                 <div>राधे</div>
                 <div className="text-xs mt-1 opacity-80">RADHE</div>
               </button>
@@ -275,7 +283,9 @@ export default function DashboardPage() {
                     : 'bg-white text-blue-700 hover:bg-blue-50 border-2 border-blue-300'
                 }`}
               >
-                <div className="text-3xl mb-2">🦚</div>
+                <div className="flex justify-center mb-2">
+                  <Bird className="w-8 h-8" />
+                </div>
                 <div>हरे कृष्णा</div>
                 <div className="text-xs mt-1 opacity-80">HARE KRISHNA</div>
               </button>
@@ -398,7 +408,8 @@ export default function DashboardPage() {
               </span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                💾 Save
+                <Save className="w-5 h-5" />
+                Save
               </span>
             )}
           </button>
@@ -434,6 +445,27 @@ export default function DashboardPage() {
               <p className="font-semibold text-orange-700">Mandirs</p>
             </Link>
             <Link
+              href="/samagri"
+              className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition text-center border-2 border-orange-200 hover:border-orange-400"
+            >
+              <div className="text-3xl mb-2">🪔</div>
+              <p className="font-semibold text-orange-700">Poojan Samagri</p>
+            </Link>
+            <Link
+              href="/samagri/orders"
+              className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition text-center border-2 border-orange-200 hover:border-orange-400"
+            >
+              <div className="text-3xl mb-2">📦</div>
+              <p className="font-semibold text-orange-700">My Orders</p>
+            </Link>
+            <Link
+              href="/community"
+              className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition text-center border-2 border-orange-200 hover:border-orange-400"
+            >
+              <div className="text-3xl mb-2">👥</div>
+              <p className="font-semibold text-orange-700">Community</p>
+            </Link>
+            <Link
               href="/profile"
               className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition text-center border-2 border-orange-200 hover:border-orange-400"
             >
@@ -448,7 +480,11 @@ export default function DashboardPage() {
         {saving && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl p-8 text-center shadow-2xl">
-              <div className="text-6xl mb-4 animate-bounce">🚩</div>
+              <div className="flex justify-center mb-4">
+                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.5, repeat: Infinity }}>
+                  <Flag className="w-16 h-16 text-orange-600" />
+                </motion.div>
+              </div>
               <p className="text-xl font-semibold text-orange-700">
                 आपका रामनाम धन सेव हो रहा है...
               </p>

@@ -85,6 +85,12 @@ export const authApi = {
       if (data.success && data.token) {
         setToken(data.token);
       }
+      // Save user object for role-based checks
+      if (data.success && data.user) {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+      }
       
       return data;
     } catch (error) {
@@ -113,6 +119,11 @@ export const authApi = {
       // If registration successful and token received, save it
       if (data.success && data.token) {
         setToken(data.token);
+      }
+      if (data.success && data.user) {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
       }
       
       return data;
@@ -150,10 +161,16 @@ export const authApi = {
 
       // Remove token from localStorage
       removeToken();
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user');
+      }
       
       return res.ok;
     } catch (error) {
       removeToken(); // Remove even on error
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user');
+      }
       return false;
     }
   },

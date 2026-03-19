@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Flag, Sparkles } from 'lucide-react';
 
 interface User {
   _id: string;
@@ -75,7 +76,7 @@ export default function AllDevoteesPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">🙏</div>
+          <Sparkles className="w-16 h-16 text-orange-500 mx-auto mb-4" />
           <p className="text-xl text-orange-700">Loading...</p>
         </div>
       </div>
@@ -90,7 +91,7 @@ export default function AllDevoteesPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <span className="text-2xl">🚩</span>
+                <Flag className="w-6 h-6 text-orange-600" />
               </div>
               <h1 className="text-2xl font-bold">All Devotees</h1>
             </div>

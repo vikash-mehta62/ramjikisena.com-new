@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authApi, User } from '@/lib/auth';
+import { User as UserIcon, Sparkles } from 'lucide-react';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -73,7 +74,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">🙏</div>
+          <Sparkles className="w-16 h-16 text-orange-500 mx-auto mb-4" />
           <p className="text-xl text-orange-700">Loading...</p>
         </div>
       </div>
@@ -96,7 +97,7 @@ export default function ProfilePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <span className="text-2xl">👤</span>
+                <UserIcon className="w-6 h-6 text-orange-600" />
               </div>
               <h1 className="text-2xl font-bold">My Profile</h1>
             </div>
@@ -119,8 +120,8 @@ export default function ProfilePage() {
             <div className="px-6 pb-6">
               {/* Avatar */}
               <div className="flex justify-center -mt-16 mb-4">
-                <div className="w-32 h-32 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center text-6xl">
-                  🙏
+                <div className="w-32 h-32 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center">
+                  <Sparkles className="w-16 h-16 text-orange-500" />
                 </div>
               </div>
 

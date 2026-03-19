@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { BarChart3, Users, Church, Scroll, Sparkles, Calendar, FileText, Clock, Home, LogOut, ChevronLeft, ChevronRight, Crown, DollarSign } from 'lucide-react';
 
 interface SidebarLink {
   href: string;
   label: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 interface DashboardSidebarProps {
@@ -22,21 +23,22 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
   const [collapsed, setCollapsed] = useState(false);
 
   const adminLinks: SidebarLink[] = [
-    { href: '/admin/admin-dashboard', label: 'Dashboard', icon: '📊' },
-    { href: '/admin/users', label: 'All Users', icon: '👥' },
-    { href: '/admin/admin-mandirs', label: 'Mandirs', icon: '🛕' },
-    { href: '/admin/admin-katha-vachaks', label: 'Katha Vachaks', icon: '📿' },
-    { href: '/admin/admin-pandits', label: 'Pandits', icon: '🕉️' },
-    { href: '/admin/admin-bookings', label: 'Bookings', icon: '📅' },
-    { href: '/admin/admin-blogs', label: 'All Blogs', icon: '📝' },
-    { href: '/admin/admin-blogs/pending', label: 'Pending Blogs', icon: '⏳' },
+    { href: '/admin/admin-dashboard', label: 'Dashboard', icon: <BarChart3 className="w-5 h-5" /> },
+    { href: '/admin/users', label: 'All Users', icon: <Users className="w-5 h-5" /> },
+    { href: '/admin/admin-mandirs', label: 'Mandirs', icon: <Church className="w-5 h-5" /> },
+    { href: '/admin/admin-katha-vachaks', label: 'Katha Vachaks', icon: <Scroll className="w-5 h-5" /> },
+    { href: '/admin/admin-pandits', label: 'Pandits', icon: <Sparkles className="w-5 h-5" /> },
+    { href: '/admin/admin-bookings', label: 'Bookings', icon: <Calendar className="w-5 h-5" /> },
+    { href: '/admin/admin-blogs', label: 'All Blogs', icon: <FileText className="w-5 h-5" /> },
+    { href: '/admin/admin-blogs/pending', label: 'Pending Blogs', icon: <Clock className="w-5 h-5" /> },
+    { href: '/admin/admin-samagri', label: 'Samagri', icon: <span className="text-base">🪔</span> },
   ];
 
   const panditLinks: SidebarLink[] = [
-    { href: '/pandit/dashboard', label: 'Dashboard', icon: '📊' },
-    { href: '/pandit/bookings', label: 'Bookings', icon: '📅' },
-    { href: '/pandit/profile', label: 'My Profile', icon: '👤' },
-    { href: '/pandit/earnings', label: 'Earnings', icon: '💰' },
+    { href: '/pandit/dashboard', label: 'Dashboard', icon: <BarChart3 className="w-5 h-5" /> },
+    { href: '/pandit/bookings', label: 'Bookings', icon: <Calendar className="w-5 h-5" /> },
+    { href: '/pandit/profile', label: 'My Profile', icon: <Users className="w-5 h-5" /> },
+    { href: '/pandit/earnings', label: 'Earnings', icon: <DollarSign className="w-5 h-5" /> },
   ];
 
   const links = role === 'admin' ? adminLinks : panditLinks;
@@ -80,7 +82,7 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
                 {userPhoto ? (
                   <img src={userPhoto} alt={userName} className="w-full h-full rounded-full object-cover" />
                 ) : (
-                  <span className="text-2xl">{role === 'admin' ? '👑' : '🕉️'}</span>
+                  role === 'admin' ? <Crown className="w-6 h-6 text-orange-600" /> : <Sparkles className="w-6 h-6 text-orange-600" />
                 )}
               </div>
               {!collapsed && (
@@ -108,7 +110,7 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
                   }`}
                   title={collapsed ? link.label : ''}
                 >
-                  <span className="text-2xl flex-shrink-0">{link.icon}</span>
+                  <span className="flex-shrink-0">{link.icon}</span>
                   {!collapsed && (
                     <span className="font-bold">{link.label}</span>
                   )}
@@ -124,7 +126,7 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
               className="flex items-center gap-4 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all"
               title={collapsed ? 'Home' : ''}
             >
-              <span className="text-2xl">🏠</span>
+              <Home className="w-5 h-5 flex-shrink-0" />
               {!collapsed && <span className="font-bold">Home</span>}
             </Link>
             
@@ -133,7 +135,7 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
               className="w-full flex items-center gap-4 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 transition-all"
               title={collapsed ? 'Logout' : ''}
             >
-              <span className="text-2xl">🚪</span>
+              <LogOut className="w-5 h-5 flex-shrink-0" />
               {!collapsed && <span className="font-bold">Logout</span>}
             </button>
 
@@ -142,7 +144,7 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
               onClick={() => setCollapsed(!collapsed)}
               className="hidden lg:flex w-full items-center justify-center py-2 text-white/60 hover:text-white transition-colors"
             >
-              {collapsed ? '→' : '←'}
+              {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
           </div>
         </div>

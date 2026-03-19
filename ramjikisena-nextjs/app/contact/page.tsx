@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import { Mail, Phone, MapPin, Globe } from 'lucide-react';
 
 export default function ContactPage() {
   return (
@@ -13,25 +14,25 @@ export default function ContactPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gradient-to-br from-orange-100 to-red-100 p-6 rounded-xl">
-                <div className="text-4xl mb-3">📧</div>
+                <Mail className="w-10 h-10 text-orange-600 mb-3" />
                 <h3 className="font-bold text-orange-700 mb-2">Email</h3>
                 <p className="text-gray-700">info@ramjikisena.com</p>
               </div>
 
               <div className="bg-gradient-to-br from-orange-100 to-red-100 p-6 rounded-xl">
-                <div className="text-4xl mb-3">📱</div>
+                <Phone className="w-10 h-10 text-orange-600 mb-3" />
                 <h3 className="font-bold text-orange-700 mb-2">Phone</h3>
                 <p className="text-gray-700">+91 98765 43210</p>
               </div>
 
               <div className="bg-gradient-to-br from-orange-100 to-red-100 p-6 rounded-xl">
-                <div className="text-4xl mb-3">📍</div>
+                <MapPin className="w-10 h-10 text-orange-600 mb-3" />
                 <h3 className="font-bold text-orange-700 mb-2">Address</h3>
                 <p className="text-gray-700">Ayodhya, Uttar Pradesh, India</p>
               </div>
 
               <div className="bg-gradient-to-br from-orange-100 to-red-100 p-6 rounded-xl">
-                <div className="text-4xl mb-3">🌐</div>
+                <Globe className="w-10 h-10 text-orange-600 mb-3" />
                 <h3 className="font-bold text-orange-700 mb-2">Social Media</h3>
                 <div className="flex gap-3">
                   <a href="#" className="text-blue-600 hover:text-blue-700">Facebook</a>

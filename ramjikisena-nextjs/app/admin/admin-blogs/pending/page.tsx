@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import { FileText, User, MapPin, CheckCircle, XCircle, Eye, Clock } from 'lucide-react';
 
 interface Blog {
   _id: string;
@@ -102,7 +103,7 @@ export default function PendingBlogs() {
       <div className="mb-8 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <span className="text-4xl">📝</span>
+            <FileText className="w-8 h-8 text-yellow-600" />
           </div>
           <div>
             <h1 className="text-4xl font-bold mb-2">Pending Blogs</h1>
@@ -114,7 +115,7 @@ export default function PendingBlogs() {
       {/* Stats */}
       <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-xl p-6 mb-6 shadow-lg">
         <div className="flex items-center gap-3">
-          <span className="text-4xl">⏳</span>
+          <Clock className="w-10 h-10 text-yellow-600" />
           <p className="text-yellow-800 text-lg">
             <span className="font-bold text-2xl">{blogs.length}</span> blog{blogs.length !== 1 ? 's' : ''} waiting for approval
           </p>
@@ -123,7 +124,7 @@ export default function PendingBlogs() {
 
       {blogs.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-xl p-12 text-center border-2 border-green-200">
-          <span className="text-8xl mb-4 block">✅</span>
+          <CheckCircle className="w-20 h-20 text-green-400 mx-auto mb-4" />
           <h3 className="text-3xl font-bold text-green-600 mb-3">All Caught Up!</h3>
           <p className="text-gray-600 text-lg">No pending blogs to review at the moment.</p>
         </div>
@@ -152,8 +153,8 @@ export default function PendingBlogs() {
 
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center text-gray-500">
-                    <span className="mr-4">👤 {blog.author.name}</span>
-                    <span>📍 {blog.author.city}</span>
+                    <span className="mr-4 flex items-center gap-1"><User className="w-3 h-3" /> {blog.author.name}</span>
+                    <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {blog.author.city}</span>
                   </div>
                   <span className="text-gray-400">
                     {new Date(blog.createdAt).toLocaleDateString()}
@@ -168,7 +169,7 @@ export default function PendingBlogs() {
             {selectedBlog ? (
               <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-orange-200">
                 <h2 className="text-3xl font-bold text-orange-600 mb-6 flex items-center gap-2">
-                  <span>👁️</span> Blog Preview
+                  <Eye className="w-7 h-7" /> Blog Preview
                 </h2>
 
                 <div className="mb-6">
@@ -186,7 +187,7 @@ export default function PendingBlogs() {
                     <p className="text-sm text-orange-600 font-semibold mb-2">✍️ Author</p>
                     <p className="font-bold text-lg text-gray-800">{selectedBlog.author.name}</p>
                     <p className="text-sm text-gray-600">@{selectedBlog.author.username}</p>
-                    <p className="text-sm text-gray-600">📍 {selectedBlog.author.city}</p>
+                    <p className="text-sm text-gray-600 flex items-center gap-1"><MapPin className="w-3 h-3" /> {selectedBlog.author.city}</p>
                   </div>
 
                   <div className="prose max-w-none">
@@ -199,22 +200,22 @@ export default function PendingBlogs() {
                   <button
                     onClick={() => handleApprove(selectedBlog._id)}
                     disabled={processing}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {processing ? '⏳ Processing...' : '✅ Approve Blog'}
+                    {processing ? <><Clock className="w-5 h-5 animate-spin" /> Processing...</> : <><CheckCircle className="w-5 h-5" /> Approve Blog</>}
                   </button>
                   <button
                     onClick={() => handleReject(selectedBlog._id)}
                     disabled={processing}
-                    className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {processing ? '⏳ Processing...' : '❌ Reject Blog'}
+                    {processing ? <><Clock className="w-5 h-5 animate-spin" /> Processing...</> : <><XCircle className="w-5 h-5" /> Reject Blog</>}
                   </button>
                 </div>
               </div>
             ) : (
               <div className="bg-white rounded-2xl shadow-xl p-12 text-center border-2 border-orange-200">
-                <span className="text-8xl mb-4 block">👈</span>
+                <Eye className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-800 mb-2">Select a Blog</h3>
                 <p className="text-gray-600">Click on a blog from the list to preview and review</p>
               </div>

@@ -19,6 +19,9 @@ var panditRouter = require('./routes/pandit');
 var bookingRouter = require('./routes/booking');
 var panditDashboardRouter = require('./routes/panditDashboard');
 var panditAuthRouter = require('./routes/panditAuth');
+var samagriRouter = require('./routes/samagri');
+var communityRouter = require('./routes/community');
+var forumRouter = require('./routes/forum');
 
 var app = express();
 
@@ -98,6 +101,9 @@ app.use('/api/pandits', panditRouter);
 app.use('/api/bookings', bookingRouter);
 app.use('/api/pandit-dashboard', panditDashboardRouter);
 app.use('/api/pandit-auth', panditAuthRouter);
+app.use('/api/samagri', samagriRouter);
+app.use('/api/community', communityRouter);
+app.use('/api/forum', forumRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -55,6 +55,16 @@ const api = {
     return res;
   },
 
+  patch: async (url: string, data?: any) => {
+    const res = await fetch(`${API_URL}${url}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      credentials: 'include',
+      body: data ? JSON.stringify(data) : undefined,
+    });
+    return res;
+  },
+
   delete: async (url: string) => {
     const res = await fetch(`${API_URL}${url}`, {
       method: 'DELETE',

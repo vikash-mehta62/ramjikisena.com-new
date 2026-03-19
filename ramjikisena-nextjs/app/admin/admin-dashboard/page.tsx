@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Users, BookOpen, Clock, CheckCircle, Hand, UserPlus, FileText, BarChart3, Crown } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function AdminDashboard() {
@@ -46,7 +47,7 @@ export default function AdminDashboard() {
     {
       title: 'Total Users',
       value: stats.totalUsers,
-      icon: '👥',
+      icon: <Users className="w-8 h-8" />,
       color: 'from-blue-500 to-blue-600',
       textColor: 'text-blue-600',
       bgColor: 'bg-blue-50'
@@ -54,7 +55,7 @@ export default function AdminDashboard() {
     {
       title: 'Total Blogs',
       value: stats.totalBlogs,
-      icon: '📚',
+      icon: <BookOpen className="w-8 h-8" />,
       color: 'from-purple-500 to-purple-600',
       textColor: 'text-purple-600',
       bgColor: 'bg-purple-50'
@@ -62,7 +63,7 @@ export default function AdminDashboard() {
     {
       title: 'Pending Blogs',
       value: stats.pendingBlogs,
-      icon: '⏳',
+      icon: <Clock className="w-8 h-8" />,
       color: 'from-yellow-500 to-yellow-600',
       textColor: 'text-yellow-600',
       bgColor: 'bg-yellow-50'
@@ -70,7 +71,7 @@ export default function AdminDashboard() {
     {
       title: 'Approved Blogs',
       value: stats.approvedBlogs,
-      icon: '✅',
+      icon: <CheckCircle className="w-8 h-8" />,
       color: 'from-green-500 to-green-600',
       textColor: 'text-green-600',
       bgColor: 'bg-green-50'
@@ -78,7 +79,7 @@ export default function AdminDashboard() {
     {
       title: 'Total Ram Naam',
       value: stats.totalRamNaam.toLocaleString(),
-      icon: '🙏',
+      icon: <Hand className="w-8 h-8" />,
       color: 'from-orange-500 to-red-600',
       textColor: 'text-orange-600',
       bgColor: 'bg-orange-50'
@@ -86,7 +87,7 @@ export default function AdminDashboard() {
     {
       title: 'New Users (7 days)',
       value: stats.recentUsers,
-      icon: '🆕',
+      icon: <UserPlus className="w-8 h-8" />,
       color: 'from-teal-500 to-teal-600',
       textColor: 'text-teal-600',
       bgColor: 'bg-teal-50'
@@ -94,7 +95,7 @@ export default function AdminDashboard() {
     {
       title: 'New Blogs (7 days)',
       value: stats.recentBlogs,
-      icon: '📝',
+      icon: <FileText className="w-8 h-8" />,
       color: 'from-pink-500 to-pink-600',
       textColor: 'text-pink-600',
       bgColor: 'bg-pink-50'
@@ -102,7 +103,7 @@ export default function AdminDashboard() {
     {
       title: 'Avg Ram Naam/User',
       value: stats.totalUsers > 0 ? Math.round(stats.totalRamNaam / stats.totalUsers) : 0,
-      icon: '📊',
+      icon: <BarChart3 className="w-8 h-8" />,
       color: 'from-indigo-500 to-indigo-600',
       textColor: 'text-indigo-600',
       bgColor: 'bg-indigo-50'
@@ -115,11 +116,13 @@ export default function AdminDashboard() {
       <div className="mb-8 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <span className="text-4xl">👑</span>
+            <Crown className="w-8 h-8 text-orange-600" />
           </div>
           <div>
             <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
-            <p className="text-orange-100">Welcome to Ramji Ki Sena Admin Panel - Jai Shri Ram! 🚩</p>
+            <p className="text-orange-100 flex items-center gap-2">
+              Welcome to Ramji Ki Sena Admin Panel - Jai Shri Ram!
+            </p>
           </div>
         </div>
       </div>
@@ -133,7 +136,7 @@ export default function AdminDashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`${card.bgColor} p-4 rounded-xl shadow-md`}>
-                <span className="text-4xl">{card.icon}</span>
+                <span className={card.textColor}>{card.icon}</span>
               </div>
             </div>
             <h3 className="text-gray-500 text-sm font-medium mb-2">{card.title}</h3>
@@ -145,14 +148,15 @@ export default function AdminDashboard() {
       {/* Quick Actions */}
       <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border-2 border-orange-100">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <span>⚡</span> Quick Actions
+          <BarChart3 className="w-6 h-6 text-orange-600" />
+          Quick Actions
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <a
             href="/admin/admin-blogs/pending"
             className="flex items-center p-6 bg-gradient-to-br from-yellow-500 to-yellow-600 text-white rounded-xl hover:shadow-2xl hover:scale-105 transition-all"
           >
-            <span className="text-4xl mr-4">📝</span>
+            <FileText className="w-10 h-10 mr-4" />
             <div>
               <p className="font-bold text-lg">Review Blogs</p>
               <p className="text-sm opacity-90">{stats.pendingBlogs} pending approval</p>
@@ -163,7 +167,7 @@ export default function AdminDashboard() {
             href="/admin/users"
             className="flex items-center p-6 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-2xl hover:scale-105 transition-all"
           >
-            <span className="text-4xl mr-4">👥</span>
+            <Users className="w-10 h-10 mr-4" />
             <div>
               <p className="font-bold text-lg">Manage Users</p>
               <p className="text-sm opacity-90">{stats.totalUsers} total users</p>

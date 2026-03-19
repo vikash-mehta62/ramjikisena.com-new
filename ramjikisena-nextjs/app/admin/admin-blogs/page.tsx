@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
+import { BookOpen, User, MapPin, Heart, MessageCircle, Eye, Trash2, CheckCircle, Clock, Calendar } from 'lucide-react';
 
 interface Blog {
   _id: string;
@@ -81,7 +82,7 @@ export default function AllBlogs() {
       <div className="mb-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <span className="text-4xl">📚</span>
+            <BookOpen className="w-8 h-8 text-purple-600" />
           </div>
           <div>
             <h1 className="text-4xl font-bold mb-2">All Blogs</h1>
@@ -126,8 +127,8 @@ export default function AllBlogs() {
 
       {/* Blogs List */}
       {filteredBlogs.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-xl p-12 text-center border-2 border-purple-200">
-          <span className="text-8xl mb-4 block">📚</span>
+        <div className="p-12 text-center border-2 border-purple-200">
+          <BookOpen className="w-20 h-20 text-gray-300 mx-auto mb-4" />
           <h3 className="text-3xl font-bold text-gray-800 mb-3">No Blogs Found</h3>
           <p className="text-gray-600 text-lg">No blogs match the selected filter.</p>
         </div>
@@ -156,11 +157,11 @@ export default function AllBlogs() {
                   <p className="text-gray-600 text-sm mb-3 line-clamp-2">{blog.content}</p>
 
                   <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span>👤 {blog.author.name} (@{blog.author.username})</span>
-                    <span>📍 {blog.author.city}</span>
-                    <span>❤️ {blog.likes.length}</span>
-                    <span>💬 {blog.comments.length}</span>
-                    <span>📅 {new Date(blog.createdAt).toLocaleDateString()}</span>
+                    <span className="flex items-center gap-1"><User className="w-3 h-3" /> {blog.author.name} (@{blog.author.username})</span>
+                    <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {blog.author.city}</span>
+                    <span className="flex items-center gap-1"><Heart className="w-3 h-3" /> {blog.likes.length}</span>
+                    <span className="flex items-center gap-1"><MessageCircle className="w-3 h-3" /> {blog.comments.length}</span>
+                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(blog.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
 
@@ -168,16 +169,16 @@ export default function AllBlogs() {
                   {blog.approved && (
                     <Link
                       href={`/blogs/${blog._id}`}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
                     >
-                      👁️ View
+                      <Eye className="w-4 h-4" /> View
                     </Link>
                   )}
                   <button
                     onClick={() => handleDelete(blog._id)}
-                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all text-sm font-semibold"
                   >
-                    🗑️ Delete
+                    <Trash2 className="w-4 h-4" /> Delete
                   </button>
                 </div>
               </div>

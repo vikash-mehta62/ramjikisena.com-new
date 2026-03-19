@@ -4,7 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { Save, BarChart3, Flag, Flower2, Bird, Sparkles } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import MusicPlayer from '@/components/MusicPlayer';
+import { authApi, User } from '@/lib/auth';
 
 const slides = [
   {
@@ -26,7 +30,14 @@ const slides = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentCount, setCurrentCount] = useState(0);
+  const [textareaValue, setTextareaValue] = useState('');
+  const [userInput, setUserInput] = useState('');
+  const [selectedName, setSelectedName] = useState<'RAM' | 'RADHE' | 'HARE_KRISHNA'>('RAM');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -35,9 +46,105 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const userData = await authApi.getCurrentUser();
+      setUser(userData);
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const appendCharacter = (char: string) => {
+    let newTextarea = textareaValue;
+    
+    // RAM logic
+    if (selectedName === 'RAM') {
+      if (char === 'R' && (userInput === '' || userInput === 'RAM')) {
+        setUserInput('R');
+        newTextarea += 'र';
+      } else if (char === 'A' && userInput === 'R') {
+        setUserInput('RA');
+        newTextarea += 'ा';
+      } else if (char === 'M' && userInput === 'RA') {
+        setUserInput('RAM');
+        newTextarea += 'म ';
+        setCurrentCount(prev => prev + 1);
+      } else {
+        return;
+      }
+    }
+    
+    // RADHE logic
+    if (selectedName === 'RADHE') {
+      if (char === 'RA' && (userInput === '' || userInput === 'RADHE')) {
+        setUserInput('RA');
+        newTextarea += 'रा';
+      } else if (char === 'DHE' && userInput === 'RA') {
+        setUserInput('RADHE');
+        newTextarea += 'धे ';
+        setCurrentCount(prev => prev + 1);
+      } else {
+        return;
+      }
+    }
+    
+    // HARE KRISHNA logic
+    if (selectedName === 'HARE_KRISHNA') {
+      if (char === 'HA' && (userInput === '' || userInput === 'HAREKRISHNA')) {
+        setUserInput('HA');
+        newTextarea += 'ह';
+      } else if (char === 'RE' && userInput === 'HA') {
+        setUserInput('HARE');
+        newTextarea += 'रे ';
+      } else if (char === 'KRI' && userInput === 'HARE') {
+        setUserInput('HAREKRI');
+        newTextarea += 'कृ';
+      } else if (char === 'SHNA' && userInput === 'HAREKRI') {
+        setUserInput('HAREKRISHNA');
+        newTextarea += 'ष्णा ';
+        setCurrentCount(prev => prev + 1);
+      } else {
+        return;
+      }
+    }
+    
+    setTextareaValue(newTextarea);
+  };
+
+  const handleSave = async () => {
+    if (textareaValue.trim() === '') {
+      alert('कृपया पहले राम नाम लिखें');
+      return;
+    }
+
+    try {
+      const result = await authApi.saveCount(currentCount, (user?.totalCount || 0) + currentCount, (user?.mala || 0) + (currentCount / 108));
+      
+      if (result.success) {
+        alert('✅ आपका रामनाम धन सेव हो गया है!');
+        setTextareaValue('');
+        setUserInput('');
+        setCurrentCount(0);
+        checkAuth(); // Refresh user data
+      }
+    } catch (error) {
+      alert('Error saving data');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FFFAF3] overflow-x-hidden selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
+      
+      {/* Music Player - Floating */}
+      <MusicPlayer />
 
       {/* Spacer for fixed navbar */}
       <div className="h-16 md:h-20"></div>
@@ -199,6 +306,274 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* --- SAMAGRI PROMO SECTION --- */}
+      <section className="py-20 bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 left-0 text-[12rem] text-white">🪔</div>
+          <div className="absolute bottom-0 right-0 text-[12rem] text-white">🌸</div>
+        </div>
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="text-white">
+              <div className="inline-block bg-white/20 text-white text-sm font-bold px-4 py-1.5 rounded-full mb-4">🆕 New Feature</div>
+              <h2 className="text-4xl md:text-5xl font-black mb-4 leading-tight">पूजन सामग्री<br/>घर पर मंगाएं</h2>
+              <p className="text-orange-100 text-lg mb-6 leading-relaxed">
+                शुद्ध और प्रामाणिक पूजा सामग्री अब आपके दरवाजे तक। Basic, Standard और Premium पैकेज उपलब्ध हैं।
+              </p>
+              <div className="flex flex-wrap gap-4 mb-8">
+                {['✅ 100% शुद्ध सामग्री', '🚚 Free Delivery ₹500+', '📦 Ready-to-use Packages', '🙏 Trusted by Devotees'].map(f => (
+                  <span key={f} className="bg-white/15 text-white text-sm font-semibold px-4 py-2 rounded-full">{f}</span>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-4">
+                <Link href="/samagri" className="inline-flex items-center gap-2 bg-white text-orange-700 font-black px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-lg">
+                  🛒 अभी खरीदें
+                </Link>
+                <Link href="/samagri?tab=packages" className="inline-flex items-center gap-2 bg-white/20 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/30 transition-all text-lg border border-white/30">
+                  🎁 Packages देखें
+                </Link>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { tier: 'Basic', price: '₹499', emoji: '🌿', color: 'from-green-400 to-emerald-500', items: ['अगरबत्ती', 'दीपक', 'फूल', 'रोली'] },
+                { tier: 'Standard', price: '₹999', emoji: '🪔', color: 'from-orange-400 to-amber-500', items: ['सभी Basic', 'घी', 'मिठाई', 'कपड़ा'] },
+                { tier: 'Premium', price: '₹1999', emoji: '👑', color: 'from-purple-500 to-violet-600', items: ['सभी Standard', 'मूर्ति', 'विशेष सामग्री'] },
+              ].map(pkg => (
+                <Link key={pkg.tier} href="/samagri"
+                  className="bg-white rounded-2xl p-4 text-center shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all group">
+                  <div className={`w-12 h-12 bg-gradient-to-br ${pkg.color} rounded-xl flex items-center justify-center text-2xl mx-auto mb-3 group-hover:scale-110 transition-transform`}>
+                    {pkg.emoji}
+                  </div>
+                  <p className="font-black text-gray-800 text-sm">{pkg.tier}</p>
+                  <p className="text-orange-600 font-bold text-lg">{pkg.price}</p>
+                  <div className="mt-2 space-y-0.5">
+                    {pkg.items.map(item => (
+                      <p key={item} className="text-xs text-gray-500">{item}</p>
+                    ))}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- NAAM JAP SECTION (Only for Logged In Users) --- */}
+      {!loading && user && (
+        <section className="py-20 bg-gradient-to-br from-orange-100 via-red-100 to-yellow-100 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-10 left-10 text-[8rem] text-orange-600">ॐ</div>
+            <div className="absolute bottom-10 right-10 text-[8rem] text-red-600">🚩</div>
+          </div>
+          
+          <div className="container mx-auto px-6 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="max-w-3xl mx-auto"
+            >
+              {/* Welcome Header */}
+              <div className="text-center mb-8">
+                <h2 className="text-4xl font-black text-slate-900 mb-3">
+                  🙏 नमस्ते, {user.name}!
+                </h2>
+                <p className="text-lg text-slate-600">यहाँ से राम नाम लेखन शुरू करें</p>
+              </div>
+
+              {/* Quick Stats */}
+              <div className="grid grid-cols-3 gap-4 mb-8">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 text-center shadow-lg border-2 border-orange-200">
+                  <div className="text-sm font-semibold text-gray-600 mb-2">Your Rank</div>
+                  <div className="text-4xl font-black text-orange-600">#{user.rank}</div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 text-center shadow-lg border-2 border-red-200">
+                  <div className="text-sm font-semibold text-gray-600 mb-2">Total Count</div>
+                  <div className="text-4xl font-black text-red-600">{user.totalCount}</div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 text-center shadow-lg border-2 border-yellow-200">
+                  <div className="text-sm font-semibold text-gray-600 mb-2">Mala Count</div>
+                  <div className="text-4xl font-black text-yellow-600">{user.mala.toFixed(1)}</div>
+                </div>
+              </div>
+
+              {/* Naam Jap Card */}
+              <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border-2 border-orange-200">
+                {/* Name Selector */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-gray-700 mb-4 text-center flex items-center justify-center gap-2">
+                    <Sparkles className="w-5 h-5 text-orange-600" />
+                    नाम चुनें / Select Name
+                  </h3>
+                  <div className="grid grid-cols-3 gap-3">
+                    <button
+                      onClick={() => {
+                        setSelectedName('RAM');
+                        setUserInput('');
+                        setTextareaValue('');
+                      }}
+                      className={`p-4 rounded-xl font-bold text-lg transition-all ${
+                        selectedName === 'RAM'
+                          ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg scale-105'
+                          : 'bg-orange-50 text-orange-700 hover:bg-orange-100 border-2 border-orange-200'
+                      }`}
+                    >
+                      <Flag className="w-8 h-8 mx-auto mb-1" />
+                      <div className="text-sm">राम</div>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedName('RADHE');
+                        setUserInput('');
+                        setTextareaValue('');
+                      }}
+                      className={`p-4 rounded-xl font-bold text-lg transition-all ${
+                        selectedName === 'RADHE'
+                          ? 'bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg scale-105'
+                          : 'bg-pink-50 text-pink-700 hover:bg-pink-100 border-2 border-pink-200'
+                      }`}
+                    >
+                      <Flower2 className="w-8 h-8 mx-auto mb-1" />
+                      <div className="text-sm">राधे</div>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedName('HARE_KRISHNA');
+                        setUserInput('');
+                        setTextareaValue('');
+                      }}
+                      className={`p-4 rounded-xl font-bold text-lg transition-all ${
+                        selectedName === 'HARE_KRISHNA'
+                          ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg scale-105'
+                          : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-2 border-blue-200'
+                      }`}
+                    >
+                      <Bird className="w-8 h-8 mx-auto mb-1" />
+                      <div className="text-sm">हरे कृष्णा</div>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-orange-700">
+                    {selectedName === 'RAM' && 'राम नाम लेखन'}
+                    {selectedName === 'RADHE' && 'राधे नाम लेखन'}
+                    {selectedName === 'HARE_KRISHNA' && 'हरे कृष्णा लेखन'}
+                  </h3>
+                  <div className="bg-orange-100 px-4 py-2 rounded-full">
+                    <span className="text-sm font-bold text-orange-700">
+                      Count: {currentCount}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Writing Area */}
+                <textarea
+                  value={textareaValue}
+                  readOnly
+                  className="w-full h-32 p-4 border-2 border-orange-300 rounded-2xl focus:outline-none focus:border-orange-500 text-2xl font-semibold text-orange-700 resize-none mb-6 bg-orange-50/50"
+                  placeholder={
+                    selectedName === 'RAM' ? 'यहाँ पर राम नाम लिखें...' :
+                    selectedName === 'RADHE' ? 'यहाँ पर राधे नाम लिखें...' :
+                    'यहाँ पर हरे कृष्णा लिखें...'
+                  }
+                />
+
+                {/* Buttons - Dynamic based on selected name */}
+                {selectedName === 'RAM' && (
+                  <div className="grid grid-cols-3 gap-3 mb-6">
+                    <button
+                      onClick={() => appendCharacter('R')}
+                      className="bg-gradient-to-br from-red-500 to-red-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      र
+                    </button>
+                    <button
+                      onClick={() => appendCharacter('A')}
+                      className="bg-gradient-to-br from-orange-500 to-orange-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      ा
+                    </button>
+                    <button
+                      onClick={() => appendCharacter('M')}
+                      className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      म
+                    </button>
+                  </div>
+                )}
+
+                {selectedName === 'RADHE' && (
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <button
+                      onClick={() => appendCharacter('RA')}
+                      className="bg-gradient-to-br from-pink-500 to-pink-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      रा
+                    </button>
+                    <button
+                      onClick={() => appendCharacter('DHE')}
+                      className="bg-gradient-to-br from-rose-500 to-rose-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      धे
+                    </button>
+                  </div>
+                )}
+
+                {selectedName === 'HARE_KRISHNA' && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    <button
+                      onClick={() => appendCharacter('HA')}
+                      className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      ह
+                    </button>
+                    <button
+                      onClick={() => appendCharacter('RE')}
+                      className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      रे
+                    </button>
+                    <button
+                      onClick={() => appendCharacter('KRI')}
+                      className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      कृ
+                    </button>
+                    <button
+                      onClick={() => appendCharacter('SHNA')}
+                      className="bg-gradient-to-br from-purple-500 to-purple-600 text-white text-3xl font-bold py-6 rounded-2xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all active:scale-95"
+                    >
+                      ष्णा
+                    </button>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={handleSave}
+                    disabled={currentCount === 0}
+                    className="bg-gradient-to-r from-green-600 to-teal-600 text-white text-lg font-bold py-4 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                  >
+                    <Save className="w-5 h-5" />
+                    Save
+                  </button>
+                  <Link
+                    href="/dashboard"
+                    className="bg-gradient-to-r from-orange-600 to-red-600 text-white text-lg font-bold py-4 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all text-center flex items-center justify-center gap-2"
+                  >
+                    <BarChart3 className="w-5 h-5" />
+                    Full Dashboard
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* --- QUOTE SECTION --- */}
       <section className="py-40 bg-slate-900 relative overflow-hidden">

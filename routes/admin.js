@@ -6,9 +6,13 @@ const blogModel = require('./blog');
 const Mandir = require('../models/Mandir');
 const KathaVachak = require('../models/KathaVachak');
 const adminAuth = require('./middleware/adminAuth');
+const adminSamagriRouter = require('./adminSamagri');
 
 // All routes require admin authentication
 router.use(adminAuth);
+
+// Samagri admin routes
+router.use('/samagri', adminSamagriRouter);
 
 // ============================================
 // DASHBOARD
