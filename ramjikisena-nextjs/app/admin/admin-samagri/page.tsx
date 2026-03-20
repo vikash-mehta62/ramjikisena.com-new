@@ -8,7 +8,7 @@ import ImageUploader from '@/components/ImageUploader';
 type AdminTab = 'orders' | 'packages' | 'products';
 
 interface Product { _id: string; name: string; category: string; price: number; unit: string; inStock: boolean; isActive: boolean; image: string; description: string; }
-interface SamagriPackage { _id: string; name: string; tier: string; poojaType: string; originalPrice: number; discountedPrice: number; isActive: boolean; description: string; items: any[]; }
+interface SamagriPackage { _id: string; name: string; tier: string; poojaType: string; originalPrice: number; discountedPrice: number; isActive: boolean; description: string; items: any[]; image?: string; }
 interface Order {
   _id: string;
   user: { name: string; contact: string; city: string };

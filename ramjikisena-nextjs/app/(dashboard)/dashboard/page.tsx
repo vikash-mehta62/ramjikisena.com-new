@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authApi, User } from '@/lib/auth';
 import { Save, Flag, Flower2, Bird, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import MusicPlayer from '@/components/MusicPlayer';
 
