@@ -9,7 +9,7 @@ Complete Katha Vachak listing system with Live Status feature.
 
 ```javascript
 {
-  name: String (required),
+  name: String (required), 
   photo: String,
   experience: Number (years),
   specialization: String,
