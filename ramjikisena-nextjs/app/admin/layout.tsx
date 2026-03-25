@@ -57,16 +57,14 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
+    <div className="min-h-screen bg-[#FFFAF3]">
       <DashboardSidebar
         role="admin"
         userName={user?.name || 'Admin'}
         userPhoto={user?.profileImage}
       />
-      
-      {/* Main Content */}
-      <div className="lg:ml-72 transition-all duration-300">
-        <div className="p-4 md:p-8">
+      <div className="lg:ml-64 transition-all duration-300">
+        <div className="p-4 md:p-8 pt-16 lg:pt-8">
           {children}
         </div>
       </div>

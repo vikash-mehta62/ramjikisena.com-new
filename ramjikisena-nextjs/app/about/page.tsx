@@ -1,103 +1,123 @@
+'use client';
+
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import { motion } from 'framer-motion';
+
+const goals = [
+  { title: 'राम नाम का प्रसार', desc: 'राम नाम के महत्व को जन-जन तक पहुंचाना' },
+  { title: 'लेखन की प्रेरणा', desc: 'लोगों को राम नाम लेखन के लिए प्रेरित करना' },
+  { title: 'आध्यात्मिक सहायता', desc: 'आध्यात्मिक विकास में सहायता करना' },
+  { title: 'सकारात्मक समुदाय', desc: 'एक सकारात्मक समुदाय का निर्माण करना' },
+];
+
+const features = [
+  { icon: '📊', title: 'Daily Tracking', desc: 'अपनी दैनिक प्रगति को ट्रैक करें' },
+  { icon: '🏆', title: 'Leaderboard', desc: 'अन्य भक्तों के साथ प्रतिस्पर्धा करें' },
+  { icon: '📈', title: 'Progress Chart', desc: 'अपनी आध्यात्मिक यात्रा देखें' },
+  { icon: '👥', title: 'Community', desc: 'भक्तों का समुदाय' },
+];
+
+const values = [
+  { icon: '🙏', title: 'भक्ति', desc: 'राम नाम में अटूट आस्था' },
+  { icon: '🤝', title: 'समुदाय', desc: 'साथ मिलकर जप करना' },
+  { icon: '🌟', title: 'प्रेरणा', desc: 'हर दिन आगे बढ़ना' },
+];
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
-      {/* Header */}
+    <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Hero Section */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-orange-200">
-            <h2 className="text-4xl font-bold text-orange-700 mb-4 text-center">
-              🚩 Ramji Ki Sena 🚩
-            </h2>
-            <p className="text-xl text-gray-700 text-center leading-relaxed">
-              राम नाम लेखन का एक आध्यात्मिक मंच
+        <div className="mb-10 text-center md:text-left">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
+              हमारे <span className="text-orange-600 italic">बारे में</span>
+            </h1>
+            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
+            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
+              Ramji Ki Sena — Spiritual Portal
             </p>
-          </div>
+          </motion.div>
+        </div>
 
-          {/* About Content */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-orange-200">
-            <h3 className="text-2xl font-bold text-orange-700 mb-4">हमारे बारे में</h3>
-            <div className="space-y-4 text-gray-700 leading-relaxed">
-              <p>
-                कलयुग में न जप है न तप है और न योग ही है। सिर्फ राम नाम ही इस कलिकाल में प्राणी मात्र का सहारा है। 
-                श्री राम चन्द्र जी सहज ही कृपा करने वाले और परम दयालु हैं उस पर उनका नाम तो प्राणी मात्र को अभय प्रदान करने वाला 
-                और परम कल्याण कारी है।
-              </p>
-              <p>
-                कलयुग में राम नाम का लिखित जाप सभी पापों को नष्ट कर मुक्ति प्रदान करने वाला है। इसी उद्देश्य को ध्यान में रखते हुए 
-                इस वेबसाइट का निर्माण किया गया है।
-              </p>
-              <p>
-                आप सबसे हमारा अनुरोध है जितना अधिक संभव हो राम नाम का लिखित जप करें। इसी में हम सब का कल्याण है।
-              </p>
-            </div>
-          </div>
+        {/* Hero */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="bg-slate-900 rounded-[2.5rem] p-10 text-center mb-10">
+          <h2 className="text-2xl md:text-4xl font-black text-white mb-4">🚩 Ramji Ki Sena 🚩</h2>
+          <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
+            कलयुग में न जप है न तप है और न योग ही है। सिर्फ राम नाम ही इस कलिकाल में प्राणी मात्र का सहारा है।
+            श्री राम चन्द्र जी सहज ही कृपा करने वाले और परम दयालु हैं।
+            राम नाम का लिखित जाप सभी पापों को नष्ट कर मुक्ति प्रदान करने वाला है।
+          </p>
+        </motion.div>
 
-          {/* Mission */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-orange-200">
-            <h3 className="text-2xl font-bold text-orange-700 mb-4">🎯 हमारा उद्देश्य</h3>
-            <ul className="space-y-3 text-gray-700">
-              <li className="flex items-start gap-3">
-                <span className="text-2xl">✅</span>
-                <span>राम नाम के महत्व को जन-जन तक पहुंचाना</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-2xl">✅</span>
-                <span>लोगों को राम नाम लेखन के लिए प्रेरित करना</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-2xl">✅</span>
-                <span>आध्यात्मिक विकास में सहायता करना</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-2xl">✅</span>
-                <span>एक सकारात्मक समुदाय का निर्माण करना</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Features */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-orange-200">
-            <h3 className="text-2xl font-bold text-orange-700 mb-4">✨ विशेषताएं</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-orange-50 p-4 rounded-xl">
-                <h4 className="font-bold text-orange-700 mb-2">📊 Daily Tracking</h4>
-                <p className="text-gray-600">अपनी दैनिक प्रगति को ट्रैक करें</p>
-              </div>
-              <div className="bg-orange-50 p-4 rounded-xl">
-                <h4 className="font-bold text-orange-700 mb-2">🏆 Leaderboard</h4>
-                <p className="text-gray-600">अन्य भक्तों के साथ प्रतिस्पर्धा करें</p>
-              </div>
-              <div className="bg-orange-50 p-4 rounded-xl">
-                <h4 className="font-bold text-orange-700 mb-2">📈 Progress Chart</h4>
-                <p className="text-gray-600">अपनी आध्यात्मिक यात्रा देखें</p>
-              </div>
-              <div className="bg-orange-50 p-4 rounded-xl">
-                <h4 className="font-bold text-orange-700 mb-2">👥 Community</h4>
-                <p className="text-gray-600">भक्तों का समुदाय</p>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-xl p-8 text-white text-center">
-            <h3 className="text-3xl font-bold mb-4">आज ही शुरू करें!</h3>
-            <p className="text-xl mb-6">राम नाम लेखन की अपनी आध्यात्मिक यात्रा शुरू करें</p>
-            <Link 
-              href="/register"
-              className="inline-block px-8 py-3 bg-white text-orange-600 font-bold rounded-lg hover:shadow-2xl transition"
-            >
-              रजिस्टर करें
-            </Link>
+        {/* Goals */}
+        <div className="mb-10">
+          <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-6">हमारा उद्देश्य</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {goals.map((g, i) => (
+              <motion.div key={g.title}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.07 }}
+                className="bg-white rounded-[2rem] border border-orange-100 shadow-sm hover:shadow-xl transition-all p-5 flex gap-4 items-start">
+                <span className="text-2xl flex-shrink-0">✅</span>
+                <div>
+                  <h3 className="font-black text-slate-900 text-sm mb-1">{g.title}</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed">{g.desc}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
+
+        {/* Features */}
+        <div className="mb-10">
+          <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-6">विशेषताएं</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {features.map((f, i) => (
+              <motion.div key={f.title}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.07 }}
+                className="bg-white rounded-[2rem] border border-orange-100 shadow-sm hover:shadow-xl transition-all p-5 text-center">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-2xl mx-auto mb-3">{f.icon}</div>
+                <h3 className="font-black text-slate-900 text-sm mb-1">{f.title}</h3>
+                <p className="text-slate-500 text-xs leading-relaxed">{f.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Values */}
+        <div className="mb-10">
+          <div className="grid grid-cols-3 gap-4">
+            {values.map((v, i) => (
+              <motion.div key={v.title}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.08 }}
+                className="bg-white rounded-[2rem] border border-orange-100 shadow-sm hover:shadow-xl transition-all p-5 text-center">
+                <span className="text-3xl block mb-2">{v.icon}</span>
+                <h3 className="font-black text-slate-900 text-sm mb-1">{v.title}</h3>
+                <p className="text-slate-500 text-xs">{v.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="bg-gradient-to-r from-orange-500 to-red-500 rounded-[2.5rem] p-10 text-center">
+          <h2 className="text-2xl md:text-3xl font-black text-white mb-4">आज ही शुरू करें!</h2>
+          <p className="text-orange-100 text-sm font-bold mb-6">राम नाम लेखन की अपनी आध्यात्मिक यात्रा शुरू करें</p>
+          <Link href="/register" className="inline-block bg-white text-orange-600 rounded-2xl font-black px-8 py-3.5 hover:bg-orange-50 transition-all active:scale-95">
+            रजिस्टर करें →
+          </Link>
+        </motion.div>
       </main>
+      <footer className="py-12 text-center border-t border-orange-100 mt-10">
+        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.8em]">जय श्री राम</p>
+      </footer>
     </div>
   );
 }

@@ -3,24 +3,24 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingCart, Package, Star, Truck, Shield, Plus, Minus, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  ShoppingCart, Package, Star, Truck, Shield, 
+  Plus, Minus, Search, CheckCircle2, ChevronRight, 
+  ChevronDown, ShoppingBag, X 
+} from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import api from '@/lib/api';
 
+// --- Types & Constants ---
 interface Product {
   _id: string;
   name: string;
-  description: string;
   category: string;
   image: string;
   price: number;
   unit: string;
   inStock: boolean;
-}
-
-interface PackageItem {
-  product: { _id: string; name: string; image: string; unit: string };
-  quantity: number;
 }
 
 interface SamagriPackage {
@@ -29,13 +29,12 @@ interface SamagriPackage {
   description: string;
   tier: 'Basic' | 'Standard' | 'Premium';
   poojaType: string;
-  items: PackageItem[];
+  items: { product: { name: string }; quantity: number }[];
   originalPrice: number;
   discountedPrice: number;
-  image: string;
 }
 
-export interface CartItem {
+interface CartItem {
   productId: string;
   name: string;
   price: number;
@@ -45,21 +44,102 @@ export interface CartItem {
 }
 
 const TIER_COLORS = {
-  Basic: 'from-green-500 to-emerald-600',
-  Standard: 'from-orange-500 to-amber-600',
-  Premium: 'from-purple-600 to-violet-700',
+  Basic: 'from-emerald-500 to-teal-600',
+  Standard: 'from-orange-500 to-red-600',
+  Premium: 'from-indigo-600 to-purple-700',
 };
 
-const TIER_BADGE = {
-  Basic: 'bg-green-100 text-green-700',
-  Standard: 'bg-orange-100 text-orange-700',
-  Premium: 'bg-purple-100 text-purple-700',
-};
+const CATEGORIES = ['All', 'Incense', 'Flowers', 'Diyas', 'Ghee', 'Sweets', 'Cloth', 'Idols'];
 
-const CATEGORIES = ['All', 'Incense', 'Flowers', 'Diyas', 'Ghee', 'Sweets', 'Cloth', 'Idols', 'Other'];
+// --- Sub-Component: Package Card with Toggle ---
+function PackageCard({ pkg }: { pkg: SamagriPackage }) {
+  const [isOpen, setIsOpen] = useState(false);
 
+  return (
+    <motion.div 
+      layout
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      className="bg-white rounded-[2.5rem] shadow-xl border border-orange-50 overflow-hidden group flex flex-col h-full hover:shadow-2xl transition-all duration-300"
+    >
+      <div className={`bg-gradient-to-br ${TIER_COLORS[pkg.tier]} p-6 text-white relative`}>
+        <div className="flex justify-between items-start">
+          <span className="text-[10px] font-black uppercase tracking-widest bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-md">
+            {pkg.tier} Edition
+          </span>
+          <Package size={24} className="opacity-40" />
+        </div>
+        <h3 className="text-xl font-black mt-4 drop-shadow-md">{pkg.name}</h3>
+        <p className="text-xs opacity-90 font-medium">{pkg.poojaType}</p>
+      </div>
+
+      <div className="p-6 flex flex-col flex-1">
+        <p className="text-slate-500 text-xs leading-relaxed mb-6 line-clamp-2 italic">
+          {pkg.description}
+        </p>
+
+        {/* --- TOGGLE BUTTON FOR ITEMS --- */}
+        <div className="mb-4">
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className={`flex items-center justify-between w-full p-3 transition-all rounded-xl group/btn ${isOpen ? 'bg-orange-600 text-white shadow-lg' : 'bg-slate-50 text-slate-500 hover:bg-orange-50'}`}
+          >
+            <div className="flex items-center gap-2">
+              <Package size={14} />
+              <span className="text-[10px] font-black uppercase tracking-widest">
+                {isOpen ? 'Close List' : `Included Items (${pkg.items.length})`}
+              </span>
+            </div>
+            <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
+              <ChevronDown size={16} />
+            </motion.div>
+          </button>
+
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="pt-4 space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                  {pkg.items.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 text-[11px] font-bold text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                      <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                      <span className="truncate">{item.product?.name}</span>
+                      <span className="ml-auto text-orange-600 font-black">x{item.quantity}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Pricing & CTA */}
+        <div className="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
+          <div>
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1">Divine Offer</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-black text-slate-900">₹{pkg.discountedPrice}</span>
+              <span className="text-xs text-slate-400 line-through font-bold">₹{pkg.originalPrice}</span>
+            </div>
+          </div>
+          <Link 
+            href={`/samagri/cart?packageId=${pkg._id}`} 
+            className="p-4 bg-slate-900 text-white rounded-2xl hover:bg-orange-600 transition-all active:scale-90 shadow-xl"
+          >
+            <Plus size={20} strokeWidth={3} />
+          </Link>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// --- Main Page Component ---
 export default function SamagriPage() {
-  const router = useRouter();
   const [tab, setTab] = useState<'packages' | 'products'>('packages');
   const [packages, setPackages] = useState<SamagriPackage[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -69,28 +149,23 @@ export default function SamagriPage() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [pkgRes, prodRes] = await Promise.all([
+          api.get('/api/samagri/packages'),
+          api.get('/api/samagri/products'),
+        ]);
+        const pkgData = await pkgRes.json();
+        const prodData = await prodRes.json();
+        if (pkgData.success) setPackages(pkgData.packages);
+        if (prodData.success) setProducts(prodData.products);
+      } catch (err) { console.error(err); } 
+      finally { setLoading(false); }
+    };
     fetchData();
-    // Load cart from localStorage
     const saved = localStorage.getItem('samagri_cart');
     if (saved) setCart(JSON.parse(saved));
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const [pkgRes, prodRes] = await Promise.all([
-        api.get('/api/samagri/packages'),
-        api.get('/api/samagri/products'),
-      ]);
-      const pkgData = await pkgRes.json();
-      const prodData = await prodRes.json();
-      if (pkgData.success) setPackages(pkgData.packages);
-      if (prodData.success) setProducts(prodData.products);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const saveCart = (newCart: CartItem[]) => {
     setCart(newCart);
@@ -99,257 +174,156 @@ export default function SamagriPage() {
 
   const addToCart = (product: Product) => {
     const existing = cart.find(c => c.productId === product._id);
-    let newCart: CartItem[];
-    if (existing) {
-      newCart = cart.map(c => c.productId === product._id ? { ...c, quantity: c.quantity + 1 } : c);
-    } else {
-      newCart = [...cart, { productId: product._id, name: product.name, price: product.price, quantity: 1, image: product.image, unit: product.unit }];
-    }
+    const newCart = existing 
+      ? cart.map(c => c.productId === product._id ? { ...c, quantity: c.quantity + 1 } : c)
+      : [...cart, { productId: product._id, name: product.name, price: product.price, quantity: 1, image: product.image, unit: product.unit }];
     saveCart(newCart);
   };
 
   const removeFromCart = (productId: string) => {
     const existing = cart.find(c => c.productId === productId);
     if (!existing) return;
-    let newCart: CartItem[];
-    if (existing.quantity === 1) {
-      newCart = cart.filter(c => c.productId !== productId);
-    } else {
-      newCart = cart.map(c => c.productId === productId ? { ...c, quantity: c.quantity - 1 } : c);
-    }
+    const newCart = existing.quantity === 1 
+      ? cart.filter(c => c.productId !== productId)
+      : cart.map(c => c.productId === productId ? { ...c, quantity: c.quantity - 1 } : c);
     saveCart(newCart);
   };
-
-  const getQty = (productId: string) => cart.find(c => c.productId === productId)?.quantity || 0;
 
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartCount = cart.reduce((sum, c) => sum + c.quantity, 0);
 
   const filteredProducts = products.filter(p => {
     const matchCat = category === 'All' || p.category === category;
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    return matchCat && matchSearch;
+    return matchCat && p.name.toLowerCase().includes(search.toLowerCase());
   });
 
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <div className="h-20"></div>
-        <div className="min-h-screen flex items-center justify-center bg-orange-50">
-          <div className="text-center">
-            <div className="text-6xl mb-4">🪔</div>
-            <p className="text-xl text-orange-700">Loading Samagri...</p>
-          </div>
-        </div>
-      </>
-    );
-  }
+  if (loading) return (
+    <div className="h-screen flex items-center justify-center bg-[#FFFAF3]">
+      <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
   return (
-    <>
+    <div className="min-h-screen bg-[#FFFAF3] antialiased pb-20 selection:bg-orange-100">
       <Navbar />
-      <div className="h-20"></div>
-
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
-        {/* Hero Banner */}
-        <div className="bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 text-white py-12 px-4">
-          <div className="max-w-6xl mx-auto text-center">
-            <div className="text-5xl mb-3">🪔</div>
-            <h1 className="text-4xl font-bold mb-2">पूजन सामग्री</h1>
-            <p className="text-orange-100 text-lg mb-6">शुद्ध और प्रामाणिक पूजा सामग्री — घर पर डिलीवरी</p>
-            <div className="flex flex-wrap justify-center gap-6 text-sm">
-              <div className="flex items-center gap-2"><Truck className="w-4 h-4" /> Free delivery above ₹500</div>
-              <div className="flex items-center gap-2"><Shield className="w-4 h-4" /> 100% Pure & Authentic</div>
-              <div className="flex items-center gap-2"><Star className="w-4 h-4" /> Trusted by 10,000+ devotees</div>
-            </div>
-          </div>
+      
+      {/* Hero */}
+      <section className="pt-24 pb-8 md:pt-32 md:pb-12 bg-gradient-to-br from-orange-600 to-red-700 text-white px-4 relative overflow-hidden">
+        <div className="absolute top-0 right-0 opacity-10 text-[12rem] pointer-events-none">🪔</div>
+        <div className="max-w-6xl mx-auto text-center md:text-left relative z-10">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <h1 className="text-3xl md:text-6xl font-black mb-2 tracking-tight">पूजन <span className="text-yellow-400">सामग्री</span></h1>
+            <p className="text-orange-100 text-sm md:text-lg mb-6 font-medium">शुद्धता और विश्वास, हर घर की पूजा के लिए।</p>
+          </motion.div>
         </div>
+      </section>
 
-        {/* Floating Cart */}
-        {cartCount > 0 && (
-          <div className="fixed bottom-6 right-6 z-50">
-            <Link href="/samagri/cart"
-              className="flex items-center gap-3 bg-orange-600 text-white px-5 py-3 rounded-full shadow-2xl hover:bg-orange-700 transition-all hover:scale-105">
-              <ShoppingCart className="w-5 h-5" />
-              <span className="font-bold">{cartCount} items</span>
-              <span className="bg-white text-orange-600 px-2 py-0.5 rounded-full text-sm font-bold">₹{cartTotal}</span>
-            </Link>
-          </div>
-        )}
-
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          {/* Tabs */}
-          <div className="flex gap-2 mb-8 bg-white rounded-2xl p-2 shadow-md w-fit">
-            <button onClick={() => setTab('packages')}
-              className={`px-6 py-3 rounded-xl font-bold transition-all ${tab === 'packages' ? 'bg-orange-600 text-white shadow' : 'text-gray-600 hover:bg-orange-50'}`}>
-              <Package className="w-4 h-4 inline mr-2" />पूजा पैकेज
-            </button>
-            <button onClick={() => setTab('products')}
-              className={`px-6 py-3 rounded-xl font-bold transition-all ${tab === 'products' ? 'bg-orange-600 text-white shadow' : 'text-gray-600 hover:bg-orange-50'}`}>
-              <ShoppingCart className="w-4 h-4 inline mr-2" />सामग्री खरीदें
-            </button>
-          </div>
-
-          {/* PACKAGES TAB */}
-          {tab === 'packages' && (
-            <div>
-              <h2 className="text-2xl font-bold text-orange-800 mb-6">🎁 पूजा पैकेज चुनें</h2>
-              {packages.length === 0 ? (
-                <div className="text-center py-16 text-gray-500">
-                  <Package className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                  <p>कोई पैकेज उपलब्ध नहीं है</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {packages.map(pkg => (
-                    <div key={pkg._id} className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-orange-100 hover:border-orange-300 transition-all hover:shadow-2xl hover:-translate-y-1">
-                      {/* Tier Header */}
-                      <div className={`bg-gradient-to-r ${TIER_COLORS[pkg.tier]} p-5 text-white`}>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <span className="text-xs font-bold uppercase tracking-wider opacity-80">{pkg.tier} Package</span>
-                            <h3 className="text-xl font-bold mt-1">{pkg.name}</h3>
-                            <p className="text-sm opacity-80 mt-1">{pkg.poojaType}</p>
-                          </div>
-                          <div className="text-3xl">
-                            {pkg.tier === 'Basic' ? '🌿' : pkg.tier === 'Standard' ? '🪔' : '👑'}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="p-5">
-                        <p className="text-gray-600 text-sm mb-4">{pkg.description}</p>
-
-                        {/* Items list */}
-                        {pkg.items.length > 0 && (
-                          <div className="mb-4">
-                            <p className="text-xs font-bold text-gray-500 uppercase mb-2">शामिल सामग्री:</p>
-                            <div className="space-y-1">
-                              {pkg.items.slice(0, 5).map((item, i) => (
-                                <div key={i} className="flex items-center gap-2 text-sm text-gray-700">
-                                  <span className="text-orange-500">✓</span>
-                                  <span>{item.product?.name}</span>
-                                  <span className="text-gray-400">×{item.quantity}</span>
-                                </div>
-                              ))}
-                              {pkg.items.length > 5 && (
-                                <p className="text-xs text-orange-600 font-medium">+{pkg.items.length - 5} more items</p>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Price */}
-                        <div className="flex items-center gap-3 mb-4">
-                          <span className="text-2xl font-bold text-orange-700">₹{pkg.discountedPrice}</span>
-                          {pkg.originalPrice > pkg.discountedPrice && (
-                            <>
-                              <span className="text-gray-400 line-through text-sm">₹{pkg.originalPrice}</span>
-                              <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                                {Math.round((1 - pkg.discountedPrice / pkg.originalPrice) * 100)}% OFF
-                              </span>
-                            </>
-                          )}
-                        </div>
-
-                        <Link href={`/samagri/cart?packageId=${pkg._id}&packageName=${encodeURIComponent(pkg.name)}&price=${pkg.discountedPrice}`}
-                          className={`w-full block text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r ${TIER_COLORS[pkg.tier]} hover:shadow-lg transition-all hover:scale-105`}>
-                          अभी बुक करें →
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+      {/* Sticky Filters */}
+      <div className="sticky top-16 md:top-20 z-40 bg-white/95 backdrop-blur-md border-b border-orange-100 px-4 py-3 shadow-sm">
+        <div className="max-w-6xl mx-auto flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex bg-slate-100 p-1 rounded-2xl w-fit">
+              <button onClick={() => setTab('packages')} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${tab === 'packages' ? 'bg-orange-600 text-white shadow-md' : 'text-slate-500'}`}>पूजा पैकेज</button>
+              <button onClick={() => setTab('products')} className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${tab === 'products' ? 'bg-orange-600 text-white shadow-md' : 'text-slate-500'}`}>खुली सामग्री</button>
             </div>
-          )}
-
-          {/* PRODUCTS TAB */}
+            {cartCount > 0 && (
+              <Link href="/samagri/cart" className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-xl active:scale-95 transition-all">
+                <ShoppingBag size={18} /> <span className="text-xs font-black">₹{cartTotal}</span>
+              </Link>
+            )}
+          </div>
           {tab === 'products' && (
-            <div>
-              <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-                  <input value={search} onChange={e => setSearch(e.target.value)}
-                    placeholder="सामग्री खोजें..."
-                    className="w-full pl-10 pr-4 py-3 border-2 border-orange-200 rounded-xl focus:outline-none focus:border-orange-500" />
-                </div>
-                <div className="flex gap-2 flex-wrap">
-                  {CATEGORIES.map(cat => (
-                    <button key={cat} onClick={() => setCategory(cat)}
-                      className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${category === cat ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:border-orange-300'}`}>
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {filteredProducts.length === 0 ? (
-                <div className="text-center py-16 text-gray-500">
-                  <ShoppingCart className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                  <p>कोई सामग्री नहीं मिली</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {filteredProducts.map(product => {
-                    const qty = getQty(product._id);
-                    return (
-                      <div key={product._id} className="bg-white rounded-2xl shadow-md overflow-hidden border border-orange-100 hover:shadow-xl transition-all">
-                        <div className="h-36 bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center">
-                          {product.image ? (
-                            <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
-                          ) : (
-                            <span className="text-5xl">🪔</span>
-                          )}
-                        </div>
-                        <div className="p-3">
-                          <h3 className="font-bold text-gray-800 text-sm mb-1 line-clamp-2">{product.name}</h3>
-                          <p className="text-xs text-gray-500 mb-2">{product.category} · per {product.unit}</p>
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-orange-700">₹{product.price}</span>
-                            {!product.inStock ? (
-                              <span className="text-xs text-red-500 font-medium">Out of Stock</span>
-                            ) : qty === 0 ? (
-                              <button onClick={() => addToCart(product)}
-                                className="flex items-center gap-1 bg-orange-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-orange-700 transition">
-                                <Plus className="w-3 h-3" /> Add
-                              </button>
-                            ) : (
-                              <div className="flex items-center gap-2">
-                                <button onClick={() => removeFromCart(product._id)}
-                                  className="w-7 h-7 bg-orange-100 text-orange-700 rounded-lg flex items-center justify-center hover:bg-orange-200 transition">
-                                  <Minus className="w-3 h-3" />
-                                </button>
-                                <span className="font-bold text-orange-700 w-4 text-center">{qty}</span>
-                                <button onClick={() => addToCart(product)}
-                                  className="w-7 h-7 bg-orange-600 text-white rounded-lg flex items-center justify-center hover:bg-orange-700 transition">
-                                  <Plus className="w-3 h-3" />
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Proceed to cart button */}
-              {cartCount > 0 && (
-                <div className="mt-8 text-center">
-                  <Link href="/samagri/cart"
-                    className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all">
-                    <ShoppingCart className="w-5 h-5" />
-                    Cart देखें ({cartCount} items · ₹{cartTotal})
-                  </Link>
-                </div>
-              )}
-            </div>
+             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+               {CATEGORIES.map(cat => (
+                 <button key={cat} onClick={() => setCategory(cat)} className={`whitespace-nowrap px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${category === cat ? 'bg-orange-600 text-white border-orange-600 shadow-md shadow-orange-900/10' : 'bg-white text-slate-400 border-slate-200 hover:border-orange-300'}`}>{cat}</button>
+               ))}
+             </div>
           )}
         </div>
       </div>
-    </>
+
+      <main className="max-w-6xl mx-auto px-2 md:px-6 py-8">
+        {/* Search */}
+        {tab === 'products' && (
+          <div className="relative mb-8 max-w-xl mx-auto px-2">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <input type="text" placeholder="Search item..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-white border border-orange-100 rounded-2xl text-sm font-bold shadow-xl shadow-orange-900/5 focus:ring-2 focus:ring-orange-500/20 outline-none transition-all" />
+          </div>
+        )}
+
+        {/* Packages Grid */}
+        {tab === 'packages' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-2">
+            {packages.map(pkg => <PackageCard key={pkg._id} pkg={pkg} />)}
+          </div>
+        )}
+
+        {/* Products Grid (2-Columns Mobile) */}
+        {tab === 'products' && (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6 px-1">
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map(product => {
+                const qty = cart.find(c => c.productId === product._id)?.quantity || 0;
+                return (
+                  <motion.div layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} key={product._id} className="bg-white rounded-2xl md:rounded-[2rem] border border-orange-50 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col h-full">
+                    <div className="relative aspect-square bg-slate-50 overflow-hidden group">
+                      <img src={product.image || '/item.jpg'} alt={product.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                      {!product.inStock && <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex items-center justify-center text-center p-2"><span className="text-[10px] font-black text-red-600 uppercase">Out of Stock</span></div>}
+                    </div>
+                    
+                    <div className="p-3 md:p-5 flex flex-col flex-1">
+                      <p className="text-[8px] md:text-[10px] text-orange-500 font-black uppercase mb-1">{product.category}</p>
+                      <h3 className="text-[12px] md:text-sm font-black text-slate-800 leading-tight mb-2 line-clamp-2 h-8 md:h-10">{product.name}</h3>
+                      
+                      <div className="flex items-baseline gap-1 mb-4">
+                         <span className="text-sm md:text-lg font-black text-slate-900">₹{product.price}</span>
+                         <span className="text-[8px] md:text-[10px] font-bold text-slate-400">/{product.unit}</span>
+                      </div>
+                      
+                      <div className="mt-auto">
+                        {qty === 0 ? (
+                          <button onClick={() => addToCart(product)} disabled={!product.inStock} className="w-full py-2.5 bg-orange-50 hover:bg-orange-600 text-orange-700 hover:text-white text-[10px] font-black rounded-xl transition-all active:scale-95 disabled:opacity-50">ADD TO CART</button>
+                        ) : (
+                          <div className="flex items-center justify-between bg-orange-600 rounded-xl p-1 shadow-lg shadow-orange-900/20">
+                            <button onClick={() => removeFromCart(product._id)} className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-white"><Minus size={14} /></button>
+                            <span className="text-white text-xs md:text-sm font-black">{qty}</span>
+                            <button onClick={() => addToCart(product)} className="w-7 h-7 md:w-9 md:h-9 flex items-center justify-center text-white"><Plus size={14} /></button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        )}
+      </main>
+
+      {/* Floating Checkout Bar */}
+      <AnimatePresence>
+        {cartCount > 0 && (
+          <motion.div initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }} className="fixed bottom-6 left-4 right-4 md:left-auto md:right-10 md:w-96 z-50">
+            <Link href="/samagri/cart" className="flex items-center justify-between bg-slate-900 text-white p-4 rounded-[2rem] shadow-2xl border border-white/10 active:scale-95 transition-all">
+              <div className="flex items-center gap-4 pl-2">
+                <div className="relative">
+                  <ShoppingBag size={24} />
+                  <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-slate-900">{cartCount}</span>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">Cart Total</p>
+                  <p className="text-lg font-black">₹{cartTotal}</p>
+                </div>
+              </div>
+              <div className="bg-orange-600 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2">Checkout <ChevronRight size={16} /></div>
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <footer className="py-12 text-center border-t border-slate-100 opacity-30">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em]">Pure Devotion • Authentic Samagri</p>
+      </footer>
+    </div>
   );
 }

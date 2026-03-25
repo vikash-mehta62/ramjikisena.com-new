@@ -6,7 +6,15 @@ import Link from 'next/link';
 import { ShoppingCart, Trash2, ArrowLeft, MapPin, Calendar, ChevronRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import api from '@/lib/api';
-import { CartItem } from '../page';
+
+interface CartItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  unit?: string;
+}
 
 interface DeliveryAddress {
   name: string; phone: string; address: string;

@@ -3,428 +3,396 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { ChevronDown, BookOpen, Church, Scroll, User as UserIcon, Image as ImageIcon, Phone, Calendar, BarChart3, Flag, Crown, Sparkles, ShoppingBag, Users, HelpCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ChevronDown, BookOpen, Church, Scroll, User as UserIcon,
+  Image as ImageIcon, Phone, Calendar, BarChart3, Flag,
+  Sparkles, ShoppingBag, Users, HelpCircle, Compass,
+  LogOut, Crown, Menu, X, Star, MessageSquare
+} from 'lucide-react';
 
-interface NavbarProps {
-  showAuthButtons?: boolean;
-}
+interface NavbarProps { showAuthButtons?: boolean; }
+
+const exploreLinks = [
+  { href: '/mandirs',       label: 'मंदिर दर्शन',    icon: Church,       desc: 'Explore divine temples',        color: 'text-orange-600 bg-orange-50' },
+  { href: '/pandits',       label: 'पंडित बुकिंग',   icon: Sparkles,     desc: 'Book experienced pandits',      color: 'text-yellow-600 bg-yellow-50' },
+  { href: '/katha-vachaks', label: 'कथा वाचक',       icon: Scroll,       desc: 'Find katha vachaks',            color: 'text-purple-600 bg-purple-50' },
+  { href: '/samagri',       label: 'पूजन सामग्री',   icon: ShoppingBag,  desc: 'Order puja samagri',            color: 'text-green-600 bg-green-50' },
+  { href: '/community',     label: 'भक्त समुदाय',    icon: Users,        desc: 'Connect with devotees',         color: 'text-blue-600 bg-blue-50' },
+  { href: '/forum',         label: 'फोरम',            icon: HelpCircle,   desc: 'Ask spiritual questions',       color: 'text-teal-600 bg-teal-50' },
+  { href: '/gallery',       label: 'गैलरी',           icon: ImageIcon,    desc: 'Divine moments & events',       color: 'text-pink-600 bg-pink-50' },
+  { href: '/glory',         label: 'राम महिमा',       icon: Star,         desc: 'Glory of Ram Naam',             color: 'text-amber-600 bg-amber-50' },
+  { href: '/mission',       label: 'हमारा मिशन',      icon: Flag,         desc: 'Our spiritual mission',         color: 'text-red-600 bg-red-50' },
+  { href: '/about',         label: 'हमारे बारे में',  icon: BookOpen,     desc: 'About Ramji Ki Sena',           color: 'text-indigo-600 bg-indigo-50' },
+  { href: '/contact',       label: 'संपर्क',          icon: Phone,        desc: 'Get in touch with us',          color: 'text-slate-600 bg-slate-50' },
+  { href: '/blogs',         label: 'ब्लॉग',           icon: MessageSquare,desc: 'Spiritual blogs & articles',    color: 'text-cyan-600 bg-cyan-50' },
+];
+
+const mainLinks = [
+  { href: '/mandirs',   label: 'Mandirs',   icon: Church },
+  { href: '/pandits',   label: 'Pandits',   icon: Sparkles },
+  { href: '/samagri',   label: 'Samagri',   icon: ShoppingBag },
+  { href: '/community', label: 'Community', icon: Users },
+];
 
 export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isPanditLoggedIn, setIsPanditLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
-  const [panditName, setPanditName] = useState('');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [showLoginDropdown, setShowLoginDropdown] = useState(false);
-  const [showRegisterDropdown, setShowRegisterDropdown] = useState(false);
-  
-  const loginDropdownRef = useRef<HTMLDivElement>(null);
-  const registerDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Scroll effect for dynamic styling
+  const [auth, setAuth] = useState({
+    isLoggedIn: false, isPanditLoggedIn: false,
+    userName: '', panditName: '', isAdmin: false,
+  });
+  const [scrolled, setScrolled]           = useState(false);
+  const [exploreOpen, setExploreOpen]     = useState(false);
+  const [userMenuOpen, setUserMenuOpen]   = useState(false);
+  const [loginOpen, setLoginOpen]         = useState(false);
+  const [mobileOpen, setMobileOpen]       = useState(false);
+
+  const exploreRef  = useRef<HTMLDivElement>(null);
+  const userRef     = useRef<HTMLDivElement>(null);
+  const loginRef    = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Check authentication
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const panditToken = localStorage.getItem('panditToken');
-    const user = localStorage.getItem('user');
-    const pandit = localStorage.getItem('pandit');
-    
-    setIsLoggedIn(!!token);
-    setIsPanditLoggedIn(!!panditToken);
-    
-    if (user) {
-      try {
-        const userData = JSON.parse(user);
-        setUserName(userData.name || 'User');
-      } catch (e) {
-        setUserName('User');
-      }
-    }
-    
-    if (pandit) {
-      try {
-        const panditData = JSON.parse(pandit);
-        setPanditName(panditData.name || 'Pandit');
-      } catch (e) {
-        setPanditName('Pandit');
-      }
-    }
+    const token      = localStorage.getItem('token');
+    const panditTok  = localStorage.getItem('panditToken');
+    const user       = JSON.parse(localStorage.getItem('user')   || '{}');
+    const pandit     = JSON.parse(localStorage.getItem('pandit') || '{}');
+    setAuth({
+      isLoggedIn:       !!token,
+      isPanditLoggedIn: !!panditTok,
+      userName:         user.name   || 'User',
+      panditName:       pandit.name || 'Pandit',
+      isAdmin:          user.role   === 'admin',
+    });
   }, []);
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (loginDropdownRef.current && !loginDropdownRef.current.contains(event.target as Node)) {
-        setShowLoginDropdown(false);
-      }
-      if (registerDropdownRef.current && !registerDropdownRef.current.contains(event.target as Node)) {
-        setShowRegisterDropdown(false);
-      }
+    const handler = (e: MouseEvent) => {
+      if (exploreRef.current && !exploreRef.current.contains(e.target as Node)) setExploreOpen(false);
+      if (userRef.current   && !userRef.current.contains(e.target as Node))    setUserMenuOpen(false);
+      if (loginRef.current  && !loginRef.current.contains(e.target as Node))   setLoginOpen(false);
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleUserLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
-    setUserName('');
+  const logout = (type: 'user' | 'pandit') => {
+    if (type === 'user') { localStorage.removeItem('token'); localStorage.removeItem('user'); }
+    else { localStorage.removeItem('panditToken'); localStorage.removeItem('pandit'); }
     router.push('/');
+    window.location.reload();
   };
 
-  const handlePanditLogout = () => {
-    localStorage.removeItem('panditToken');
-    localStorage.removeItem('pandit');
-    setIsPanditLoggedIn(false);
-    setPanditName('');
-    router.push('/');
-  };
-
-  const navLinks = [
-    { href: '/about', label: 'About', icon: <BookOpen className="w-4 h-4" /> },
-    { href: '/mandirs', label: 'Mandirs', icon: <Church className="w-4 h-4" /> },
-    { href: '/katha-vachaks', label: 'Katha Vachak', icon: <Scroll className="w-4 h-4" /> },
-    { href: '/pandits', label: 'Book Pandit', icon: <Sparkles className="w-4 h-4" /> },
-    { href: '/samagri', label: 'Samagri', icon: <ShoppingBag className="w-4 h-4" /> },
-    { href: '/community', label: 'Community', icon: <Users className="w-4 h-4" /> },
-    { href: '/forum', label: 'Forum', icon: <HelpCircle className="w-4 h-4" /> },
-    { href: '/gallery', label: 'Gallery', icon: <ImageIcon className="w-4 h-4" /> },
-    { href: '/contact', label: 'Contact', icon: <Phone className="w-4 h-4" /> },
-  ];
-
-  const isActive = (path: string) => pathname === path;
+  const dashboardHref = auth.isAdmin ? '/admin/admin-dashboard' : '/dashboard';
+  const isActive = (p: string) => pathname === p;
 
   return (
-    <header 
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-orange-800/95 backdrop-blur-lg py-2 shadow-xl border-b border-orange-400/20' 
-          : 'bg-gradient-to-r from-orange-600 to-red-600 py-3 shadow-lg'
-      }`}
-    >
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-between">
-          
-          {/* Logo Section */}
-          <Link href="/" className="flex items-center gap-2 group outline-none">
-            <div className="relative">
-              <div className="absolute inset-0 bg-yellow-400 rounded-full blur-md group-hover:blur-lg transition-all opacity-50 scale-110"></div>
-              <div className="relative w-10 h-10 md:w-11 md:h-11 bg-white rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-105 group-hover:rotate-[360deg] transition-all duration-700">
-                <Flag className="w-5 h-5 md:w-6 md:h-6 text-orange-600" />
-              </div>
+    <>
+      <header className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
+        scrolled ? 'bg-slate-950/95 backdrop-blur-xl py-3 shadow-2xl' : 'bg-transparent py-5'
+      }`}>
+        <div className="container mx-auto px-5 flex items-center justify-between gap-4">
+
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
+            <div className="w-9 h-9 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/30 group-hover:scale-105 transition-transform">
+              <Flag className="w-5 h-5 text-white" />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-lg md:text-xl font-black tracking-tighter text-white leading-none drop-shadow-md">
-                RAMJI KI SENA
-              </h1>
-              
+            <div className="hidden sm:block">
+              <p className="text-base font-black tracking-tighter text-white leading-none">RAMJI KI <span className="text-orange-500">SENA</span></p>
+              <p className="text-[9px] text-white/40 tracking-[0.2em] uppercase">Spiritual Portal</p>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center bg-black/10 backdrop-blur-md rounded-full px-1.5 py-1 border border-white/10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`relative px-4 py-1.5 text-sm font-bold transition-all rounded-full flex items-center gap-1.5 group ${
-                  isActive(link.href) 
-                    ? 'text-orange-900 bg-yellow-400 shadow-md' 
-                    : 'text-white hover:bg-white/10'
-                }`}
-              >
-                <span className="transition-transform group-hover:scale-125">{link.icon}</span>
-                {link.label}
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-1 bg-white/5 border border-white/10 rounded-2xl p-1 backdrop-blur-md">
+            {mainLinks.map(({ href, label, icon: Icon }) => (
+              <Link key={href} href={href}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                  isActive(href) ? 'bg-orange-600 text-white shadow-lg' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}>
+                <Icon className="w-3.5 h-3.5" /> {label}
               </Link>
             ))}
+
+            {/* Explore Dropdown */}
+            <div className="relative" ref={exploreRef}>
+              <button
+                onClick={() => { setExploreOpen(o => !o); setUserMenuOpen(false); setLoginOpen(false); }}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                  exploreOpen ? 'bg-white/15 text-white' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}>
+                <Compass className="w-3.5 h-3.5" />
+                Explore
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${exploreOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {exploreOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[520px] bg-white rounded-[1.5rem] shadow-2xl border border-slate-100 p-4 z-50"
+                  >
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em] mb-3 px-1">सभी सेवाएं / All Features</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {exploreLinks.map(({ href, label, icon: Icon, desc, color }) => (
+                        <Link key={href} href={href}
+                          onClick={() => setExploreOpen(false)}
+                          className="flex items-start gap-3 p-3 rounded-2xl hover:bg-slate-50 transition-all group">
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${color}`}>
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight">{label}</p>
+                            <p className="text-[10px] text-slate-400 leading-tight mt-0.5 truncate">{desc}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </nav>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3">
+          {/* Right: Auth */}
+          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             {showAuthButtons && (
-              <div className="hidden sm:flex items-center gap-3">
-                {isLoggedIn || isPanditLoggedIn ? (
-                  <>
-                    {isLoggedIn && (
-                      <>
-                        {/* User Dropdown */}
-                        <div className="relative" ref={loginDropdownRef}>
-                          <button
-                            onClick={() => {
-                              setShowLoginDropdown(!showLoginDropdown);
-                              setShowRegisterDropdown(false);
-                            }}
-                            className="flex items-center gap-2 text-sm font-bold text-white hover:text-yellow-300 transition-colors"
-                          >
-                            <UserIcon className="w-4 h-4" />
-                            {userName}
-                            <ChevronDown className={`w-4 h-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
-                          </button>
-                          
-                          {showLoginDropdown && (
-                            <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-orange-200 overflow-hidden z-50">
-                              <Link
-                                href="/dashboard"
-                                onClick={() => setShowLoginDropdown(false)}
-                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
-                              >
-                                <BarChart3 className="w-4 h-4" />
-                                Dashboard
-                              </Link>
-                              <Link
-                                href="/my-bookings"
-                                onClick={() => setShowLoginDropdown(false)}
-                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
-                              >
-                                <Calendar className="w-4 h-4" />
-                                My Bookings
-                              </Link>
-                              <Link
-                                href="/samagri"
-                                onClick={() => setShowLoginDropdown(false)}
-                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-t border-orange-100"
-                              >
-                                <ShoppingBag className="w-4 h-4" />
-                                Samagri Shop
-                              </Link>
-                              <Link
-                                href="/samagri/orders"
-                                onClick={() => setShowLoginDropdown(false)}
-                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
-                              >
-                                <span className="text-sm">📦</span>
-                                My Samagri Orders
-                              </Link>
-                              <Link
-                                href="/community"
-                                onClick={() => setShowLoginDropdown(false)}
-                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-t border-orange-100"
-                              >
-                                <Users className="w-4 h-4" />
-                                Community Feed
-                              </Link>
-                              <Link
-                                href="/forum"
-                                onClick={() => setShowLoginDropdown(false)}
-                                className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
-                              >
-                                <HelpCircle className="w-4 h-4" />
-                                Spiritual Forum
-                              </Link>
-                            </div>
-                          )}
-                        </div>
-                        <button
-                          onClick={handleUserLogout}
-                          className="px-4 py-2 bg-white text-red-600 rounded-full text-sm font-bold shadow-lg hover:bg-red-50 active:scale-95 transition-all"
-                        >
-                          Logout
-                        </button>
-                      </>
-                    )}
-                    {isPanditLoggedIn && (
-                      <>
-                        <Link href="/pandit/dashboard" className="flex items-center gap-2 text-sm font-bold text-white hover:text-yellow-300 transition-colors">
-                          <Sparkles className="w-4 h-4" />
-                          {panditName}
-                        </Link>
-                        <button
-                          onClick={handlePanditLogout}
-                          className="px-4 py-2 bg-white text-red-600 rounded-full text-sm font-bold shadow-lg hover:bg-red-50 active:scale-95 transition-all"
-                        >
-                          Logout
-                        </button>
-                      </>
-                    )}
-                  </>
+              <>
+                {auth.isLoggedIn ? (
+                  <div className="relative" ref={userRef}>
+                    <button
+                      onClick={() => { setUserMenuOpen(o => !o); setExploreOpen(false); }}
+                      className="flex items-center gap-2 bg-white/10 border border-white/15 hover:bg-white/15 transition-all px-3 py-2 rounded-2xl">
+                      <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-white text-xs font-black ${auth.isAdmin ? 'bg-orange-600' : 'bg-white/20'}`}>
+                        {auth.isAdmin ? <Crown className="w-4 h-4" /> : auth.userName[0]?.toUpperCase()}
+                      </div>
+                      <span className="text-white text-sm font-bold max-w-[100px] truncate">{auth.userName}</span>
+                      {auth.isAdmin && <span className="text-[9px] bg-orange-600 text-white px-1.5 py-0.5 rounded-full font-black">ADMIN</span>}
+                      <ChevronDown className={`w-3.5 h-3.5 text-white/60 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {userMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+                          <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
+                            <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Signed in as</p>
+                            <p className="text-sm font-black text-slate-900 truncate">{auth.userName}</p>
+                          </div>
+                          <div className="p-1.5 space-y-0.5">
+                            <Link href={dashboardHref} onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
+                              <BarChart3 className="w-4 h-4" />
+                              {auth.isAdmin ? 'Admin Dashboard' : 'Dashboard'}
+                            </Link>
+                            {!auth.isAdmin && (
+                              <>
+                                <Link href="/my-bookings" onClick={() => setUserMenuOpen(false)}
+                                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
+                                  <Calendar className="w-4 h-4" /> My Bookings
+                                </Link>
+                                <Link href="/samagri/orders" onClick={() => setUserMenuOpen(false)}
+                                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
+                                  <ShoppingBag className="w-4 h-4" /> My Orders
+                                </Link>
+                              </>
+                            )}
+                          </div>
+                          <div className="p-1.5 border-t border-slate-100">
+                            <button onClick={() => logout('user')}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-all">
+                              <LogOut className="w-4 h-4" /> Logout
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : auth.isPanditLoggedIn ? (
+                  <div className="flex items-center gap-2">
+                    <Link href="/pandit/dashboard"
+                      className="flex items-center gap-2 bg-white/10 border border-white/15 px-3 py-2 rounded-2xl text-white text-sm font-bold hover:bg-white/15 transition-all">
+                      <Sparkles className="w-4 h-4 text-orange-400" />
+                      {auth.panditName}
+                    </Link>
+                    <button onClick={() => logout('pandit')}
+                      className="p-2 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-xl transition-all">
+                      <LogOut className="w-4 h-4" />
+                    </button>
+                  </div>
                 ) : (
-                  <>
-                    {/* Login Dropdown */}
-                    <div className="relative" ref={loginDropdownRef}>
-                      <button
-                        onClick={() => {
-                          setShowLoginDropdown(!showLoginDropdown);
-                          setShowRegisterDropdown(false);
-                        }}
-                        className="flex items-center gap-1 text-sm font-bold text-white hover:text-yellow-300 transition-colors"
-                      >
-                        Login
-                        <ChevronDown className={`w-4 h-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
-                      </button>
-                      
-                      {showLoginDropdown && (
-                        <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-orange-200 overflow-hidden z-50">
-                          <Link
-                            href="/login"
-                            onClick={() => setShowLoginDropdown(false)}
-                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
-                          >
-                            <UserIcon className="w-4 h-4" />
-                            User Login
-                          </Link>
-                          <Link
-                            href="/pandit/login"
-                            onClick={() => setShowLoginDropdown(false)}
-                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                            Pandit Login
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Register Dropdown */}
-                    <div className="relative" ref={registerDropdownRef}>
-                      <button
-                        onClick={() => {
-                          setShowRegisterDropdown(!showRegisterDropdown);
-                          setShowLoginDropdown(false);
-                        }}
-                        className="flex items-center gap-1 px-5 py-2 bg-gradient-to-r from-yellow-300 to-orange-400 text-orange-950 rounded-full text-sm font-black shadow-xl hover:shadow-yellow-500/40 transition-all hover:-translate-y-0.5 active:translate-y-0"
-                      >
-                        SIGN UP
-                        <ChevronDown className={`w-4 h-4 transition-transform ${showRegisterDropdown ? 'rotate-180' : ''}`} />
-                      </button>
-                      
-                      {showRegisterDropdown && (
-                        <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-orange-200 overflow-hidden z-50">
-                          <Link
-                            href="/register"
-                            onClick={() => setShowRegisterDropdown(false)}
-                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors border-b border-orange-100"
-                          >
-                            <UserIcon className="w-4 h-4" />
-                            User Register
-                          </Link>
-                          <Link
-                            href="/pandit/register"
-                            onClick={() => setShowRegisterDropdown(false)}
-                            className="flex items-center gap-2 px-4 py-3 text-sm font-bold text-orange-900 hover:bg-orange-50 transition-colors"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                            Pandit Register
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-
-            {/* Mobile Toggle Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden w-10 h-10 flex flex-col items-center justify-center rounded-xl bg-white/10 border border-white/20 active:scale-90 transition-all"
-              aria-label="Toggle Menu"
-            >
-              <span className={`h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'w-5 rotate-45 translate-y-1.5' : 'w-5 mb-1'}`} />
-              <span className={`h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : 'w-4 mb-1'}`} />
-              <span className={`h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'w-5 -rotate-45 -translate-y-1' : 'w-4'}`} />
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Sidebar Content */}
-        <div 
-          className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-            mobileMenuOpen ? 'max-h-[500px] opacity-100 mt-4' : 'max-h-0 opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className="bg-orange-900/40 backdrop-blur-xl rounded-3xl p-4 border border-white/10 flex flex-col gap-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between p-4 rounded-2xl transition-all ${
-                  isActive(link.href) ? 'bg-yellow-400 text-orange-900' : 'bg-white/5 text-white hover:bg-white/10'
-                }`}
-              >
-                <div className="flex items-center gap-4 font-bold">
-                  <span>{link.icon}</span>
-                  <span>{link.label}</span>
-                </div>
-                <span className="opacity-50">→</span>
-              </Link>
-            ))}
-            
-            {/* Mobile Auth Buttons */}
-            {isLoggedIn || isPanditLoggedIn ? (
-              <div className="space-y-2 mt-2">
-                {isLoggedIn && (
-                  <>
-                    <div className="text-xs font-bold text-yellow-300 px-2 mb-1">User Menu</div>
-                    <Link href="/dashboard" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      <BarChart3 className="w-4 h-4" />
-                      Dashboard
-                    </Link>
-                    <Link href="/my-bookings" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      <Calendar className="w-4 h-4" />
-                      My Bookings
-                    </Link>
-                    <Link href="/samagri" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      <ShoppingBag className="w-4 h-4" />
-                      Samagri Shop
-                    </Link>
-                    <Link href="/samagri/orders" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      <span>📦</span>
-                      My Samagri Orders
-                    </Link>
-                    <Link href="/community" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      <Users className="w-4 h-4" />
-                      Community Feed
-                    </Link>
-                    <Link href="/forum" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      <HelpCircle className="w-4 h-4" />
-                      Spiritual Forum
-                    </Link>
-                    <button onClick={handleUserLogout} className="w-full py-3 text-center font-bold bg-red-500 text-white rounded-2xl">
-                      Logout
+                  <div className="flex items-center gap-2" ref={loginRef}>
+                    <button onClick={() => { setLoginOpen(o => !o); setExploreOpen(false); }}
+                      className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-bold px-3 py-2 rounded-xl hover:bg-white/10 transition-all">
+                      Login <ChevronDown className={`w-3.5 h-3.5 transition-transform ${loginOpen ? 'rotate-180' : ''}`} />
                     </button>
-                  </>
-                )}
-                {isPanditLoggedIn && (
-                  <>
-                    <Link href="/pandit/dashboard" className="flex items-center justify-center gap-2 py-3 text-center font-bold text-white bg-white/10 rounded-2xl">
-                      <Sparkles className="w-4 h-4" />
-                      {panditName} Dashboard
+                    <Link href="/register"
+                      className="bg-orange-600 text-white px-5 py-2 rounded-xl text-sm font-black hover:bg-orange-500 transition-all shadow-lg shadow-orange-600/20 active:scale-95">
+                      Sign Up
                     </Link>
-                    <button onClick={handlePanditLogout} className="w-full py-3 text-center font-bold bg-red-500 text-white rounded-2xl">
-                      Logout
-                    </button>
-                  </>
+
+                    <AnimatePresence>
+                      {loginOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute right-5 top-full mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+                          <Link href="/login" onClick={() => setLoginOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all border-b border-slate-100">
+                            <UserIcon className="w-4 h-4" /> User Login
+                          </Link>
+                          <Link href="/pandit/login" onClick={() => setLoginOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
+                            <Sparkles className="w-4 h-4" /> Pandit Login
+                          </Link>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 )}
-              </div>
-            ) : (
-              <div className="space-y-2 mt-2">
-                <div className="text-xs font-bold text-yellow-300 px-2 mb-1">User</div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Link href="/login" className="py-3 text-center font-bold text-white bg-white/10 rounded-2xl">Login</Link>
-                  <Link href="/register" className="py-3 text-center font-bold bg-yellow-400 text-orange-900 rounded-2xl shadow-lg">Register</Link>
-                </div>
-                <div className="text-xs font-bold text-yellow-300 px-2 mt-3 mb-1">Pandit</div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Link href="/pandit/login" className="py-3 text-center font-bold text-white bg-white/10 rounded-2xl">Login</Link>
-                  <Link href="/pandit/register" className="py-3 text-center font-bold bg-yellow-400 text-orange-900 rounded-2xl shadow-lg">Register</Link>
-                </div>
-              </div>
+              </>
             )}
           </div>
+
+          {/* Mobile toggle */}
+          <button onClick={() => setMobileOpen(o => !o)}
+            className="lg:hidden w-10 h-10 flex items-center justify-center bg-white/10 border border-white/15 rounded-xl text-white hover:bg-white/15 transition-all">
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* Mobile Drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[98]" />
+            <motion.div
+              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="lg:hidden fixed top-0 right-0 h-screen w-[85%] max-w-sm bg-slate-950 border-l border-white/10 z-[99] flex flex-col overflow-y-auto">
+
+              {/* Mobile Header */}
+              <div className="flex items-center justify-between p-5 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-orange-600 rounded-xl flex items-center justify-center">
+                    <Flag className="w-4 h-4 text-white" />
+                  </div>
+                  <p className="text-sm font-black text-white">RAMJI KI <span className="text-orange-500">SENA</span></p>
+                </div>
+                <button onClick={() => setMobileOpen(false)} className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center text-white">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="flex-1 p-4 space-y-6">
+                {/* Main Links */}
+                <div>
+                  <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.25em] mb-2 px-1">Main</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {mainLinks.map(({ href, label, icon: Icon }) => (
+                      <Link key={href} href={href} onClick={() => setMobileOpen(false)}
+                        className={`flex items-center gap-2 p-3 rounded-2xl text-sm font-bold transition-all ${
+                          isActive(href) ? 'bg-orange-600 text-white' : 'bg-white/5 text-white/80 hover:bg-white/10'
+                        }`}>
+                        <Icon className="w-4 h-4" /> {label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Explore */}
+                <div>
+                  <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.25em] mb-2 px-1">Explore</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {exploreLinks.map(({ href, label, icon: Icon }) => (
+                      <Link key={href} href={href} onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-2 p-3 rounded-2xl text-sm font-bold bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-all">
+                        <Icon className="w-4 h-4" /> {label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Auth */}
+                {showAuthButtons && (
+                  <div>
+                    <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.25em] mb-2 px-1">Account</p>
+                    {auth.isLoggedIn ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3 bg-white/5 rounded-2xl p-3">
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black ${auth.isAdmin ? 'bg-orange-600' : 'bg-white/20'}`}>
+                            {auth.isAdmin ? <Crown className="w-4 h-4" /> : auth.userName[0]?.toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-black">{auth.userName}</p>
+                            {auth.isAdmin && <p className="text-orange-400 text-[10px] font-black uppercase">Admin</p>}
+                          </div>
+                        </div>
+                        <Link href={dashboardHref} onClick={() => setMobileOpen(false)}
+                          className="flex items-center gap-2 p-3 rounded-2xl bg-orange-600 text-white text-sm font-black">
+                          <BarChart3 className="w-4 h-4" /> {auth.isAdmin ? 'Admin Dashboard' : 'Dashboard'}
+                        </Link>
+                        {!auth.isAdmin && (
+                          <Link href="/my-bookings" onClick={() => setMobileOpen(false)}
+                            className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 text-white/80 text-sm font-bold">
+                            <Calendar className="w-4 h-4" /> My Bookings
+                          </Link>
+                        )}
+                        <button onClick={() => logout('user')}
+                          className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500 hover:text-white transition-all">
+                          <LogOut className="w-4 h-4" /> Logout
+                        </button>
+                      </div>
+                    ) : auth.isPanditLoggedIn ? (
+                      <div className="space-y-2">
+                        <Link href="/pandit/dashboard" onClick={() => setMobileOpen(false)}
+                          className="flex items-center gap-2 p-3 rounded-2xl bg-orange-600 text-white text-sm font-black">
+                          <Sparkles className="w-4 h-4" /> {auth.panditName} Dashboard
+                        </Link>
+                        <button onClick={() => logout('pandit')}
+                          className="w-full p-3 rounded-2xl bg-red-500/20 text-red-400 text-sm font-bold">
+                          Logout
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                          <Link href="/login" onClick={() => setMobileOpen(false)}
+                            className="p-3 rounded-2xl bg-white/10 text-white text-sm font-bold text-center">Login</Link>
+                          <Link href="/register" onClick={() => setMobileOpen(false)}
+                            className="p-3 rounded-2xl bg-orange-600 text-white text-sm font-black text-center">Sign Up</Link>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Link href="/pandit/login" onClick={() => setMobileOpen(false)}
+                            className="p-3 rounded-2xl bg-white/5 text-white/70 text-xs font-bold text-center">Pandit Login</Link>
+                          <Link href="/pandit/register" onClick={() => setMobileOpen(false)}
+                            className="p-3 rounded-2xl bg-white/5 text-white/70 text-xs font-bold text-center">Pandit Register</Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

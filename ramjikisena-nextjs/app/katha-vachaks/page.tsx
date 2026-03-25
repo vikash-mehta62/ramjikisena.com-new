@@ -14,20 +14,11 @@ interface KathaVachak {
   experience: number;
   specialization: string;
   description: string;
-  contact: {
-    phone?: string;
-    email?: string;
-    whatsapp?: string;
-  };
+  contact: { phone?: string; email?: string; whatsapp?: string; };
   liveKathas: Array<{
-    _id: string;
-    city: string;
-    state: string;
-    startDate: string;
-    endDate: string;
-    liveLink?: string;
-    kathaType: string;
-    isActive: boolean;
+    _id: string; city: string; state: string;
+    startDate: string; endDate: string;
+    liveLink?: string; kathaType: string; isActive: boolean;
   }>;
   averageRating: number;
   reviews: any[];
@@ -41,218 +32,151 @@ export default function KathaVachakListing() {
   const [cityFilter, setCityFilter] = useState('');
   const [liveFilter, setLiveFilter] = useState<'all' | 'live' | 'offline'>('all');
 
-  useEffect(() => {
-    fetchKathaVachaks();
-  }, [search, cityFilter, liveFilter]);
+  useEffect(() => { fetchKathaVachaks(); }, [search, cityFilter, liveFilter]);
 
   const fetchKathaVachaks = async () => {
     try {
       let url = `/api/katha-vachaks?search=${search}&city=${cityFilter}`;
       if (liveFilter === 'live') url += '&isLive=true';
-      
       const response = await api.get(url);
       const data = await response.json();
       if (data.success) {
-        // Filter by live status on frontend if needed
         let filtered = data.kathaVachaks;
-        if (liveFilter === 'offline') {
-          filtered = filtered.filter((kv: KathaVachak) => !isCurrentlyLive(kv));
-        }
+        if (liveFilter === 'offline') filtered = filtered.filter((kv: KathaVachak) => !isCurrentlyLive(kv));
         setKathaVachaks(filtered);
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { console.error(error); }
+    finally { setLoading(false); }
   };
 
-  const isCurrentlyLive = (kathaVachak: KathaVachak) => {
+  const isCurrentlyLive = (kv: KathaVachak) => {
     const now = new Date();
-    return kathaVachak.liveKathas.some(katha => {
-      if (!katha.isActive) return false;
-      const start = new Date(katha.startDate);
-      
-      // If no end date, consider it ongoing (live)
-      if (!katha.endDate) {
-        return start <= now;
-      }
-      
-      const end = new Date(katha.endDate);
-      return start <= now && end >= now;
+    return kv.liveKathas.some(k => {
+      if (!k.isActive) return false;
+      const start = new Date(k.startDate);
+      if (!k.endDate) return start <= now;
+      return start <= now && new Date(k.endDate) >= now;
     });
   };
 
-  const getCurrentLiveKatha = (kathaVachak: KathaVachak) => {
+  const getCurrentLiveKatha = (kv: KathaVachak) => {
     const now = new Date();
-    return kathaVachak.liveKathas.find(katha => {
-      if (!katha.isActive) return false;
-      const start = new Date(katha.startDate);
-      
-      // If no end date, consider it ongoing (live)
-      if (!katha.endDate) {
-        return start <= now;
-      }
-      
-      const end = new Date(katha.endDate);
-      return start <= now && end >= now;
+    return kv.liveKathas.find(k => {
+      if (!k.isActive) return false;
+      const start = new Date(k.startDate);
+      if (!k.endDate) return start <= now;
+      return start <= now && new Date(k.endDate) >= now;
     });
   };
 
   if (loading) return (
-    <div className="h-screen flex items-center justify-center bg-[#FAF9F6]">
-      <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+    <div className="h-screen flex items-center justify-center bg-[#FFFAF3]">
+      <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-slate-800 antialiased">
+    <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
+      <main className="max-w-6xl mx-auto px-2 sm:px-6 pt-24 pb-12">
 
-      <main className="max-w-6xl mx-auto px-4 pt-20 pb-12">
         {/* Header */}
-        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900">
-              कथा <span className="text-orange-600">वाचक</span>
+        <div className="mb-6 md:mb-10 text-center md:text-left px-3">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
+              कथा <span className="text-orange-600 italic">वाचक</span>
             </h1>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
-              Divine Storytellers & Spiritual Guides
+            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
+            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
+              Divine Storytellers &amp; Spiritual Guides
             </p>
-          </div>
-          <div className="text-right">
-            <span className="text-[10px] font-black bg-orange-100 text-orange-700 px-2 py-1 rounded-md uppercase tracking-tighter">
-              Total: {kathaVachaks.length} Katha Vachaks
-            </span>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Search & Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mb-10">
+        {/* Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3 mb-8 px-2">
           <div className="md:col-span-4 relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-500 transition-colors" size={16} />
-            <input
-              type="text"
-              placeholder="नाम खोजें..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
-            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-500 transition-colors" size={16} />
+            <input type="text" placeholder="नाम खोजें..." value={search} onChange={e => setSearch(e.target.value)}
+              className="w-full pl-11 pr-4 py-3.5 bg-white border border-orange-100 rounded-2xl text-xs font-bold focus:border-orange-500 outline-none transition-all shadow-sm" />
           </div>
-          <div className="md:col-span-3 relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input
-              type="text"
-              placeholder="शहर..."
-              value={cityFilter}
-              onChange={(e) => setCityFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
-            />
+          <div className="md:col-span-3 relative group">
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-500 transition-colors" size={16} />
+            <input type="text" placeholder="City..." value={cityFilter} onChange={e => setCityFilter(e.target.value)}
+              className="w-full pl-11 pr-4 py-3.5 bg-white border border-orange-100 rounded-2xl text-xs font-bold focus:border-orange-500 outline-none transition-all shadow-sm" />
           </div>
           <div className="md:col-span-3">
-            <select
-              value={liveFilter}
-              onChange={(e) => setLiveFilter(e.target.value as any)}
-              className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
-            >
+            <select value={liveFilter} onChange={e => setLiveFilter(e.target.value as 'all' | 'live' | 'offline')}
+              className="w-full px-4 py-3.5 bg-white border border-orange-100 rounded-2xl text-xs font-bold focus:border-orange-500 outline-none transition-all shadow-sm">
               <option value="all">All Status</option>
               <option value="live">🟢 Live Now</option>
               <option value="offline">⚪ Offline</option>
             </select>
           </div>
-          <button
-            onClick={() => { setSearch(''); setCityFilter(''); setLiveFilter('all'); }}
-            className="md:col-span-2 flex items-center justify-center gap-2 bg-slate-900 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-orange-600 transition-colors active:scale-95"
-          >
-            <FilterX size={16} /> Reset
+          <button onClick={() => { setSearch(''); setCityFilter(''); setLiveFilter('all'); }}
+            className="md:col-span-2 flex items-center justify-center gap-2 bg-slate-900 text-white py-3.5 rounded-2xl text-xs font-black shadow-lg hover:bg-orange-600 transition-all active:scale-95">
+            <FilterX size={16} /> RESET
           </button>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <AnimatePresence>
-            {kathaVachaks.map((kv) => {
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-6 px-1">
+          <AnimatePresence mode="popLayout">
+            {kathaVachaks.map((kv, i) => {
               const isLive = isCurrentlyLive(kv);
               const liveKatha = getCurrentLiveKatha(kv);
-
               return (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  key={kv._id}
-                  className="group bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:shadow-orange-900/5 transition-all duration-300"
-                >
-                  {/* Image */}
-                  <div className="relative h-44 overflow-hidden">
+                <motion.div layout key={kv._id}
+                  initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3, delay: i * 0.03 }}
+                  className="group bg-white rounded-2xl md:rounded-[2.5rem] border border-orange-50 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  {/* Photo */}
+                  <div className="relative aspect-[4/3] md:h-52 overflow-hidden bg-slate-100">
                     {kv.photo ? (
-                      <img src={kv.photo} alt={kv.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <img src={kv.photo} alt={kv.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center text-5xl">
-                        🙏
-                      </div>
+                      <div className="w-full h-full flex items-center justify-center text-4xl opacity-20 bg-orange-50">🙏</div>
                     )}
-                    
-                    {/* Live Badge */}
                     {isLive && (
-                      <div className="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-lg flex items-center gap-2 shadow-lg animate-pulse">
-                        <Radio size={12} className="animate-ping" />
-                        <span className="text-[11px] font-black uppercase">LIVE NOW</span>
+                      <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-red-500 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-lg flex items-center gap-1.5 shadow-lg animate-pulse">
+                        <Radio size={10} className="sm:w-3 sm:h-3" />
+                        <span className="text-[9px] sm:text-[11px] font-black uppercase">LIVE</span>
                       </div>
                     )}
-
-                    {/* Rating */}
-                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm border border-slate-100">
-                      <Star size={12} className="fill-orange-500 text-orange-500" />
-                      <span className="text-[11px] font-black text-slate-800">
-                        {kv.averageRating > 0 ? kv.averageRating.toFixed(1) : 'New'}
+                    <div className="absolute top-2 right-2 md:top-4 md:right-4 bg-white/80 backdrop-blur-md px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-lg flex items-center gap-1 shadow-sm border border-white/40">
+                      <Star size={10} className="fill-orange-500 text-orange-500 sm:w-3 sm:h-3" />
+                      <span className="text-[9px] sm:text-xs font-black text-slate-800">
+                        {kv.averageRating > 0 ? kv.averageRating.toFixed(1) : 'NEW'}
                       </span>
                     </div>
                   </div>
-
                   {/* Content */}
-                  <div className="p-4">
-                    <h3 className="text-md font-bold text-slate-900 mb-1 group-hover:text-orange-600 transition-colors truncate">
+                  <div className="p-2.5 sm:p-5">
+                    <h3 className="text-[12px] sm:text-lg font-black text-slate-900 mb-0.5 group-hover:text-orange-600 transition-colors truncate tracking-tighter">
                       {kv.name}
                     </h3>
-
-                    <p className="text-[11px] text-orange-600 font-bold mb-2">
+                    <p className="text-[10px] sm:text-xs text-orange-600 font-bold mb-2 truncate">
                       {kv.specialization || 'Katha Vachak'}
                     </p>
-
+                    <span className="inline-flex items-center bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full text-[9px] sm:text-[11px] font-black mb-2">
+                      {kv.experience} yrs exp
+                    </span>
                     {isLive && liveKatha && (
-                      <div className="mb-3 p-3 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-300 rounded-lg">
-                        <p className="text-[10px] font-black text-red-700 uppercase mb-1 flex items-center gap-1">
-                          <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                      <div className="mb-2 p-2 sm:p-3 bg-red-50 border border-red-200 rounded-xl">
+                        <p className="text-[9px] sm:text-[10px] font-black text-red-700 uppercase flex items-center gap-1 mb-0.5">
+                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
                           {liveKatha.kathaType}
                         </p>
-                        <p className="text-[10px] text-slate-700 font-semibold mb-1">
-                          📍 {liveKatha.city}, {liveKatha.state}
-                        </p>
-                        <p className="text-[9px] text-slate-500">
-                          Until {new Date(liveKatha.endDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                        </p>
+                        <p className="text-[9px] sm:text-[10px] text-slate-600 font-semibold">📍 {liveKatha.city}, {liveKatha.state}</p>
                       </div>
                     )}
-
-                    <div className="flex items-center gap-1.5 text-slate-500 mb-4">
-                      <span className="text-[11px] font-medium">
-                        {kv.experience} years experience
+                    <div className="flex flex-col gap-2 pt-2 sm:pt-3 border-t border-orange-50">
+                      <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                        {kv.reviews.length} reviews
                       </span>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-50">
-                      <div className="flex items-center gap-1 text-slate-400">
-                        <span className="text-[10px] font-bold uppercase">
-                          {kv.reviews.length} reviews
-                        </span>
-                      </div>
-
-                      <Link
-                        href={`/katha-vachaks/${kv._id}`}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-lg text-[11px] font-black hover:bg-orange-600 hover:text-white transition-all group/btn"
-                      >
-                        VIEW <ArrowRight size={12} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                      <Link href={`/katha-vachaks/${kv._id}`}
+                        className="w-full py-2 sm:py-3 bg-orange-600 text-white rounded-xl sm:rounded-2xl text-[9px] sm:text-xs font-black flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-all group/btn">
+                        VIEW <ArrowRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
                       </Link>
                     </div>
                   </div>
@@ -262,16 +186,15 @@ export default function KathaVachakListing() {
           </AnimatePresence>
         </div>
 
-        {/* Empty State */}
-        {kathaVachaks.length === 0 && (
-          <div className="text-center py-20 border-2 border-dashed border-slate-200 rounded-3xl">
-            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No Results Found</p>
+        {!loading && kathaVachaks.length === 0 && (
+          <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-orange-200 mx-2 shadow-inner">
+            <div className="text-5xl mb-3">📖</div>
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No Katha Vachaks Found</p>
           </div>
         )}
       </main>
-
-      <footer className="py-8 text-center border-t border-slate-100">
-        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">जय श्री राम</p>
+      <footer className="py-12 text-center border-t border-orange-100 mt-10">
+        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.8em]">जय श्री राम</p>
       </footer>
     </div>
   );
