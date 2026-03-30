@@ -10,7 +10,7 @@ import {
   Sparkles, ShoppingBag, Users, HelpCircle, Compass,
   LogOut, Crown, Menu, X, Star, MessageSquare
 } from 'lucide-react';
-
+import { requestGlobalNavigation } from '@/lib/jaapContext';
 interface NavbarProps { showAuthButtons?: boolean; }
 
 const exploreLinks = [
@@ -38,6 +38,22 @@ const mainLinks = [
 export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const navigate = (href: string) => {
+    router.push(href);
+    setExploreOpen(false);
+    setUserMenuOpen(false);
+    setLoginOpen(false);
+    setMobileOpen(false);
+  };
+
+  const safeNavigate = (href: string) => {
+    requestGlobalNavigation(href, navigate);
+    setExploreOpen(false);
+    setUserMenuOpen(false);
+    setLoginOpen(false);
+    setMobileOpen(false);
+  };
 
   const [auth, setAuth] = useState({
     isLoggedIn: false, isPanditLoggedIn: false,
@@ -101,7 +117,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
         <div className="container mx-auto px-5 flex items-center justify-between gap-4">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
+          <button onClick={() => safeNavigate('/')} className="flex items-center gap-3 group flex-shrink-0">
             <div className="w-9 h-9 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/30 group-hover:scale-105 transition-transform">
               <Flag className="w-5 h-5 text-white" />
             </div>
@@ -109,17 +125,17 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
               <p className="text-base font-black tracking-tighter text-white leading-none">RAMJI KI <span className="text-orange-500">SENA</span></p>
               <p className="text-[9px] text-white/40 tracking-[0.2em] uppercase">Spiritual Portal</p>
             </div>
-          </Link>
+          </button>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1 bg-white/5 border border-white/10 rounded-2xl p-1 backdrop-blur-md">
             {mainLinks.map(({ href, label, icon: Icon }) => (
-              <Link key={href} href={href}
+              <button key={href} onClick={() => safeNavigate(href)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                   isActive(href) ? 'bg-orange-600 text-white shadow-lg' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}>
                 <Icon className="w-3.5 h-3.5" /> {label}
-              </Link>
+              </button>
             ))}
 
             {/* Explore Dropdown */}
@@ -146,9 +162,8 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em] mb-3 px-1">सभी सेवाएं / All Features</p>
                     <div className="grid grid-cols-3 gap-2">
                       {exploreLinks.map(({ href, label, icon: Icon, desc, color }) => (
-                        <Link key={href} href={href}
-                          onClick={() => setExploreOpen(false)}
-                          className="flex items-start gap-3 p-3 rounded-2xl hover:bg-slate-50 transition-all group">
+                        <button key={href} onClick={() => safeNavigate(href)}
+                          className="flex items-start gap-3 p-3 rounded-2xl hover:bg-slate-50 transition-all group text-left w-full">
                           <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${color}`}>
                             <Icon className="w-4 h-4" />
                           </div>
@@ -156,7 +171,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                             <p className="text-xs font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight">{label}</p>
                             <p className="text-[10px] text-slate-400 leading-tight mt-0.5 truncate">{desc}</p>
                           </div>
-                        </Link>
+                        </button>
                       ))}
                     </div>
                   </motion.div>
@@ -193,21 +208,21 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                             <p className="text-sm font-black text-slate-900 truncate">{auth.userName}</p>
                           </div>
                           <div className="p-1.5 space-y-0.5">
-                            <Link href={dashboardHref} onClick={() => setUserMenuOpen(false)}
-                              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
+                            <button onClick={() => safeNavigate(dashboardHref)}
+                              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
                               <BarChart3 className="w-4 h-4" />
                               {auth.isAdmin ? 'Admin Dashboard' : 'Dashboard'}
-                            </Link>
+                            </button>
                             {!auth.isAdmin && (
                               <>
-                                <Link href="/my-bookings" onClick={() => setUserMenuOpen(false)}
-                                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
+                                <button onClick={() => safeNavigate('/my-bookings')}
+                                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
                                   <Calendar className="w-4 h-4" /> My Bookings
-                                </Link>
-                                <Link href="/samagri/orders" onClick={() => setUserMenuOpen(false)}
-                                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
+                                </button>
+                                <button onClick={() => safeNavigate('/samagri/orders')}
+                                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
                                   <ShoppingBag className="w-4 h-4" /> My Orders
-                                </Link>
+                                </button>
                               </>
                             )}
                           </div>
@@ -223,11 +238,11 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                   </div>
                 ) : auth.isPanditLoggedIn ? (
                   <div className="flex items-center gap-2">
-                    <Link href="/pandit/dashboard"
+                    <button onClick={() => safeNavigate('/pandit/dashboard')}
                       className="flex items-center gap-2 bg-white/10 border border-white/15 px-3 py-2 rounded-2xl text-white text-sm font-bold hover:bg-white/15 transition-all">
                       <Sparkles className="w-4 h-4 text-orange-400" />
                       {auth.panditName}
-                    </Link>
+                    </button>
                     <button onClick={() => logout('pandit')}
                       className="p-2 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-xl transition-all">
                       <LogOut className="w-4 h-4" />
@@ -239,10 +254,10 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                       className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-bold px-3 py-2 rounded-xl hover:bg-white/10 transition-all">
                       Login <ChevronDown className={`w-3.5 h-3.5 transition-transform ${loginOpen ? 'rotate-180' : ''}`} />
                     </button>
-                    <Link href="/register"
+                    <button onClick={() => safeNavigate('/register')}
                       className="bg-orange-600 text-white px-5 py-2 rounded-xl text-sm font-black hover:bg-orange-500 transition-all shadow-lg shadow-orange-600/20 active:scale-95">
                       Sign Up
-                    </Link>
+                    </button>
 
                     <AnimatePresence>
                       {loginOpen && (
@@ -250,14 +265,14 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
                           transition={{ duration: 0.15 }}
                           className="absolute right-5 top-full mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
-                          <Link href="/login" onClick={() => setLoginOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all border-b border-slate-100">
+                          <button onClick={() => safeNavigate('/login')}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all border-b border-slate-100">
                             <UserIcon className="w-4 h-4" /> User Login
-                          </Link>
-                          <Link href="/pandit/login" onClick={() => setLoginOpen(false)}
-                            className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
+                          </button>
+                          <button onClick={() => safeNavigate('/pandit/login')}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
                             <Sparkles className="w-4 h-4" /> Pandit Login
-                          </Link>
+                          </button>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -306,12 +321,12 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                   <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.25em] mb-2 px-1">Main</p>
                   <div className="grid grid-cols-2 gap-2">
                     {mainLinks.map(({ href, label, icon: Icon }) => (
-                      <Link key={href} href={href} onClick={() => setMobileOpen(false)}
+                      <button key={href} onClick={() => safeNavigate(href)}
                         className={`flex items-center gap-2 p-3 rounded-2xl text-sm font-bold transition-all ${
                           isActive(href) ? 'bg-orange-600 text-white' : 'bg-white/5 text-white/80 hover:bg-white/10'
                         }`}>
                         <Icon className="w-4 h-4" /> {label}
-                      </Link>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -321,10 +336,10 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                   <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.25em] mb-2 px-1">Explore</p>
                   <div className="grid grid-cols-2 gap-2">
                     {exploreLinks.map(({ href, label, icon: Icon }) => (
-                      <Link key={href} href={href} onClick={() => setMobileOpen(false)}
+                      <button key={href} onClick={() => safeNavigate(href)}
                         className="flex items-center gap-2 p-3 rounded-2xl text-sm font-bold bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-all">
                         <Icon className="w-4 h-4" /> {label}
-                      </Link>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -344,15 +359,15 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                             {auth.isAdmin && <p className="text-orange-400 text-[10px] font-black uppercase">Admin</p>}
                           </div>
                         </div>
-                        <Link href={dashboardHref} onClick={() => setMobileOpen(false)}
-                          className="flex items-center gap-2 p-3 rounded-2xl bg-orange-600 text-white text-sm font-black">
+                        <button onClick={() => safeNavigate(dashboardHref)}
+                          className="w-full flex items-center gap-2 p-3 rounded-2xl bg-orange-600 text-white text-sm font-black">
                           <BarChart3 className="w-4 h-4" /> {auth.isAdmin ? 'Admin Dashboard' : 'Dashboard'}
-                        </Link>
+                        </button>
                         {!auth.isAdmin && (
-                          <Link href="/my-bookings" onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-2 p-3 rounded-2xl bg-white/5 text-white/80 text-sm font-bold">
+                          <button onClick={() => safeNavigate('/my-bookings')}
+                            className="w-full flex items-center gap-2 p-3 rounded-2xl bg-white/5 text-white/80 text-sm font-bold">
                             <Calendar className="w-4 h-4" /> My Bookings
-                          </Link>
+                          </button>
                         )}
                         <button onClick={() => logout('user')}
                           className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500 hover:text-white transition-all">
@@ -361,10 +376,10 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                       </div>
                     ) : auth.isPanditLoggedIn ? (
                       <div className="space-y-2">
-                        <Link href="/pandit/dashboard" onClick={() => setMobileOpen(false)}
-                          className="flex items-center gap-2 p-3 rounded-2xl bg-orange-600 text-white text-sm font-black">
+                        <button onClick={() => safeNavigate('/pandit/dashboard')}
+                          className="w-full flex items-center gap-2 p-3 rounded-2xl bg-orange-600 text-white text-sm font-black">
                           <Sparkles className="w-4 h-4" /> {auth.panditName} Dashboard
-                        </Link>
+                        </button>
                         <button onClick={() => logout('pandit')}
                           className="w-full p-3 rounded-2xl bg-red-500/20 text-red-400 text-sm font-bold">
                           Logout
@@ -373,16 +388,16 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     ) : (
                       <div className="space-y-2">
                         <div className="grid grid-cols-2 gap-2">
-                          <Link href="/login" onClick={() => setMobileOpen(false)}
-                            className="p-3 rounded-2xl bg-white/10 text-white text-sm font-bold text-center">Login</Link>
-                          <Link href="/register" onClick={() => setMobileOpen(false)}
-                            className="p-3 rounded-2xl bg-orange-600 text-white text-sm font-black text-center">Sign Up</Link>
+                          <button onClick={() => safeNavigate('/login')}
+                            className="p-3 rounded-2xl bg-white/10 text-white text-sm font-bold text-center">Login</button>
+                          <button onClick={() => safeNavigate('/register')}
+                            className="p-3 rounded-2xl bg-orange-600 text-white text-sm font-black text-center">Sign Up</button>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
-                          <Link href="/pandit/login" onClick={() => setMobileOpen(false)}
-                            className="p-3 rounded-2xl bg-white/5 text-white/70 text-xs font-bold text-center">Pandit Login</Link>
-                          <Link href="/pandit/register" onClick={() => setMobileOpen(false)}
-                            className="p-3 rounded-2xl bg-white/5 text-white/70 text-xs font-bold text-center">Pandit Register</Link>
+                          <button onClick={() => safeNavigate('/pandit/login')}
+                            className="p-3 rounded-2xl bg-white/5 text-white/70 text-xs font-bold text-center">Pandit Login</button>
+                          <button onClick={() => safeNavigate('/pandit/register')}
+                            className="p-3 rounded-2xl bg-white/5 text-white/70 text-xs font-bold text-center">Pandit Register</button>
                         </div>
                       </div>
                     )}

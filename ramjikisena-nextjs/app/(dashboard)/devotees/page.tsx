@@ -5,6 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Flag, Sparkles } from 'lucide-react';
 
+const getAuthHeaders = (): HeadersInit => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return headers;
+};
+
 interface User {
   _id: string;
   name: string;
@@ -30,6 +37,7 @@ export default function AllDevoteesPage() {
   const fetchDevotees = async () => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/devotees`, {
+        headers: getAuthHeaders(),
         credentials: 'include',
       });
 

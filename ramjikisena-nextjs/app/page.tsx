@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import MusicPlayer from '@/components/MusicPlayer';
 import NaamJapSection from '@/components/NaamJapSection';
 import Footer from '@/components/Footer';
 import { authApi, User } from '@/lib/auth';
+import { useJaapNavigate } from '@/lib/useJaapNavigate';
+import { ImageIcon, BookOpen, Users, Star, MessageCircle, Target, ArrowRight } from 'lucide-react';
 
 const slides = [
   {
@@ -33,6 +34,7 @@ export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const safeNavigate = useJaapNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -112,12 +114,12 @@ export default function HomePage() {
                   </p>
                   
                   <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
-                    <Link href="/register" className="px-10 py-4 bg-orange-600 text-white font-bold rounded-2xl shadow-xl hover:bg-orange-500 transition-all hover:scale-105 active:scale-95 text-lg">
+                    <button onClick={() => safeNavigate('/register')} className="px-10 py-4 bg-orange-600 text-white font-bold rounded-2xl shadow-xl hover:bg-orange-500 transition-all hover:scale-105 active:scale-95 text-lg">
                       अभी शुरू करें ✨
-                    </Link>
-                    <Link href="/login" className="px-10 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold rounded-2xl hover:bg-white/20 transition-all text-lg">
+                    </button>
+                    <button onClick={() => safeNavigate('/login')} className="px-10 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold rounded-2xl hover:bg-white/20 transition-all text-lg">
                       लॉगिन करें 🙏
-                    </Link>
+                    </button>
                   </div>
                 </motion.div>
 
@@ -207,58 +209,74 @@ export default function HomePage() {
             ].map((item, i) => (
               <motion.div key={i} whileHover={{ y: -10 }}
                 className="group p-8 bg-white rounded-[2.5rem] border border-orange-100 shadow-lg shadow-orange-900/5 transition-all">
-                <Link href={item.href}>
+                <button onClick={() => safeNavigate(item.href)} className="w-full text-left">
                   <div className="text-4xl mb-6 bg-orange-50 w-16 h-16 flex items-center justify-center rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-colors">
                     {item.icon}
                   </div>
                   <h3 className="text-xl font-black text-slate-900 mb-3">{item.title}</h3>
                   <p className="text-slate-500 leading-relaxed text-sm">{item.desc}</p>
-                </Link>
+                </button>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* --- EXPLORE MORE FEATURES (pages not in navbar) --- */}
-      <section className="py-24 bg-white">
+      {/* --- EXPLORE MORE FEATURES --- */}
+      <section className="py-16 bg-white overflow-hidden">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 bg-orange-100 text-orange-700 text-xs font-black uppercase tracking-widest rounded-full mb-4">और भी बहुत कुछ</span>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">सभी सेवाएं एक जगह</h2>
-            <div className="h-1.5 w-20 bg-orange-500 mx-auto rounded-full" />
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex items-center justify-between mb-8"
+          >
+            <div>
+              <span className="inline-block px-3 py-1 bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest rounded-full mb-2">और भी बहुत कुछ</span>
+              <h2 className="text-2xl md:text-3xl font-black text-slate-900">सभी सेवाएं एक जगह</h2>
+            </div>
+            <div className="h-0.5 flex-1 mx-6 bg-gradient-to-r from-orange-200 to-transparent rounded-full hidden md:block" />
+          </motion.div>
+
+          <div className="flex gap-4 justify-between pb-3 flex-wrap md:flex-nowrap">
             {[
-              { title: "गैलरी", icon: "🖼️", desc: "भव्य दर्शन और उत्सवों की तस्वीरें देखें", href: "/gallery", color: "from-pink-500 to-rose-500" },
-              { title: "कथा वाचक", icon: "📖", desc: "अनुभवी कथा वाचकों को बुक करें", href: "/katha-vachaks", color: "from-violet-500 to-purple-600" },
-              { title: "भक्त समुदाय", icon: "🙏", desc: "भक्तों के साथ अनुभव साझा करें", href: "/community", color: "from-orange-500 to-red-500" },
-              { title: "राम महिमा", icon: "✨", desc: "श्री राम की महिमा और कथाएं पढ़ें", href: "/glory", color: "from-amber-500 to-yellow-500" },
-              { title: "फोरम", icon: "💬", desc: "आध्यात्मिक प्रश्न पूछें और उत्तर पाएं", href: "/forum", color: "from-teal-500 to-cyan-500" },
-              { title: "हमारा मिशन", icon: "🚩", desc: "राम सेना के उद्देश्य और लक्ष्य जानें", href: "/mission", color: "from-red-500 to-orange-600" },
+              { title: "गैलरी",       desc: "भव्य दर्शन",          href: "/gallery",       icon: ImageIcon,    grad: "from-pink-500 to-rose-500" },
+              { title: "कथा वाचक",   desc: "बुकिंग करें",          href: "/katha-vachaks", icon: BookOpen,     grad: "from-violet-500 to-purple-600" },
+              { title: "भक्त समुदाय", desc: "साथ जुड़ें",           href: "/community",     icon: Users,        grad: "from-orange-500 to-red-500" },
+              { title: "राम महिमा",   desc: "महिमा पढ़ें",          href: "/glory",         icon: Star,         grad: "from-amber-500 to-yellow-500" },
+              { title: "फोरम",        desc: "प्रश्न पूछें",         href: "/forum",         icon: MessageCircle,grad: "from-teal-500 to-cyan-500" },
+              { title: "हमारा मिशन", desc: "उद्देश्य जानें",        href: "/mission",       icon: Target,       grad: "from-red-500 to-orange-600" },
             ].map((item, i) => (
-              <motion.div
+              <motion.button
                 key={i}
-                whileInView={{ opacity: 1, y: 0 }}
-                initial={{ opacity: 0, y: 20 }}
+                onClick={() => safeNavigate(item.href)}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.07 }}
-                whileHover={{ y: -6 }}
+                transition={{ delay: i * 0.07, type: 'spring', stiffness: 200, damping: 20 }}
+                whileHover={{ y: -6, scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="group flex-1 min-w-[130px] snap-start bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden text-left"
               >
-                <Link href={item.href}
-                  className="group flex flex-col h-full bg-white rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-                  <div className={`bg-gradient-to-br ${item.color} p-6 flex items-center justify-center`}>
-                    <span className="text-4xl">{item.icon}</span>
-                  </div>
-                  <div className="p-5 flex-1">
-                    <h3 className="text-base font-black text-slate-900 mb-1.5 group-hover:text-orange-600 transition-colors">{item.title}</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
-                  </div>
-                  <div className="px-5 pb-4">
-                    <span className="text-xs font-black text-orange-600 uppercase tracking-wider">देखें →</span>
-                  </div>
-                </Link>
-              </motion.div>
+                <div className={`bg-gradient-to-br ${item.grad} p-5 flex items-center justify-center`}>
+                  <motion.div
+                    whileHover={{ rotate: 12, scale: 1.2 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    <item.icon className="w-7 h-7 text-white" strokeWidth={2} />
+                  </motion.div>
+                </div>
+                <div className="p-3">
+                  <p className="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight">{item.title}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">{item.desc}</p>
+                  <motion.span
+                    className="inline-flex items-center gap-0.5 text-[10px] font-black text-orange-500 mt-2"
+                    whileHover={{ x: 3 }}
+                  >
+                    देखें <ArrowRight className="w-3 h-3" />
+                  </motion.span>
+                </div>
+              </motion.button>
             ))}
           </div>
         </div>
@@ -282,12 +300,12 @@ export default function HomePage() {
                 ))}
               </div>
               <div className="flex flex-wrap gap-4">
-                <Link href="/samagri" className="inline-flex items-center gap-2 bg-white text-orange-700 font-black px-8 py-4 rounded-2xl shadow-xl hover:scale-105 transition-all text-lg">
+                <button onClick={() => safeNavigate('/samagri')} className="inline-flex items-center gap-2 bg-white text-orange-700 font-black px-8 py-4 rounded-2xl shadow-xl hover:scale-105 transition-all text-lg">
                   🛒 अभी खरीदें
-                </Link>
-                <Link href="/samagri?tab=packages" className="inline-flex items-center gap-2 bg-white/20 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/30 transition-all text-lg border border-white/30">
+                </button>
+                <button onClick={() => safeNavigate('/samagri')} className="inline-flex items-center gap-2 bg-white/20 text-white font-bold px-8 py-4 rounded-2xl hover:bg-white/30 transition-all text-lg border border-white/30">
                   🎁 Packages देखें
-                </Link>
+                </button>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -296,14 +314,14 @@ export default function HomePage() {
                 { tier: 'Standard', price: '₹999', emoji: '🪔', color: 'from-orange-400 to-amber-500' },
                 { tier: 'Premium', price: '₹1999', emoji: '👑', color: 'from-purple-500 to-violet-600' },
               ].map(pkg => (
-                <Link key={pkg.tier} href="/samagri"
+                <button key={pkg.tier} onClick={() => safeNavigate('/samagri')}
                   className="bg-white rounded-2xl p-4 text-center shadow-xl hover:-translate-y-2 transition-all group">
                   <div className={`w-12 h-12 bg-gradient-to-br ${pkg.color} rounded-xl flex items-center justify-center text-2xl mx-auto mb-3 group-hover:scale-110 transition-transform`}>
                     {pkg.emoji}
                   </div>
                   <p className="font-black text-gray-800 text-sm">{pkg.tier}</p>
                   <p className="text-orange-600 font-bold text-lg">{pkg.price}</p>
-                </Link>
+                </button>
               ))}
             </div>
           </div>
@@ -329,9 +347,9 @@ export default function HomePage() {
                   <span key={t} className="bg-orange-200 text-orange-800 text-xs font-bold px-3 py-1 rounded-full">{t}</span>
                 ))}
               </div>
-              <Link href="/pandits" className="inline-flex items-center gap-2 bg-orange-600 text-white font-black px-6 py-3 rounded-2xl hover:bg-orange-700 transition-all shadow-lg">
+              <button onClick={() => safeNavigate('/pandits')} className="inline-flex items-center gap-2 bg-orange-600 text-white font-black px-6 py-3 rounded-2xl hover:bg-orange-700 transition-all shadow-lg">
                 पंडित खोजें →
-              </Link>
+              </button>
             </motion.div>
             <motion.div whileHover={{ y: -8 }} className="group relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-violet-50 to-purple-100 border border-purple-200 p-8 shadow-lg">
               <div className="absolute top-4 right-4 text-6xl opacity-20">📖</div>
@@ -343,9 +361,9 @@ export default function HomePage() {
                   <span key={t} className="bg-purple-200 text-purple-800 text-xs font-bold px-3 py-1 rounded-full">{t}</span>
                 ))}
               </div>
-              <Link href="/katha-vachaks" className="inline-flex items-center gap-2 bg-violet-600 text-white font-black px-6 py-3 rounded-2xl hover:bg-violet-700 transition-all shadow-lg">
+              <button onClick={() => safeNavigate('/katha-vachaks')} className="inline-flex items-center gap-2 bg-violet-600 text-white font-black px-6 py-3 rounded-2xl hover:bg-violet-700 transition-all shadow-lg">
                 कथा वाचक खोजें →
-              </Link>
+              </button>
             </motion.div>
           </div>
         </div>

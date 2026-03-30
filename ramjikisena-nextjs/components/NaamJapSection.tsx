@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Link from 'next/link';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Save, BarChart3, Flag, Flower2, Bird, CheckCircle2 } from 'lucide-react';
 import { authApi, User } from '@/lib/auth';
+import { setGlobalUnsavedJaap } from '@/lib/jaapContext';
+import { useJaapNavigate } from '@/lib/useJaapNavigate';
 
 interface NaamJapSectionProps {
   user: User;
@@ -41,12 +42,18 @@ const NAME_CONFIG = {
 };
 
 export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionProps) {
+  const safeNavigate = useJaapNavigate();
   const [currentCount, setCurrentCount] = useState(0);
   const [textareaValue, setTextareaValue] = useState('');
   const [userInput, setUserInput] = useState('');
   const [selectedName, setSelectedName] = useState<NameType>('RAM');
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  // Sync unsaved state globally whenever text changes
+  useEffect(() => {
+    setGlobalUnsavedJaap(textareaValue.length > 0);
+  }, [textareaValue]);
 
   const appendCharacter = useCallback((char: string) => {
     let newTextarea = textareaValue;
@@ -84,6 +91,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
       if (result.success) {
         setSaved(true);
         setTextareaValue(''); setUserInput(''); setCurrentCount(0);
+        setGlobalUnsavedJaap(false);
         onSaveSuccess();
         setTimeout(() => setSaved(false), 2500);
       }
@@ -244,12 +252,12 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                   )}
                 </AnimatePresence>
               </button>
-              <Link
-                href="/dashboard"
+              <button
+                onClick={() => safeNavigate('/dashboard')}
                 className="py-4 bg-slate-900 text-white font-black rounded-2xl text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-slate-800 shadow-lg"
               >
                 <BarChart3 className="w-4 h-4" /> DASHBOARD
-              </Link>
+              </button>
             </div>
           </div>
         </motion.div>
