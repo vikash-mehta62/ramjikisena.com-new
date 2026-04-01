@@ -443,15 +443,18 @@ function BookingModal({ pandit, service, onClose }: any) {
   const inputClass = "w-full bg-white border border-orange-100 rounded-2xl px-4 py-3 text-sm font-bold focus:border-orange-500 outline-none shadow-sm focus:ring-2 focus:ring-orange-200";
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-[2rem] max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div className="sticky top-0 bg-orange-600 text-white p-6 rounded-t-[2rem] flex items-center justify-between">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
+      <div className="bg-white rounded-[2rem] max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl relative">
+        {/* Fixed Header */}
+        <div className="bg-orange-600 text-white p-6 rounded-t-[2rem] flex items-center justify-between flex-shrink-0">
           <div>
             <h2 className="text-xl font-black">Book Pandit Ji</h2>
             <p className="text-orange-100 text-sm mt-0.5">{pandit.name}</p>
           </div>
           <button onClick={onClose} className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center text-xl hover:bg-white/30 transition font-black">×</button>
         </div>
+        {/* Scrollable Body */}
+        <div className="overflow-y-auto flex-1 rounded-b-[2rem]">
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div>
@@ -517,6 +520,7 @@ function BookingModal({ pandit, service, onClose }: any) {
             {loading ? 'Sending Request...' : 'Confirm Booking'}
           </button>
         </form>
+        </div>
       </div>
     </div>
   );

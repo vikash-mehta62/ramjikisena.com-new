@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
@@ -10,7 +11,6 @@ import {
   ChevronRight, 
   UserCheck, 
   SlidersHorizontal,
-  Navigation
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 
@@ -68,23 +68,36 @@ export default function PanditsPage() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] selection:bg-orange-100">
       <Navbar />
-      
-      {/* --- HERO & SEARCH SECTION --- */}
-      <section className="pt-24 pb-6 md:pt-36 md:pb-12 bg-gradient-to-b from-orange-100/40 to-transparent">
-        <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <h1 className="text-2xl md:text-5xl font-black text-slate-900 mb-2">
-              Book <span className="text-orange-600">Pandit Ji</span>
+
+      {/* Hero Banner */}
+      <div className="relative h-[320px] md:h-[400px] w-full overflow-hidden">
+        <Image
+          src="/home/Pradeep-Ji-Mishra.webp"
+          alt="Pandit Ji"
+          fill
+          className="object-cover object-top"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-[#FFFAF3]" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pt-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <span className="inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 text-white"
+              style={{ background: 'rgba(200,130,0,0.5)', border: '1px solid rgba(200,130,0,0.4)' }}>
+              🙏 वैदिक परंपरा
+            </span>
+            <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-2xl">
+              पंडित <span style={{ color: '#f9e07a' }}>बुकिंग</span>
             </h1>
-            <p className="text-[10px] md:text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">
+            <p className="text-orange-200/80 text-sm mt-3 font-medium tracking-widest uppercase">
               Verified Experts for Every Occasion
             </p>
           </motion.div>
+        </div>
+      </div>
 
+      {/* Search Section */}
+      <section className="pb-6 -mt-6 relative z-10">
+        <div className="container mx-auto px-4 text-center">
           {/* Compact Search Bar */}
           <div className="max-w-xl mx-auto flex gap-2">
             <div className="relative flex-1 group">
@@ -105,7 +118,7 @@ export default function PanditsPage() {
             </button>
           </div>
 
-          {/* Mobile Filter Dropdown */}
+          {/* Filter Dropdown */}
           <AnimatePresence>
             {showFilters && (
               <motion.div 

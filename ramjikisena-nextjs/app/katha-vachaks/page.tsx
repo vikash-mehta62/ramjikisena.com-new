@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Star, FilterX, ArrowRight, Radio } from 'lucide-react';
@@ -78,20 +79,34 @@ export default function KathaVachakListing() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
-      <main className="max-w-6xl mx-auto px-2 sm:px-6 pt-24 pb-12">
 
-        {/* Header */}
-        <div className="mb-6 md:mb-10 text-center md:text-left px-3">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-              कथा <span className="text-orange-600 italic">वाचक</span>
+      {/* Hero Banner */}
+      <div className="relative h-[320px] md:h-[400px] w-full overflow-hidden">
+        <Image
+          src="/home/kathavachak.webp"
+          alt="Katha Vachak"
+          fill
+          className="object-cover object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-[#FFFAF3]" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pt-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+            <span className="inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 text-white"
+              style={{ background: 'rgba(200,130,0,0.5)', border: '1px solid rgba(200,130,0,0.4)' }}>
+              🙏 आध्यात्मिक प्रवचन
+            </span>
+            <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-2xl">
+              कथा <span style={{ color: '#f9e07a' }}>वाचक</span>
             </h1>
-            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
+            <p className="text-orange-200/80 text-sm mt-3 font-medium tracking-widest uppercase">
               Divine Storytellers &amp; Spiritual Guides
             </p>
           </motion.div>
         </div>
+      </div>
+
+      <main className="max-w-6xl mx-auto px-2 sm:px-6 pb-12 -mt-6 relative z-10">
 
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3 mb-8 px-2">

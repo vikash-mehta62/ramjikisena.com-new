@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Package, ArrowLeft, Clock, CheckCircle, Truck, XCircle } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import api from '@/lib/api';
 
 interface Order {
@@ -138,6 +139,7 @@ export default function MyOrdersPage() {
           )}
         </div>
       </div>
+      <Footer />
     </>
   );
 }

@@ -18,7 +18,7 @@ const NAME_CONFIGS = {
     hindiName: 'राम नाम',
     pattern: ['R', 'A', 'M'],
     hindiChars: ['र', 'ा', 'म'],
-    colors: ['from-red-500 to-red-600', 'from-orange-500 to-amber-500', 'from-yellow-500 to-yellow-600'],
+    colors: ['', '', ''],
     activeTab: 'bg-orange-500',
     icon: Flag,
   },
@@ -260,9 +260,20 @@ export default function DashboardPage() {
                     key={i}
                     whileTap={{ scale: 0.93 }}
                     onClick={() => appendCharacter(cfg.pattern[i])}
-                    className={`bg-gradient-to-br ${cfg.colors[i]} text-white text-3xl font-black py-6 rounded-2xl shadow-md active:shadow-inner transition-shadow`}
+                    className="relative font-black transition-transform overflow-hidden rounded-xl"
+                    style={{
+                      color: '#783205',
+                      fontSize: '2.2rem',
+                      padding: '10px 20px',
+                      background: 'linear-gradient(160deg, #f9e07a 0%, #d4920a 30%, #f0b429 55%, #b8760a 80%, #e8a820 100%)',
+                      boxShadow: '0 6px 16px rgba(140,80,0,0.5), inset 0 2px 3px rgba(255,245,160,0.7), inset 0 -3px 5px rgba(90,40,0,0.35)',
+                      border: '2.5px solid #9a6200',
+                      textShadow: '0 1px 2px rgba(255,220,100,0.4)',
+                    }}
                   >
-                    {char}
+                    <span className="absolute inset-0 rounded-xl pointer-events-none"
+                      style={{ background: 'linear-gradient(135deg, rgba(255,255,210,0.45) 0%, transparent 50%)' }} />
+                    <span className="relative z-10">{char}</span>
                   </motion.button>
                 ))}
               </div>

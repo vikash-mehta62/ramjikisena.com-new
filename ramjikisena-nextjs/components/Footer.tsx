@@ -1,135 +1,124 @@
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Instagram, Youtube, Facebook, Twitter } from 'lucide-react';
+import { Mail, Phone, MapPin, ExternalLink, Youtube, Facebook, Instagram, Twitter } from 'lucide-react';
 
 const footerLinks = {
   'Quick Links': [
     { label: 'होम', href: '/' },
     { label: 'हमारे बारे में', href: '/about' },
-    { label: 'मिशन', href: '/mission' },
-    { label: 'गैलरी', href: '/gallery' },
     { label: 'संपर्क', href: '/contact' },
   ],
   'सेवाएं': [
     { label: 'राम नाम लेखन', href: '/dashboard' },
-    { label: 'पूजन सामग्री', href: '/samagri' },
     { label: 'मंदिर दर्शन', href: '/mandirs' },
     { label: 'पंडित बुकिंग', href: '/pandits' },
-    { label: 'कथा वाचक', href: '/katha-vachaks' },
   ],
   'समुदाय': [
     { label: 'भक्त गण', href: '/devotees' },
     { label: 'ब्लॉग', href: '/blogs' },
-    { label: 'फोरम', href: '/community' },
     { label: 'लीडरबोर्ड', href: '/history' },
-    { label: 'फीडबैक', href: '/feedback' },
   ],
 };
 
-const socialLinks = [
-  { Icon: Instagram, href: '#', label: 'Instagram', color: 'hover:text-pink-500' },
-  { Icon: Youtube, href: '#', label: 'YouTube', color: 'hover:text-red-500' },
-  { Icon: Facebook, href: '#', label: 'Facebook', color: 'hover:text-blue-500' },
-  { Icon: Twitter, href: '#', label: 'Twitter', color: 'hover:text-sky-400' },
-];
-
 export default function Footer() {
+  const marqueeStyle = {
+    display: 'inline-block',
+    whiteSpace: 'nowrap',
+    animation: 'marquee 40s linear infinite',
+  };
+
+  const marqueeReverseStyle = {
+    display: 'inline-block',
+    whiteSpace: 'nowrap',
+    animation: 'marquee-reverse 40s linear infinite',
+  };
+
   return (
-    <footer className="bg-slate-900 text-slate-300">
-      {/* Top CTA Strip */}
-      <div className="bg-gradient-to-r from-orange-600 to-red-600 py-4">
-        <div className="container mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white font-semibold text-sm">🙏 राम नाम का जाप शुरू करें — आज ही जुड़ें</p>
-          <Link
-            href="/register"
-            className="bg-white text-orange-700 font-bold text-sm px-5 py-2 rounded-full hover:bg-orange-50 transition-colors whitespace-nowrap"
-          >
-            अभी रजिस्टर करें →
-          </Link>
-        </div>
+    <footer className="relative overflow-hidden w-full" style={{ background: 'linear-gradient(180deg, #2a0e02 0%, #1a0800 100%)' }}>
+      
+      {/* Keyframes for Animation */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes marquee-reverse { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+      `}} />
+
+      {/* --- Small "Ram Ram" Watermark --- */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] select-none flex flex-col justify-around py-4">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="flex overflow-hidden">
+            <div style={i % 2 === 0 ? marqueeReverseStyle : marqueeStyle} className="text-[24px] font-bold tracking-[15px] text-orange-200">
+              राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम
+            </div>
+            <div style={i % 2 === 0 ? marqueeReverseStyle : marqueeStyle} className="text-[24px] font-bold tracking-[15px] text-orange-200">
+              राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Main Footer */}
-      <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+      {/* Main Content (More Compact) */}
+      <div className="container relative z-10 mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-          {/* Brand Column */}
-          <div className="lg:col-span-2">
-            <h2 className="text-2xl font-black text-white mb-2 tracking-wide">
-              🚩 Ramji Ki <span className="text-orange-500">Sena</span>
-            </h2>
-            <p className="text-slate-400 text-sm leading-relaxed mb-6 max-w-xs">
-              कलियुग में नाम ही आधार है। डिजिटल माध्यम से अपनी भक्ति यात्रा को नई ऊंचाइयों पर ले जाएं।
-            </p>
-
-            {/* Contact Info */}
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center gap-3 text-sm">
-                <Mail className="w-4 h-4 text-orange-500 shrink-0" />
-                <span className="text-slate-400">contact@ramjikisena.com</span>
+          {/* Brand Section */}
+          <div className="lg:col-span-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg text-xl"
+                style={{ background: 'linear-gradient(135deg, #f9e07a, #d4920a)', color: '#3a0f00' }}>
+                🚩
               </div>
-              <div className="flex items-center gap-3 text-sm">
-                <Phone className="w-4 h-4 text-orange-500 shrink-0" />
-                <span className="text-slate-400">+91 98765 43210</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
-                <span className="text-slate-400">अयोध्या, उत्तर प्रदेश, भारत</span>
-              </div>
+              <h2 className="text-xl font-black tracking-tight text-white">
+                RAMJI KI <span className="text-[#f9e07a]">SENA</span>
+              </h2>
             </div>
-
-            {/* Social Links */}
-            <div className="flex gap-4">
-              {socialLinks.map(({ Icon, href, label, color }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className={`w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 ${color} hover:bg-slate-700 transition-all`}
-                >
-                  <Icon className="w-4 h-4" />
+            <p className="text-sm leading-relaxed mb-6 text-white/60 max-w-xs">
+              डिजिटल माध्यम से अपनी भक्ति यात्रा को नई ऊंचाइयों पर ले जाएं।
+            </p>
+            
+            <div className="flex gap-3">
+              {[<Youtube size={16}/>, <Facebook size={16}/>, <Instagram size={16}/>, <Twitter size={16}/>].map((icon, i) => (
+                <a key={i} href="#" className="w-9 h-9 rounded-lg flex items-center justify-center border border-white/10 bg-white/5 text-white/40 hover:text-[#f9e07a] hover:border-[#f9e07a] transition-all">
+                  {icon}
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Link Columns */}
-          {Object.entries(footerLinks).map(([title, links]) => (
-            <div key={title}>
-              <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-5">{title}</h3>
-              <ul className="space-y-3">
-                {links.map(({ label, href }) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      className="text-slate-400 text-sm hover:text-orange-400 transition-colors"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Links Section */}
+          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-6">
+            {Object.entries(footerLinks).map(([title, links]) => (
+              <div key={title}>
+                <h3 className="font-bold text-[11px] uppercase tracking-[0.2em] mb-4 text-[#f9e07a]">
+                  {title}
+                </h3>
+                <ul className="space-y-2.5">
+                  {links.map(({ label, href }) => (
+                    <li key={label}>
+                      <Link href={href} className="text-[13px] text-white/50 hover:text-white transition-colors">
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="border-t border-slate-800">
-        <div className="container mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-slate-500 text-xs">
-            © 2026 Ramji Ki Sena. Built with 🙏 Devotion. All rights reserved.
-          </p>
-          <div className="flex gap-5">
-            {['Privacy Policy', 'Terms of Use'].map((item) => (
-              <Link
-                key={item}
-                href={`/${item.toLowerCase().replace(/ /g, '-')}`}
-                className="text-slate-500 text-xs hover:text-orange-400 transition-colors"
-              >
-                {item}
-              </Link>
-            ))}
+      {/* Bottom Bar (Thin) */}
+      <div className="relative z-10 border-t border-white/5 bg-black/30 backdrop-blur-md">
+        <div className="container mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-[12px] text-white/30 flex items-center gap-4">
+            <span>© 2026 Ramji Ki Sena</span>
+            <Link href="/" className="hover:text-white">Privacy</Link>
+            <Link href="/" className="hover:text-white">Terms</Link>
           </div>
+          
+          <a href="https://inextets.com" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-[11px] font-bold text-white/20 hover:text-[#f9e07a] transition-all">
+            Powered by <span className="text-white/40">iNext ETS</span>
+            <ExternalLink size={12} />
+          </a>
         </div>
       </div>
     </footer>

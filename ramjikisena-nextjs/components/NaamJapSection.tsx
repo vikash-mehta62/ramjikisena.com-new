@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Save, BarChart3, Flag, Flower2, Bird, CheckCircle2 } from 'lucide-react';
+import { Save, BarChart3, Flag, Flower2, Bird, CheckCircle2, Play, Pause, SkipBack, SkipForward, Music2 } from 'lucide-react';
 import { authApi, User } from '@/lib/auth';
 import { setGlobalUnsavedJaap } from '@/lib/jaapContext';
 import { useJaapNavigate } from '@/lib/useJaapNavigate';
@@ -17,29 +17,180 @@ type NameType = 'RAM' | 'RADHE' | 'HARE_KRISHNA';
 const NAME_CONFIG = {
   RAM: {
     label: 'राम', Icon: Flag,
-    activeGrad: 'from-orange-500 to-red-600',
-    bgLight: 'bg-orange-50', textColor: 'text-orange-700',
-    borderColor: 'border-orange-300',
-    keys: [['R', 'र', 'from-red-500 to-red-600'], ['A', 'ा', 'from-orange-500 to-orange-600'], ['M', 'म', 'from-yellow-500 to-yellow-600']],
+    keys: [['R', 'र'], ['A', 'ा'], ['M', 'म']],
     cols: 'grid-cols-3',
+    beadColor: '#d4920a', accentColor: '#f9e07a',
+    textColor: '#f9e07a',
+    scrollText: 'राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम राम',
   },
   RADHE: {
     label: 'राधे', Icon: Flower2,
-    activeGrad: 'from-pink-500 to-rose-600',
-    bgLight: 'bg-pink-50', textColor: 'text-pink-700',
-    borderColor: 'border-pink-300',
-    keys: [['RA', 'रा', 'from-pink-500 to-pink-600'], ['DHE', 'धे', 'from-rose-500 to-rose-600']],
+    keys: [['RA', 'रा'], ['DHE', 'धे']],
     cols: 'grid-cols-2',
+    beadColor: '#e91e8c', accentColor: '#f9a8d4',
+    textColor: '#f9a8d4',
+    scrollText: 'राधे राधे राधे राधे राधे राधे राधे राधे राधे राधे राधे राधे राधे राधे राधे राधे',
   },
   HARE_KRISHNA: {
     label: 'हरे कृष्णा', Icon: Bird,
-    activeGrad: 'from-blue-500 to-cyan-600',
-    bgLight: 'bg-blue-50', textColor: 'text-blue-700',
-    borderColor: 'border-blue-300',
-    keys: [['HA', 'ह', 'from-blue-500 to-blue-600'], ['RE', 'रे', 'from-cyan-500 to-cyan-600'], ['KRI', 'कृ', 'from-indigo-500 to-indigo-600'], ['SHNA', 'ष्णा', 'from-purple-500 to-purple-600']],
-    cols: 'grid-cols-2 sm:grid-cols-4',
+    keys: [['HA', 'ह'], ['RE', 'रे'], ['KRI', 'कृ'], ['SHNA', 'ष्णा']],
+    cols: 'grid-cols-4',
+    beadColor: '#1d4ed8', accentColor: '#93c5fd',
+    textColor: '#93c5fd',
+    scrollText: 'हरे कृष्णा हरे कृष्णा हरे कृष्णा हरे कृष्णा हरे कृष्णा हरे कृष्णा हरे कृष्णा',
   },
 };
+
+const SONGS = [
+  { displayName: 'राम धुन',       file: '/audios/ramdhun.mp3',      emoji: '🚩' },
+  { displayName: 'हे राम',        file: '/audios/heyram.mp3',       emoji: '🙏' },
+  { displayName: 'सीता राम',      file: '/audios/sitaram.mp3',      emoji: '💐' },
+  { displayName: 'हरि धुन',       file: '/audios/haridhun.mp3',     emoji: '🌺' },
+  { displayName: 'राम नाम कीर्तन', file: '/audios/ramnamkirtan.mp3', emoji: '🎵' },
+];
+
+// Mala SVG
+function MalaBeads({ progress, completedMalas, beadColor, accentColor }: {
+  progress: number; completedMalas: number; beadColor: string; accentColor: string;
+}) {
+  const total = 108;
+  const filled = Math.round((progress / 100) * total);
+  const radius = 108, cx = 128, cy = 128;
+  return (
+    <svg width="256" height="256" viewBox="0 0 256 256">
+      <circle cx={cx} cy={cy} r={radius + 8} fill="none" stroke={beadColor} strokeWidth="1" opacity="0.12" />
+      {Array.from({ length: total }).map((_, i) => {
+        const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
+        const x = cx + radius * Math.cos(angle);
+        const y = cy + radius * Math.sin(angle);
+        const isFilled = i < filled;
+        const isNext = i === filled;
+        const isMeru = i === 0;
+        return (
+          <motion.circle key={i} cx={x} cy={y}
+            r={isMeru ? 7 : isNext ? 5.5 : 4}
+            fill={isMeru ? accentColor : isFilled ? beadColor : 'rgba(255,255,255,0.1)'}
+            stroke={isMeru ? beadColor : isFilled ? accentColor : 'rgba(255,255,255,0.15)'}
+            strokeWidth={isMeru ? 2 : 1}
+            animate={{ scale: isNext ? [1, 1.5, 1] : 1, opacity: isFilled || isMeru ? 1 : 0.3 }}
+            transition={{ duration: 0.3 }}
+          />
+        );
+      })}
+      <text x={cx} y={cy - 20} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="10" fontWeight="bold" letterSpacing="2">माला</text>
+      <text x={cx} y={cy + 10} textAnchor="middle" fill={accentColor} fontSize="30" fontWeight="900">{filled}</text>
+      <text x={cx} y={cy + 28} textAnchor="middle" fill="rgba(255,255,255,0.35)" fontSize="10">/ 108</text>
+      {completedMalas > 0 && (
+        <text x={cx} y={cy + 48} textAnchor="middle" fill={accentColor} fontSize="10" fontWeight="bold">{completedMalas} पूर्ण 🙏</text>
+      )}
+    </svg>
+  );
+}
+
+// Inline Mini Music Player
+function InlineMusicPlayer() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [idx, setIdx] = useState(0);
+  const [showList, setShowList] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const play = (i: number) => {
+    setIdx(i); setIsPlaying(false);
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.volume = 1;
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
+    }, 80);
+  };
+
+  const toggle = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) { audioRef.current.pause(); setIsPlaying(false); }
+    else { audioRef.current.volume = 1; audioRef.current.play(); setIsPlaying(true); }
+  };
+
+  const next = () => play((idx + 1) % SONGS.length);
+  const prev = () => play(idx === 0 ? SONGS.length - 1 : idx - 1);
+
+  return (
+    <div className="relative w-full">
+      <audio ref={audioRef} src={SONGS[idx].file} onEnded={next} />
+
+      {/* Playlist dropdown - opens UPWARD */}
+      <AnimatePresence>
+        {showList && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 0.97, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="absolute bottom-full mb-2 left-0 right-0 rounded-2xl overflow-hidden z-50"
+            style={{ background: '#1a0800', border: '1px solid rgba(200,130,0,0.3)' }}>
+            {SONGS.map((s, i) => (
+              <button key={i} onClick={() => { play(i); setShowList(false); }}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all hover:bg-white/5"
+                style={idx === i ? { background: 'rgba(200,130,0,0.2)' } : {}}>
+                <span className="text-base">{s.emoji}</span>
+                <span className="text-sm font-bold flex-1" style={{ color: idx === i ? '#f9e07a' : 'rgba(255,200,120,0.6)' }}>
+                  {s.displayName}
+                </span>
+                {idx === i && isPlaying && (
+                  <span className="text-[10px] font-black" style={{ color: '#d4920a' }}>▶</span>
+                )}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Player bar */}
+      <div className="flex items-center gap-2 rounded-2xl px-3 py-2"
+        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(200,130,0,0.25)' }}>
+
+        {/* Play/Pause */}
+        <button onClick={toggle}
+          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all hover:scale-110"
+          style={{ background: 'linear-gradient(135deg, #f9e07a, #d4920a)' }}>
+          {isPlaying
+            ? <Pause className="w-3.5 h-3.5" style={{ color: '#3a0f00' }} />
+            : <Play className="w-3.5 h-3.5 ml-0.5" style={{ color: '#3a0f00' }} />}
+        </button>
+
+        {/* Song name + visualizer */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">{SONGS[idx].emoji}</span>
+            <span className="text-xs font-black truncate" style={{ color: '#f9e07a' }}>{SONGS[idx].displayName}</span>
+          </div>
+          {isPlaying && (
+            <div className="flex items-end gap-0.5 mt-0.5 h-2.5">
+              {[...Array(8)].map((_, i) => (
+                <motion.div key={i}
+                  animate={{ height: ['2px', `${5 + i % 3 * 3}px`, '2px'] }}
+                  transition={{ duration: 0.5 + i * 0.06, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-0.5 rounded-full" style={{ background: '#d4920a' }} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Prev / Next / Playlist */}
+        <button onClick={prev} className="w-6 h-6 flex items-center justify-center hover:opacity-80 transition-all">
+          <SkipBack className="w-3 h-3" style={{ color: 'rgba(255,200,120,0.7)' }} />
+        </button>
+        <button onClick={next} className="w-6 h-6 flex items-center justify-center hover:opacity-80 transition-all">
+          <SkipForward className="w-3 h-3" style={{ color: 'rgba(255,200,120,0.7)' }} />
+        </button>
+        <button onClick={() => setShowList(s => !s)}
+          className="w-6 h-6 flex items-center justify-center hover:opacity-80 transition-all">
+          <Music2 className="w-3 h-3" style={{ color: showList ? '#f9e07a' : 'rgba(255,200,120,0.5)' }} />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionProps) {
   const safeNavigate = useJaapNavigate();
@@ -50,32 +201,27 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Sync unsaved state globally whenever text changes
-  useEffect(() => {
-    setGlobalUnsavedJaap(textareaValue.length > 0);
-  }, [textareaValue]);
+  useEffect(() => { setGlobalUnsavedJaap(textareaValue.length > 0); }, [textareaValue]);
 
   const appendCharacter = useCallback((char: string) => {
-    let newTextarea = textareaValue;
+    let t = textareaValue;
     if (selectedName === 'RAM') {
-      if (char === 'R' && (userInput === '' || userInput === 'RAM')) { setUserInput('R'); newTextarea += 'र'; }
-      else if (char === 'A' && userInput === 'R') { setUserInput('RA'); newTextarea += 'ा'; }
-      else if (char === 'M' && userInput === 'RA') { setUserInput('RAM'); newTextarea += 'म '; setCurrentCount(p => p + 1); }
+      if (char === 'R' && (userInput === '' || userInput === 'RAM')) { setUserInput('R'); t += 'र'; }
+      else if (char === 'A' && userInput === 'R') { setUserInput('RA'); t += 'ा'; }
+      else if (char === 'M' && userInput === 'RA') { setUserInput('RAM'); t += 'म '; setCurrentCount(p => p + 1); }
+      else return;
+    } else if (selectedName === 'RADHE') {
+      if (char === 'RA' && (userInput === '' || userInput === 'RADHE')) { setUserInput('RA'); t += 'रा'; }
+      else if (char === 'DHE' && userInput === 'RA') { setUserInput('RADHE'); t += 'धे '; setCurrentCount(p => p + 1); }
+      else return;
+    } else if (selectedName === 'HARE_KRISHNA') {
+      if (char === 'HA' && (userInput === '' || userInput === 'HAREKRISHNA')) { setUserInput('HA'); t += 'ह'; }
+      else if (char === 'RE' && userInput === 'HA') { setUserInput('HARE'); t += 'रे '; }
+      else if (char === 'KRI' && userInput === 'HARE') { setUserInput('HAREKRI'); t += 'कृ'; }
+      else if (char === 'SHNA' && userInput === 'HAREKRI') { setUserInput('HAREKRISHNA'); t += 'ष्णा '; setCurrentCount(p => p + 1); }
       else return;
     }
-    if (selectedName === 'RADHE') {
-      if (char === 'RA' && (userInput === '' || userInput === 'RADHE')) { setUserInput('RA'); newTextarea += 'रा'; }
-      else if (char === 'DHE' && userInput === 'RA') { setUserInput('RADHE'); newTextarea += 'धे '; setCurrentCount(p => p + 1); }
-      else return;
-    }
-    if (selectedName === 'HARE_KRISHNA') {
-      if (char === 'HA' && (userInput === '' || userInput === 'HAREKRISHNA')) { setUserInput('HA'); newTextarea += 'ह'; }
-      else if (char === 'RE' && userInput === 'HA') { setUserInput('HARE'); newTextarea += 'रे '; }
-      else if (char === 'KRI' && userInput === 'HARE') { setUserInput('HAREKRI'); newTextarea += 'कृ'; }
-      else if (char === 'SHNA' && userInput === 'HAREKRI') { setUserInput('HAREKRISHNA'); newTextarea += 'ष्णा '; setCurrentCount(p => p + 1); }
-      else return;
-    }
-    setTextareaValue(newTextarea);
+    setTextareaValue(t);
   }, [textareaValue, userInput, selectedName]);
 
   const handleNameChange = (name: NameType) => {
@@ -103,146 +249,159 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
   const completedMalas = Math.floor(currentCount / 108);
 
   return (
-    <section className="py-12 md:py-20 bg-gradient-to-b from-[#FFFAF3] to-orange-50/60 relative overflow-hidden">
-      {/* Subtle bg decoration */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-10 -left-10 text-[14rem] font-black text-orange-600/[0.03] select-none leading-none">ॐ</div>
-        <div className="absolute -bottom-10 -right-10 text-[10rem] text-red-600/[0.04] select-none leading-none">🚩</div>
+    <section className="min-h-screen relative overflow-hidden flex flex-col"
+      style={{ background: 'linear-gradient(160deg, #0f0500 0%, #1a0800 40%, #2d0f00 70%, #0f0500 100%)' }}>
+
+      {/* Scrolling naam background - full section cover, CSS marquee */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none flex flex-col justify-around py-2" style={{ opacity: 0.07 }}>
+        {[...Array(10)].map((_, row) => (
+          <div key={row} className="overflow-hidden whitespace-nowrap">
+            <motion.span
+              className="inline-block text-xl font-black"
+              style={{ color: cfg.accentColor }}
+              animate={{ x: row % 2 === 0 ? ['0%', '-50%'] : ['-50%', '0%'] }}
+              transition={{ duration: 60 + row * 8, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}>
+              {(cfg.scrollText + ' ').repeat(12)}
+            </motion.span>
+          </div>
+        ))}
       </div>
 
-      <div className="container mx-auto px-4 relative z-10 max-w-2xl">
+      {/* Radial glow center */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: `radial-gradient(ellipse at 50% 50%, ${cfg.beadColor}22 0%, transparent 65%)` }} />
 
-        {/* Welcome */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-8"
-        >
-          <span className="inline-block px-4 py-1.5 bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-[0.25em] rounded-full mb-3">
+      <div className="relative z-10 flex-1 flex flex-col container mx-auto px-4 py-14 max-w-6xl">
+
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="text-center mb-8">
+          <span className="inline-block px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em] mb-4"
+            style={{ background: 'rgba(200,130,0,0.2)', border: '1px solid rgba(200,130,0,0.35)', color: '#f9e07a' }}>
             🙏 नाम लेखन
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
-            जय श्री राम, <span className="text-orange-600">{user.name}</span>!
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-1">
+            जय श्री राम, <span style={{ color: '#f9e07a' }}>{user.name}</span>!
           </h2>
-          <p className="text-sm text-slate-500 mt-1">यहाँ से अपना नाम जाप शुरू करें</p>
+          <p className="text-sm" style={{ color: 'rgba(255,200,120,0.5)' }}>यहाँ से अपना नाम जाप शुरू करें</p>
         </motion.div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        {/* Stats + Player - same row */}
+        <div className="flex items-center gap-3 mb-8 max-w-2xl mx-auto w-full">
+          {/* Stats */}
           {[
-            { label: 'Rank', val: `#${user.rank}`, color: 'text-orange-600', bg: 'bg-orange-50 border-orange-100' },
-            { label: 'Total Jaap', val: user.totalCount.toLocaleString(), color: 'text-red-600', bg: 'bg-red-50 border-red-100' },
-            { label: 'Mala', val: user.mala.toFixed(1), color: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-100' },
+            { label: 'Rank', val: `#${user.rank}`, color: '#f9e07a' },
+            { label: 'Total Jaap', val: user.totalCount.toLocaleString(), color: '#fb923c' },
+            { label: 'Mala', val: user.mala.toFixed(1), color: '#fbbf24' },
           ].map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className={`${s.bg} border rounded-2xl py-4 text-center`}
-            >
-              <p className="text-[9px] uppercase font-black text-slate-400 tracking-widest mb-1">{s.label}</p>
-              <p className={`text-lg sm:text-xl font-black ${s.color}`}>{s.val}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Main Jaap Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-white rounded-[2rem] shadow-xl border border-orange-100 overflow-hidden"
-        >
-          {/* Name Selector Tab Bar */}
-          <div className="flex border-b border-orange-100">
-            {(Object.keys(NAME_CONFIG) as NameType[]).map((key) => {
-              const c = NAME_CONFIG[key];
-              const isActive = selectedName === key;
-              return (
-                <button
-                  key={key}
-                  onClick={() => handleNameChange(key)}
-                  className={`flex-1 flex flex-col items-center gap-1 py-4 text-[10px] font-black uppercase tracking-wider transition-all border-b-2 ${
-                    isActive
-                      ? `border-orange-500 text-orange-700 bg-orange-50/60`
-                      : 'border-transparent text-slate-400 hover:text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  <c.Icon className={`w-4 h-4 ${isActive ? 'text-orange-600' : ''}`} />
-                  {c.label}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="p-5 sm:p-7">
-            {/* Mala Progress */}
-            <div className="mb-5">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  माला प्रगति {completedMalas > 0 && <span className="text-orange-600 ml-1">({completedMalas} पूरी)</span>}
-                </span>
-                <span className="text-[10px] font-black text-orange-600">{currentCount % 108}/108</span>
-              </div>
-              <div className="h-2 bg-orange-100 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full"
-                  animate={{ width: `${malaProgress}%` }}
-                  transition={{ type: 'spring', stiffness: 120 }}
-                />
-              </div>
+            <div key={i} className="rounded-xl py-2 px-3 text-center flex-shrink-0"
+              style={{ background: 'rgba(200,130,0,0.1)', border: '1px solid rgba(200,130,0,0.2)' }}>
+              <p className="text-[8px] uppercase font-black tracking-wider mb-0.5" style={{ color: 'rgba(255,200,120,0.4)' }}>{s.label}</p>
+              <p className="text-sm font-black" style={{ color: s.color }}>{s.val}</p>
             </div>
+          ))}
+          {/* Player - takes remaining space */}
+          <div className="flex-1 min-w-0">
+            <InlineMusicPlayer />
+          </div>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start justify-center flex-1">
+
+          {/* LEFT: Mala only */}
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }} className="flex flex-col items-center gap-4 lg:w-72">
+
+            <MalaBeads progress={malaProgress} completedMalas={completedMalas}
+              beadColor={cfg.beadColor} accentColor={cfg.accentColor} />
+
+            {/* Name tabs */}
+            <div className="flex gap-2 flex-wrap justify-center">
+              {(Object.keys(NAME_CONFIG) as NameType[]).map((key) => {
+                const c = NAME_CONFIG[key];
+                const isActive = selectedName === key;
+                return (
+                  <button key={key} onClick={() => handleNameChange(key)}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-black transition-all"
+                    style={isActive ? {
+                      background: 'linear-gradient(135deg, #f9e07a, #d4920a)',
+                      color: '#3a0f00',
+                      boxShadow: '0 4px 12px rgba(180,100,0,0.4)',
+                    } : {
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(200,130,0,0.2)',
+                      color: 'rgba(255,200,120,0.6)',
+                    }}>
+                    <c.Icon className="w-3 h-3" />{c.label}
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* RIGHT: Jaap Panel */}
+          <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }} className="flex-1 max-w-md w-full">
+
+          \
 
             {/* Textarea */}
-            <div className="relative mb-5">
-              <div className="absolute -top-3 right-4 z-10">
-                <span className={`bg-gradient-to-r ${cfg.activeGrad} text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md`}>
-                  JAAP: {currentCount}
-                </span>
-              </div>
-              <textarea
-                readOnly
-                value={textareaValue}
-                className={`w-full h-28 p-4 pt-5 ${cfg.bgLight} border-2 ${cfg.borderColor} rounded-2xl text-xl sm:text-2xl font-bold ${cfg.textColor} text-center focus:outline-none resize-none placeholder:text-current placeholder:opacity-20 leading-relaxed`}
-                placeholder="नाम यहाँ प्रगट होगा..."
-              />
+            <div className="relative mb-5 rounded-2xl overflow-hidden"
+              style={{ border: `1.5px solid ${cfg.beadColor}55`, background: 'rgba(255,255,255,0.04)' }}>
+              <textarea readOnly value={textareaValue} rows={5}
+                className="w-full p-4 bg-transparent text-lg font-bold text-center focus:outline-none resize-none leading-relaxed"
+                style={{ color: cfg.accentColor }}
+                placeholder="" />
+              {!textareaValue && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <span className="text-sm font-bold" style={{ color: 'rgba(255,200,120,0.2)' }}>
+                    नाम यहाँ प्रगट होगा...
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Keys */}
+            {/* Golden Keys */}
             <AnimatePresence mode="wait">
-              <motion.div
-                key={selectedName}
-                initial={{ opacity: 0, scale: 0.97 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.97 }}
-                transition={{ duration: 0.15 }}
-                className={`grid ${cfg.cols} gap-3 mb-5`}
-              >
-                {cfg.keys.map(([char, label, grad]) => (
-                  <button
-                    key={char}
-                    onClick={() => appendCharacter(char)}
-                    className={`bg-gradient-to-br ${grad} text-white text-2xl sm:text-3xl font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all border-b-4 border-black/15 hover:brightness-110`}
-                  >
-                    {label}
-                  </button>
+              <motion.div key={selectedName}
+                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.15 }}
+                className={`grid ${cfg.cols} gap-3 mb-5`}>
+                {cfg.keys.map(([char, label]) => (
+                  <motion.button key={char} onClick={() => appendCharacter(char)}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative font-black overflow-hidden rounded-xl"
+                    style={{
+                      color: '#783205',
+                      fontSize: cfg.keys.length === 4 ? '1.4rem' : '2rem',
+                      padding: cfg.keys.length === 4 ? '12px 4px' : '12px 8px',
+                      background: 'linear-gradient(160deg, #f9e07a 0%, #d4920a 30%, #f0b429 55%, #b8760a 80%, #e8a820 100%)',
+                      boxShadow: '0 6px 20px rgba(140,80,0,0.5), inset 0 2px 3px rgba(255,245,160,0.7), inset 0 -3px 5px rgba(90,40,0,0.35)',
+                      border: '2px solid #9a6200',
+                    }}>
+                    <span className="absolute inset-0 rounded-xl pointer-events-none"
+                      style={{ background: 'linear-gradient(135deg, rgba(255,255,210,0.45) 0%, transparent 50%)' }} />
+                    <span className="relative z-10">{label}</span>
+                  </motion.button>
                 ))}
               </motion.div>
             </AnimatePresence>
 
             {/* Action Buttons */}
             <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={handleSave}
+              <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
                 disabled={currentCount === 0 || isSaving}
-                className="relative py-4 bg-gradient-to-r from-green-600 to-emerald-600 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 text-white font-black rounded-2xl text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-green-900/10 overflow-hidden"
-              >
+                className="py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all"
+                style={currentCount > 0 ? {
+                  background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                  color: 'white', boxShadow: '0 6px 20px rgba(22,163,74,0.3)',
+                } : {
+                  background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                }}>
                 <AnimatePresence mode="wait">
                   {saved ? (
-                    <motion.span key="saved" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-2">
+                    <motion.span key="saved" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
+                      className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4" /> सेव हो गया!
                     </motion.span>
                   ) : (
@@ -251,17 +410,19 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                     </motion.span>
                   )}
                 </AnimatePresence>
-              </button>
-              <button
-                onClick={() => safeNavigate('/dashboard')}
-                className="py-4 bg-slate-900 text-white font-black rounded-2xl text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-slate-800 shadow-lg"
-              >
-                <BarChart3 className="w-4 h-4" /> DASHBOARD
-              </button>
-            </div>
-          </div>
-        </motion.div>
+              </motion.button>
 
+              <motion.button whileTap={{ scale: 0.97 }} onClick={() => safeNavigate('/dashboard')}
+                className="py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all"
+                style={{
+                  background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
+                  color: '#3a0f00', boxShadow: '0 6px 20px rgba(180,100,0,0.35)',
+                }}>
+                <BarChart3 className="w-4 h-4" /> DASHBOARD
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

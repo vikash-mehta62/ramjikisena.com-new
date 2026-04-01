@@ -59,6 +59,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
     isLoggedIn: false, isPanditLoggedIn: false,
     userName: '', panditName: '', isAdmin: false,
   });
+  const isHomePage = pathname === '/';
   const [scrolled, setScrolled]           = useState(false);
   const [exploreOpen, setExploreOpen]     = useState(false);
   const [userMenuOpen, setUserMenuOpen]   = useState(false);
@@ -111,29 +112,50 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
 
   return (
     <>
-      <header className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
-        scrolled ? 'bg-slate-950/95 backdrop-blur-xl py-3 shadow-2xl' : 'bg-transparent py-5'
-      }`}>
+      <header
+        className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
+          isHomePage
+            ? scrolled ? 'py-2 shadow-2xl shadow-black/40' : 'bg-transparent py-4'
+            : 'py-3 shadow-lg'
+        }`}
+        style={
+          !isHomePage
+            ? { background: 'rgba(15,5,0,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(200,130,0,0.2)' }
+            : scrolled
+            ? { background: 'rgba(15,5,0,0.96)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(200,130,0,0.15)' }
+            : {}
+        }
+      >
         <div className="container mx-auto px-5 flex items-center justify-between gap-4">
 
           {/* Logo */}
           <button onClick={() => safeNavigate('/')} className="flex items-center gap-3 group flex-shrink-0">
-            <div className="w-9 h-9 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-600/30 group-hover:scale-105 transition-transform">
-              <Flag className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform"
+              style={{ background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)', boxShadow: '0 4px 12px rgba(180,100,0,0.4)' }}>
+              <Flag className="w-5 h-5" style={{ color: '#5a1a00' }} />
             </div>
             <div className="hidden sm:block">
-              <p className="text-base font-black tracking-tighter text-white leading-none">RAMJI KI <span className="text-orange-500">SENA</span></p>
+              <p className="text-base font-black tracking-tighter text-white leading-none">
+                RAMJI KI <span style={{ color: '#f9e07a' }}>SENA</span>
+              </p>
               <p className="text-[9px] text-white/40 tracking-[0.2em] uppercase">Spiritual Portal</p>
             </div>
           </button>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1 bg-white/5 border border-white/10 rounded-2xl p-1 backdrop-blur-md">
+          <nav className="hidden lg:flex items-center gap-1 rounded-2xl p-1 backdrop-blur-md"
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(200,130,0,0.2)' }}>
             {mainLinks.map(({ href, label, icon: Icon }) => (
               <button key={href} onClick={() => safeNavigate(href)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                  isActive(href) ? 'bg-orange-600 text-white shadow-lg' : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}>
+                  isActive(href)
+                    ? 'text-white shadow-lg'
+                    : 'text-white/75 hover:text-white hover:bg-white/10'
+                }`}
+                style={isActive(href) ? {
+                  background: 'linear-gradient(135deg, #d4920a, #f9e07a, #b8760a)',
+                  color: '#3a0f00',
+                } : {}}>
                 <Icon className="w-3.5 h-3.5" /> {label}
               </button>
             ))}
@@ -255,7 +277,12 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                       Login <ChevronDown className={`w-3.5 h-3.5 transition-transform ${loginOpen ? 'rotate-180' : ''}`} />
                     </button>
                     <button onClick={() => safeNavigate('/register')}
-                      className="bg-orange-600 text-white px-5 py-2 rounded-xl text-sm font-black hover:bg-orange-500 transition-all shadow-lg shadow-orange-600/20 active:scale-95">
+                      className="font-black px-5 py-2 rounded-xl text-sm active:scale-95 transition-all"
+                      style={{
+                        background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 50%, #b8760a 100%)',
+                        color: '#3a0f00',
+                        boxShadow: '0 4px 14px rgba(180,100,0,0.35)',
+                      }}>
                       Sign Up
                     </button>
 
