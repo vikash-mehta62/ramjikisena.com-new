@@ -23,17 +23,17 @@ const doc = {
                 type: 'object',
                 required: ['name', 'email', 'phone', 'password'],
                 properties: {
-                    name:     { type: 'string',  example: 'Pandit Ram Sharma' },
-                    email:    { type: 'string',  example: 'pandit@example.com' },
-                    phone:    { type: 'string',  example: '9876543210' },
-                    password: { type: 'string',  example: 'Strong@123' }
+                    name: { type: 'string', example: 'Pandit Ram Sharma' },
+                    email: { type: 'string', example: 'pandit@example.com' },
+                    phone: { type: 'string', example: '9876543210' },
+                    password: { type: 'string', example: 'Strong@123' }
                 }
             },
             PanditLogin: {
                 type: 'object',
                 required: ['email', 'password'],
                 properties: {
-                    email:    { type: 'string', example: 'pandit@example.com' },
+                    email: { type: 'string', example: 'pandit@example.com' },
                     password: { type: 'string', example: 'Strong@123' }
                 }
             },
@@ -42,7 +42,7 @@ const doc = {
                 required: ['currentPassword', 'newPassword'],
                 properties: {
                     currentPassword: { type: 'string', example: 'OldPass@1' },
-                    newPassword:     { type: 'string', example: 'NewPass@2' }
+                    newPassword: { type: 'string', example: 'NewPass@2' }
                 }
             },
 
@@ -50,14 +50,14 @@ const doc = {
             PanditUpdate: {
                 type: 'object',
                 properties: {
-                    name:           { type: 'string' },
-                    phone:          { type: 'string' },
-                    city:           { type: 'string' },
-                    state:          { type: 'string' },
-                    address:        { type: 'string' },
+                    name: { type: 'string' },
+                    phone: { type: 'string' },
+                    city: { type: 'string' },
+                    state: { type: 'string' },
+                    address: { type: 'string' },
                     specialization: { type: 'array', items: { type: 'string' } },
-                    experience:     { type: 'number', example: 10 },
-                    bio:            { type: 'string' }
+                    experience: { type: 'number', example: 10 },
+                    bio: { type: 'string' }
                 }
             },
 
@@ -66,13 +66,13 @@ const doc = {
                 type: 'object',
                 required: ['name', 'phone'],
                 properties: {
-                    name:           { type: 'string',  example: 'Vachak Ji' },
-                    phone:          { type: 'string',  example: '9876543210' },
-                    email:          { type: 'string',  example: 'vachak@example.com' },
-                    city:           { type: 'string' },
+                    name: { type: 'string', example: 'Vachak Ji' },
+                    phone: { type: 'string', example: '9876543210' },
+                    email: { type: 'string', example: 'vachak@example.com' },
+                    city: { type: 'string' },
                     specialization: { type: 'array', items: { type: 'string' } },
-                    experience:     { type: 'number', example: 5 },
-                    bio:            { type: 'string' }
+                    experience: { type: 'number', example: 5 },
+                    bio: { type: 'string' }
                 }
             },
             KathaVachakUpdate: { $ref: '#/components/schemas/KathaVachakCreate' },
@@ -82,13 +82,13 @@ const doc = {
                 type: 'object',
                 required: ['name', 'phone'],
                 properties: {
-                    name:           { type: 'string',  example: 'Pandit Ji' },
-                    phone:          { type: 'string',  example: '9876543210' },
-                    email:          { type: 'string',  example: 'pandit@example.com' },
-                    city:           { type: 'string' },
+                    name: { type: 'string', example: 'Pandit Ji' },
+                    phone: { type: 'string', example: '9876543210' },
+                    email: { type: 'string', example: 'pandit@example.com' },
+                    city: { type: 'string' },
                     specialization: { type: 'array', items: { type: 'string' } },
-                    experience:     { type: 'number', example: 10 },
-                    bio:            { type: 'string' }
+                    experience: { type: 'number', example: 10 },
+                    bio: { type: 'string' }
                 }
             },
             PanditUpdateBody: { $ref: '#/components/schemas/PanditCreate' },
@@ -98,17 +98,17 @@ const doc = {
                 type: 'object',
                 required: ['panditId', 'bookingDate', 'poojaType'],
                 properties: {
-                    panditId:    { type: 'string',  example: '65f0c1...' },
-                    bookingDate: { type: 'string',  format: 'date', example: '2026-04-10' },
-                    poojaType:   { type: 'string',  example: 'Satyanarayan Katha' },
-                    startTime:   { type: 'string',  example: '10:00 AM' },
-                    address:     { type: 'string' },
-                    city:        { type: 'string' },
-                    notes:       { type: 'string' },
+                    panditId: { type: 'string', example: '65f0c1...' },
+                    bookingDate: { type: 'string', format: 'date', example: '2026-04-10' },
+                    poojaType: { type: 'string', example: 'Satyanarayan Katha' },
+                    startTime: { type: 'string', example: '10:00 AM' },
+                    address: { type: 'string' },
+                    city: { type: 'string' },
+                    notes: { type: 'string' },
                     customerDetails: {
                         type: 'object',
                         properties: {
-                            name:  { type: 'string' },
+                            name: { type: 'string' },
                             email: { type: 'string' },
                             phone: { type: 'string' }
                         }
@@ -132,7 +132,7 @@ const doc = {
                 type: 'object',
                 required: ['file'],
                 properties: {
-                    file:   { type: 'string', description: 'base64 encoded data URL' },
+                    file: { type: 'string', description: 'base64 encoded data URL' },
                     folder: { type: 'string', example: 'documents' }
                 }
             }
@@ -142,23 +142,29 @@ const doc = {
     security: [{ bearerAuth: [] }],
 
     tags: [
-        { name: 'PanditAuth',      description: 'Pandit authentication & registration' },
+        { name: 'PanditAuth', description: 'Pandit authentication & registration' },
         { name: 'PanditDashboard', description: 'Pandit dashboard operations' },
-        { name: 'KathaVachaks',    description: 'Katha Vachak management' },
-        { name: 'Pandits',         description: 'Pandit listing & management' },
-        { name: 'Bookings',        description: 'Booking management' },
-        { name: 'Upload',          description: 'File / image uploads' },
+        { name: 'KathaVachaks', description: 'Katha Vachak management' },
+        { name: 'Pandits', description: 'Pandit listing & management' },
+        { name: 'Bookings', description: 'Booking management' },
+        { name: 'Samagri', description: 'Samagri (pooja materials) management' },
+        { name: 'Community', description: 'Community management' },
+        { name: 'Forum', description: 'Forum management' },
+        { name: 'Upload', description: 'File / image uploads' },
     ],
 };
 
 // ─── Prefix → Tag (longest first to avoid partial matches) ───────────────────
 const TAG_MAP = [
     { prefix: '/api/pandit-dashboard', tag: 'PanditDashboard' },
-    { prefix: '/api/pandit-auth',      tag: 'PanditAuth' },
-    { prefix: '/api/katha-vachaks',    tag: 'KathaVachaks' },
-    { prefix: '/api/bookings',         tag: 'Bookings' },
-    { prefix: '/api/pandits',          tag: 'Pandits' },
-    { prefix: '/api/upload',           tag: 'Upload' },
+    { prefix: '/api/pandit-auth', tag: 'PanditAuth' },
+    { prefix: '/api/katha-vachaks', tag: 'KathaVachaks' },
+    { prefix: '/api/bookings', tag: 'Bookings' },
+    { prefix: '/api/pandits', tag: 'Pandits' },
+    { prefix: '/api/samagri', tag: 'Samagri' },
+    { prefix: '/api/community', tag: 'Community' },
+    { prefix: '/api/forum', tag: 'Forum' },
+    { prefix: '/api/upload', tag: 'Upload' },
 ];
 
 function assignTagsFromPaths(outputFile) {
@@ -294,7 +300,7 @@ function augmentSpec(outputFile) {
                                 schema: {
                                     type: 'object',
                                     properties: {
-                                        file:   { type: 'string', format: 'binary' },
+                                        file: { type: 'string', format: 'binary' },
                                         folder: { type: 'string' }
                                     },
                                     required: ['file']
