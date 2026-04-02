@@ -8,7 +8,7 @@ import { setGlobalUnsavedJaap } from '@/lib/jaapContext';
 import { useJaapNavigate } from '@/lib/useJaapNavigate';
 
 interface NaamJapSectionProps {
-  user: User;
+  user: User | null;
   onSaveSuccess: () => void;
 }
 
@@ -233,7 +233,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
     if (currentCount === 0) return;
     setIsSaving(true);
     try {
-      const result = await authApi.saveCount(currentCount, (user.totalCount || 0) + currentCount, (user.mala || 0) + currentCount / 108);
+      const result = await authApi.saveCount(currentCount, (user?.totalCount || 0) + currentCount, (user?.mala || 0) + currentCount / 108);
       if (result.success) {
         setSaved(true);
         setTextareaValue(''); setUserInput(''); setCurrentCount(0);
@@ -281,7 +281,10 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
             🙏 नाम लेखन
           </span>
           <h2 className="text-3xl sm:text-4xl font-black text-white mb-1">
-            जय श्री राम, <span style={{ color: '#f9e07a' }}>{user.name}</span>!
+            {user
+              ? <>जय श्री राम, <span style={{ color: '#f9e07a' }}>{user.name}</span>!</>
+              : <>🙏 <span style={{ color: '#f9e07a' }}>राम नाम</span> जाप करें</>
+            }
           </h2>
           <p className="text-sm" style={{ color: 'rgba(255,200,120,0.5)' }}>यहाँ से अपना नाम जाप शुरू करें</p>
         </motion.div>
@@ -290,9 +293,9 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
         <div className="flex items-center gap-3 mb-8 max-w-2xl mx-auto w-full">
           {/* Stats */}
           {[
-            { label: 'Rank', val: `#${user.rank}`, color: '#f9e07a' },
-            { label: 'Total Jaap', val: user.totalCount.toLocaleString(), color: '#fb923c' },
-            { label: 'Mala', val: user.mala.toFixed(1), color: '#fbbf24' },
+            { label: 'Rank', val: user ? `#${user.rank}` : '--', color: '#f9e07a' },
+            { label: 'Total Jaap', val: user ? user.totalCount.toLocaleString() : '--', color: '#fb923c' },
+            { label: 'Mala', val: user ? user.mala.toFixed(1) : '--', color: '#fbbf24' },
           ].map((s, i) => (
             <div key={i} className="rounded-xl py-2 px-3 text-center flex-shrink-0"
               style={{ background: 'rgba(200,130,0,0.1)', border: '1px solid rgba(200,130,0,0.2)' }}>
@@ -387,40 +390,51 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
             </AnimatePresence>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-3">
-              <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
-                disabled={currentCount === 0 || isSaving}
-                className="py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all"
-                style={currentCount > 0 ? {
-                  background: 'linear-gradient(135deg, #16a34a, #15803d)',
-                  color: 'white', boxShadow: '0 6px 20px rgba(22,163,74,0.3)',
-                } : {
-                  background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                }}>
-                <AnimatePresence mode="wait">
-                  {saved ? (
-                    <motion.span key="saved" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
-                      className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4" /> सेव हो गया!
-                    </motion.span>
-                  ) : (
-                    <motion.span key="save" className="flex items-center gap-2">
-                      <Save className="w-4 h-4" /> {isSaving ? 'सेविंग...' : 'SAVE'}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </motion.button>
+            {user ? (
+              <div className="grid grid-cols-2 gap-3">
+                <motion.button whileTap={{ scale: 0.97 }} onClick={handleSave}
+                  disabled={currentCount === 0 || isSaving}
+                  className="py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all"
+                  style={currentCount > 0 ? {
+                    background: 'linear-gradient(135deg, #16a34a, #15803d)',
+                    color: 'white', boxShadow: '0 6px 20px rgba(22,163,74,0.3)',
+                  } : {
+                    background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                  }}>
+                  <AnimatePresence mode="wait">
+                    {saved ? (
+                      <motion.span key="saved" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
+                        className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4" /> सेव हो गया!
+                      </motion.span>
+                    ) : (
+                      <motion.span key="save" className="flex items-center gap-2">
+                        <Save className="w-4 h-4" /> {isSaving ? 'सेविंग...' : 'SAVE'}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
 
-              <motion.button whileTap={{ scale: 0.97 }} onClick={() => safeNavigate('/dashboard')}
-                className="py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all"
+                <motion.button whileTap={{ scale: 0.97 }} onClick={() => safeNavigate('/dashboard')}
+                  className="py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all"
+                  style={{
+                    background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
+                    color: '#3a0f00', boxShadow: '0 6px 20px rgba(180,100,0,0.35)',
+                  }}>
+                  <BarChart3 className="w-4 h-4" /> DASHBOARD
+                </motion.button>
+              </div>
+            ) : (
+              <motion.button whileTap={{ scale: 0.97 }} onClick={() => safeNavigate('/login')}
+                className="w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all"
                 style={{
                   background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
                   color: '#3a0f00', boxShadow: '0 6px 20px rgba(180,100,0,0.35)',
                 }}>
-                <BarChart3 className="w-4 h-4" /> DASHBOARD
+                🙏 जाप सेव करने के लिए लॉगिन करें
               </motion.button>
-            </div>
+            )}
           </motion.div>
         </div>
       </div>

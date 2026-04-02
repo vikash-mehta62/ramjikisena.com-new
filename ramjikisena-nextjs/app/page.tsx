@@ -224,8 +224,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* --- NAAM JAP (logged in users only, right after hero) --- */}
-      {!loading && user && <NaamJapSection user={user} onSaveSuccess={checkAuth} />}
+      {/* --- NAAM JAP --- */}
+      {!loading && <NaamJapSection user={user} onSaveSuccess={checkAuth} />}
 
      
 

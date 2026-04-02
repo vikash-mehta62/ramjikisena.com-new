@@ -137,11 +137,20 @@ export const authApi = {
     try {
       const res = await fetch(`${API_URL}/api/me`, {
         method: 'GET',
-        headers: getAuthHeaders(), // Send token in header
+        headers: getAuthHeaders(),
         credentials: 'include',
       });
 
-      if (!res.ok) return null;
+      if (!res.ok) {
+        // Token invalid/expired - clear everything
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('panditToken');
+          localStorage.removeItem('pandit');
+        }
+        return null;
+      }
 
       const data = await res.json();
       return data.user;

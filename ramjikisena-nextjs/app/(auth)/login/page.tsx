@@ -4,15 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/auth';
-import { User, Lock, ArrowLeft, Loader2 } from 'lucide-react';
-import MusicPlayer from '@/components/MusicPlayer';
+import { User, Lock, ArrowLeft, Loader2, Flag } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -20,22 +16,16 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const result = await authApi.login(formData.username, formData.password);
-
       if (result.success) {
-        if (result.redirect) {
-          router.push(result.redirect);
-        } else if (result.user?.role === 'admin') {
-          router.push('/admin/admin-dashboard');
-        } else {
-          router.push('/dashboard');
-        }
+        if (result.redirect) router.push(result.redirect);
+        else if (result.user?.role === 'admin') router.push('/admin/admin-dashboard');
+        else router.push('/dashboard');
       } else {
         setError(result.message || 'Invalid credentials');
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -43,106 +33,113 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFAF3] flex items-center justify-center p-4 relative overflow-hidden">
-      <MusicPlayer />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      style={{ background: 'linear-gradient(160deg, #0f0500 0%, #1a0800 50%, #0f0500 100%)' }}>
 
-      {/* Subtle ॐ background decoration */}
+      {/* OM background */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-        <span className="text-[28rem] font-black text-orange-600/[0.03] leading-none">ॐ</span>
+        <span className="text-[32rem] font-black leading-none" style={{ color: 'rgba(200,130,0,0.04)' }}>ॐ</span>
       </div>
+      {/* Radial glow */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(180,100,0,0.15) 0%, transparent 65%)' }} />
 
       <div className="w-full max-w-md relative z-10">
+
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-600 rounded-full shadow-xl mb-4">
-            <span className="text-4xl">🚩</span>
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-xl"
+            style={{ background: 'linear-gradient(135deg, #f9e07a, #d4920a)', boxShadow: '0 8px 24px rgba(180,100,0,0.4)' }}>
+            <Flag className="w-7 h-7" style={{ color: '#3a0f00' }} />
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">RAMJI KI SENA</h1>
-          <p className="text-slate-500 text-sm mt-1 font-medium">राम नाम लेखन हेतु लॉगिन करें</p>
+          <h1 className="text-2xl font-black text-white tracking-tight">
+            RAMJI KI <span style={{ color: '#f9e07a' }}>SENA</span>
+          </h1>
+          <p className="text-sm mt-1" style={{ color: 'rgba(255,200,120,0.5)' }}>राम नाम लेखन हेतु लॉगिन करें</p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-[2rem] border border-orange-100 shadow-xl p-8">
-          <h2 className="text-xl font-black text-slate-900 text-center mb-6">लॉगिन / Login</h2>
+        <div className="rounded-[2rem] p-8"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(200,130,0,0.25)', backdropFilter: 'blur(12px)' }}>
+
+          <h2 className="text-xl font-black text-center mb-6" style={{ color: '#f9e07a' }}>लॉगिन / Login</h2>
 
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-2xl mb-6 flex items-center gap-2 text-sm font-bold">
-              <span>⚠️</span>
-              <span>{error}</span>
+            <div className="px-4 py-3 rounded-2xl mb-5 flex items-center gap-2 text-sm font-bold"
+              style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)', color: '#fca5a5' }}>
+              ⚠️ {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
-                Username
-              </label>
+              <label className="block text-[10px] font-black uppercase tracking-widest mb-2"
+                style={{ color: 'rgba(255,200,120,0.5)' }}>Username</label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4" />
-                <input
-                  type="text"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full pl-11 pr-4 bg-white border border-orange-100 rounded-2xl px-4 py-3 text-sm font-bold focus:border-orange-500 outline-none shadow-sm focus:ring-2 focus:ring-orange-200"
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#d4920a' }} />
+                <input type="text" value={formData.username}
+                  onChange={e => setFormData({ ...formData, username: e.target.value })}
+                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-sm font-bold focus:outline-none transition-all"
+                  style={{
+                    background: 'rgba(255,255,255,0.07)',
+                    border: '1px solid rgba(200,130,0,0.3)',
+                    color: 'white',
+                  }}
                   placeholder="Enter your username"
-                  required
-                />
+                  required />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
-                Password
-              </label>
+              <label className="block text-[10px] font-black uppercase tracking-widest mb-2"
+                style={{ color: 'rgba(255,200,120,0.5)' }}>Password</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4" />
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-11 pr-4 bg-white border border-orange-100 rounded-2xl px-4 py-3 text-sm font-bold focus:border-orange-500 outline-none shadow-sm focus:ring-2 focus:ring-orange-200"
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#d4920a' }} />
+                <input type="password" value={formData.password}
+                  onChange={e => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-sm font-bold focus:outline-none transition-all"
+                  style={{
+                    background: 'rgba(255,255,255,0.07)',
+                    border: '1px solid rgba(200,130,0,0.3)',
+                    color: 'white',
+                  }}
                   placeholder="Enter your password"
-                  required
-                />
+                  required />
               </div>
             </div>
 
             <div className="text-right">
-              <Link href="/forgot" className="text-orange-600 hover:text-orange-700 text-xs font-black hover:underline">
-                📱 Login With Mobile Number?
+              <Link href="/forgot" className="text-xs font-black hover:opacity-80 transition-all"
+                style={{ color: '#d4920a' }}>
+                📱 मोबाइल नंबर से लॉगिन?
               </Link>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-orange-600 text-white rounded-2xl font-black py-4 hover:bg-orange-700 transition-all active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                '🙏 लॉगिन / Login'
-              )}
+            <button type="submit" disabled={loading}
+              className="w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-60"
+              style={{
+                background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
+                color: '#3a0f00',
+                boxShadow: '0 6px 20px rgba(180,100,0,0.4)',
+              }}>
+              {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Loading...</> : '🙏 लॉगिन / Login'}
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-orange-50 text-center">
-            <p className="text-slate-500 text-sm">
+          <div className="mt-6 pt-5 text-center" style={{ borderTop: '1px solid rgba(200,130,0,0.15)' }}>
+            <p className="text-sm" style={{ color: 'rgba(255,200,120,0.5)' }}>
               नये सदस्य हैं?{' '}
-              <Link href="/register" className="text-orange-600 hover:text-orange-700 font-black hover:underline">
-                Register karein ✨
+              <Link href="/register" className="font-black hover:opacity-80 transition-all" style={{ color: '#f9e07a' }}>
+                Register करें ✨
               </Link>
             </p>
           </div>
         </div>
 
         <div className="text-center mt-6">
-          <Link href="/" className="text-orange-600 hover:text-orange-700 font-black text-sm inline-flex items-center gap-2 hover:gap-3 transition-all">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
+          <Link href="/" className="text-sm font-black inline-flex items-center gap-2 hover:gap-3 transition-all"
+            style={{ color: 'rgba(255,200,120,0.5)' }}>
+            <ArrowLeft className="w-4 h-4" /> Back to Home
           </Link>
         </div>
       </div>

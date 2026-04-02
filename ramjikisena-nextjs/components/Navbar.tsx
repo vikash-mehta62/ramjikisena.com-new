@@ -101,10 +101,20 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   }, []);
 
   const logout = (type: 'user' | 'pandit') => {
-    if (type === 'user') { localStorage.removeItem('token'); localStorage.removeItem('user'); }
-    else { localStorage.removeItem('panditToken'); localStorage.removeItem('pandit'); }
-    router.push('/');
-    window.location.reload();
+    // 1. Clear all localStorage
+    localStorage.clear();
+
+    // 2. Clear all cookies
+    document.cookie.split(';').forEach(c => {
+      const key = c.trim().split('=')[0];
+      document.cookie = `${key}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
+      document.cookie = `${key}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=${window.location.hostname}`;
+    });
+
+    // 3. Call backend logout to clear server-side cookie
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+    fetch(`${apiUrl}/api/logout`, { method: 'GET', credentials: 'include' })
+      .finally(() => { window.location.href = '/'; });
   };
 
   const dashboardHref = auth.isAdmin ? '/admin/admin-dashboard' : '/dashboard';
