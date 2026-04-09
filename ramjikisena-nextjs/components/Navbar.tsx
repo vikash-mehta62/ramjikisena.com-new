@@ -189,22 +189,58 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.97 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[520px] bg-white rounded-[1.5rem] shadow-2xl border border-slate-100 p-4 z-50"
+                    style={{
+                      position: 'fixed',
+                      top: '64px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: 'min(640px, calc(100vw - 2rem))',
+                      zIndex: 9999,
+                    }}
                   >
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em] mb-3 px-1">सभी सेवाएं / All Features</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {exploreLinks.map(({ href, label, icon: Icon, desc, color }) => (
-                        <button key={href} onClick={() => safeNavigate(href)}
-                          className="flex items-start gap-3 p-3 rounded-2xl hover:bg-slate-50 transition-all group text-left w-full">
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${color}`}>
-                            <Icon className="w-4 h-4" />
+                    {/* Arrow */}
+                    <div className="flex justify-center mb-1">
+                      <div className="w-3 h-3 bg-white rotate-45 shadow-sm border-l border-t border-slate-100" />
+                    </div>
+                    <div className="bg-white rounded-[1.5rem] shadow-2xl border border-slate-100 overflow-hidden">
+                      {/* Header */}
+                      <div className="px-5 py-3 border-b border-slate-100"
+                        style={{ background: 'linear-gradient(135deg, #fff9f0, #fff)' }}>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">सभी सेवाएं</p>
+                            <p className="text-sm font-black text-slate-800">All Features</p>
                           </div>
-                          <div className="min-w-0">
-                            <p className="text-xs font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight">{label}</p>
-                            <p className="text-[10px] text-slate-400 leading-tight mt-0.5 truncate">{desc}</p>
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+                            🚩 Ramji Ki Sena
                           </div>
+                        </div>
+                      </div>
+
+                      {/* Grid */}
+                      <div className="p-4 grid grid-cols-3 gap-1.5">
+                        {exploreLinks.map(({ href, label, icon: Icon, desc, color }) => (
+                          <button key={href} onClick={() => safeNavigate(href)}
+                            className="flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 active:bg-orange-50 transition-all group text-left w-full">
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${color} group-hover:scale-110 transition-transform`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight">{label}</p>
+                              <p className="text-[10px] text-slate-400 leading-tight mt-0.5 truncate">{desc}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Footer */}
+                      <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                        <p className="text-[10px] text-slate-400">🙏 जय श्री राम</p>
+                        <button onClick={() => safeNavigate('/dashboard')}
+                          className="text-[10px] font-black text-orange-600 hover:text-orange-700 flex items-center gap-1">
+                          Dashboard →
                         </button>
-                      ))}
+                      </div>
                     </div>
                   </motion.div>
                 )}

@@ -78,6 +78,22 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 0
   },
+  about: {
+    type: String,
+    default: '',
+    maxlength: 300,
+  },
+  dob: {
+    type: Date,
+    default: null,
+  },
+  customJaapNames: [
+    {
+      id: { type: String },
+      label: { type: String, maxlength: 40 },
+      chars: [{ type: String }],
+    }
+  ],
   role: {
     type: String,
     default: 'user'

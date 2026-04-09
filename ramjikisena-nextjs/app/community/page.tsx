@@ -9,7 +9,7 @@ import ImageUploader from '@/components/ImageUploader';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
 
-interface Author { _id: string; name: string; username: string; city: string; profileImage?: string; }
+interface Author { _id: string; name: string; username: string; city: string; profileImage?: string; dob?: string; }
 interface Comment { _id: string; user: Author; text: string; createdAt: string; }
 interface Post {
   _id: string; author: Author; text: string; images: string[];
@@ -18,6 +18,7 @@ interface Post {
   isLiked: boolean; isFollowing: boolean;
   comments: Comment[]; createdAt: string;
 }
+interface BirthdayUser { _id: string; name: string; username: string; dob: string; }
 
 const CATEGORIES = ['General', 'Pooja', 'Katha', 'Bhandara', 'Bhajan', 'Temple'];
 const CAT_EMOJI: Record<string, string> = { General: '🙏', Pooja: '🪔', Katha: '📖', Bhandara: '🍛', Bhajan: '🎵', Temple: '🛕' };
@@ -33,13 +34,27 @@ function timeAgo(date: string) {
   return `${Math.floor(h / 24)}d ago`;
 }
 
+function isTodayBirthday(dob?: string): boolean {
+  if (!dob) return false;
+  const d = new Date(dob);
+  const today = new Date();
+  return d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+}
+
 function Avatar({ user, size = 'md' }: { user: Author; size?: 'sm' | 'md' | 'lg' }) {
   const s = size === 'sm' ? 'w-8 h-8 text-sm' : size === 'lg' ? 'w-12 h-12 text-xl' : 'w-10 h-10 text-base';
-  return user.profileImage ? (
-    <img src={user.profileImage} alt={user.name} className={`${s} rounded-full object-cover flex-shrink-0 ring-2 ring-orange-100`} />
-  ) : (
-    <div className={`${s} rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-black flex-shrink-0`}>
-      {user.name[0].toUpperCase()}
+  return (
+    <div className="relative flex-shrink-0">
+      {user.profileImage ? (
+        <img src={user.profileImage} alt={user.name} className={`${s} rounded-full object-cover ring-2 ring-orange-100`} />
+      ) : (
+        <div className={`${s} rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-black`}>
+          {user.name[0].toUpperCase()}
+        </div>
+      )}
+      {isTodayBirthday(user.dob) && (
+        <span className="absolute -top-1 -right-1 text-base leading-none" title="🎂 Birthday today!">🎂</span>
+      )}
     </div>
   );
 }
@@ -375,6 +390,7 @@ export default function CommunityPage() {
   const [feedFilter, setFeedFilter] = useState<'all' | 'following'>('all');
   const [cityFilter, setCityFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [birthdayUsers, setBirthdayUsers] = useState<BirthdayUser[]>([]);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -384,9 +400,8 @@ export default function CommunityPage() {
     const userStr = localStorage.getItem('user');
     if (userStr) setCurrentUser(JSON.parse(userStr));
     fetchCities();
-  }, []);
-
-  useEffect(() => {
+    fetchBirthdays();
+  }, []);  useEffect(() => {
     if (!currentUser) return;
     setPosts([]); setPage(1); setHasMore(true);
     fetchPosts(1, true);
@@ -406,6 +421,16 @@ export default function CommunityPage() {
       const res = await api.get('/api/community/cities');
       const data = await res.json();
       if (data.success) setCities(data.cities);
+    } catch (e) {}
+  };
+
+  const fetchBirthdays = async () => {
+    try {
+      const res = await api.get('/api/birthdays');
+      const data = await res.json();
+      if (data.success && data.users.length > 0) {
+        setBirthdayUsers(data.users);
+      }
     } catch (e) {}
   };
 
@@ -501,6 +526,7 @@ export default function CommunityPage() {
                 </div>
               </CollapsibleCard>
             )}
+
           </aside>
 
           {/* Main Feed */}

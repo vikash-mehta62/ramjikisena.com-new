@@ -185,6 +185,9 @@ router.get('/api/me', isLoggedInAPI, async function (req, res) {
         totalCount: loggedInUser.totalCount,
         mala: loggedInUser.mala,
         role: loggedInUser.role,
+        about: loggedInUser.about || '',
+        dob: loggedInUser.dob || null,
+        customJaapNames: loggedInUser.customJaapNames || [],
         dailyCounts: loggedInUser.dailyCounts
       }
     });
@@ -341,7 +344,8 @@ router.get('/api/devotees', isLoggedInAPI, async function (req, res) {
         name: user.name,
         rank: user.rank,
         totalCount: user.totalCount,
-        dailyCounts: user.dailyCounts
+        dailyCounts: user.dailyCounts,
+        dob: user.dob || null
       }))
     });
   } catch (error) {
@@ -353,11 +357,33 @@ router.get('/api/devotees', isLoggedInAPI, async function (req, res) {
   }
 });
 
+// API Get Today's Birthdays
+router.get('/api/birthdays', isLoggedInAPI, async function (req, res) {
+  try {
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    // Match users whose dob month+day equals today
+    const users = await userModel.find({
+      dob: { $ne: null },
+      $expr: {
+        $and: [
+          { $eq: [{ $month: '$dob' }, month] },
+          { $eq: [{ $dayOfMonth: '$dob' }, day] }
+        ]
+      }
+    }).select('_id name username dob');
+    return res.json({ success: true, users });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'An error occurred' });
+  }
+});
+
 // API Update Profile (JSON response)
 router.post('/api/profile/update', isLoggedInAPI, async function (req, res) {
   try {
     const user = req.user;
-    const { name, city, contact } = req.body;
+    const { name, city, contact, about, dob } = req.body;
 
     const loggedInUser = await userModel.findOne({ _id: user._id });
     
@@ -371,6 +397,8 @@ router.post('/api/profile/update', isLoggedInAPI, async function (req, res) {
     // Update fields
     if (name) loggedInUser.name = name;
     if (city) loggedInUser.city = city;
+    if (about !== undefined) loggedInUser.about = about.slice(0, 300);
+    if (dob !== undefined) loggedInUser.dob = dob ? new Date(dob) : null;
     if (contact && /^[0-9]{10}$/.test(contact)) {
       // Check if contact already exists for another user
       const existingContact = await userModel.findOne({ 
@@ -405,6 +433,38 @@ router.post('/api/profile/update', isLoggedInAPI, async function (req, res) {
       success: false, 
       message: 'An error occurred while updating profile' 
     });
+  }
+});
+
+// API Save Custom Jaap Name
+router.post('/api/custom-jaap-names', isLoggedInAPI, async function (req, res) {
+  try {
+    const user = await userModel.findById(req.user._id);
+    const { id, label, chars } = req.body;
+    if (!label || !chars || !Array.isArray(chars) || chars.length === 0) {
+      return res.status(400).json({ success: false, message: 'Invalid data' });
+    }
+    if (user.customJaapNames.length >= 10) {
+      return res.status(400).json({ success: false, message: 'Maximum 10 custom names allowed' });
+    }
+    const newName = { id: id || Date.now().toString(), label: label.slice(0, 40), chars };
+    user.customJaapNames.push(newName);
+    await user.save();
+    return res.json({ success: true, customJaapNames: user.customJaapNames });
+  } catch (e) {
+    return res.status(500).json({ success: false, message: 'Error saving' });
+  }
+});
+
+// API Delete Custom Jaap Name
+router.delete('/api/custom-jaap-names/:id', isLoggedInAPI, async function (req, res) {
+  try {
+    const user = await userModel.findById(req.user._id);
+    user.customJaapNames = user.customJaapNames.filter(n => n.id !== req.params.id);
+    await user.save();
+    return res.json({ success: true, customJaapNames: user.customJaapNames });
+  } catch (e) {
+    return res.status(500).json({ success: false, message: 'Error deleting' });
   }
 });
 

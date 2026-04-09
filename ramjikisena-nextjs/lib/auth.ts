@@ -11,6 +11,9 @@ export interface User {
   totalCount: number;
   mala: number;
   role: string;
+  about?: string;
+  dob?: string | null;
+  customJaapNames?: Array<{ id: string; label: string; chars: string[] }>;
   dailyCounts: Array<{
     date: string;
     count: number;

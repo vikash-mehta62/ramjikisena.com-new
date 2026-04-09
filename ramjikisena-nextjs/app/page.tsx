@@ -8,7 +8,129 @@ import NaamJapSection from '@/components/NaamJapSection';
 import Footer from '@/components/Footer';
 import { authApi, User } from '@/lib/auth';
 import { useJaapNavigate } from '@/lib/useJaapNavigate';
-import { ImageIcon, BookOpen, Users, Star, MessageCircle, Target, ArrowRight } from 'lucide-react';
+import { ImageIcon, BookOpen, Users, Star, MessageCircle, Target, ArrowRight, ChevronLeft, ChevronRight as ChevronRightIcon } from 'lucide-react';
+
+const ALL_SERVICES = [
+  { title: 'पंडित बुकिंग',   desc: 'पूजा, हवन, विवाह',   href: '/pandits',       img: '/home/Pradeep-Ji-Mishra.webp', grad: 'from-orange-700 to-red-800',    emoji: '🙏', popular: '🔥 Most Booked' },
+  { title: 'कथा वाचक',      desc: 'रामायण, भागवत',       href: '/katha-vachaks', img: '/home/kathavachak.webp',        grad: 'from-purple-700 to-indigo-800', emoji: '📖', popular: '⭐ Popular' },
+  { title: 'नाम जाप',        desc: 'राम नाम लिखें',       href: '/#jaap',         img: '/ramji.jpg',                    grad: 'from-amber-700 to-orange-800',  emoji: '📿', popular: '🏆 #1 Feature' },
+  { title: 'मंदिर दर्शन',   desc: 'प्रसिद्ध मंदिर',      href: '/mandirs',       img: '/ramji.jpg',                    grad: 'from-red-700 to-orange-800',    emoji: '🛕', popular: '' },
+  { title: 'भक्त समुदाय',   desc: 'साथ जुड़ें',           href: '/community',     img: '/ramji.jpg',                    grad: 'from-orange-600 to-red-700',    emoji: '🤝', popular: '💬 Active' },
+  { title: 'पूजन सामग्री',  desc: 'घर पर मंगाएं',         href: '/samagri',       img: '/ramji.jpg',                    grad: 'from-green-700 to-teal-800',    emoji: '🪔', popular: '🆕 New' },
+  { title: 'गैलरी',          desc: 'भव्य दर्शन',          href: '/gallery',       img: '/ramji.jpg',                    grad: 'from-pink-700 to-rose-800',     emoji: '🖼️', popular: '' },
+  { title: 'राम महिमा',      desc: 'महिमा पढ़ें',          href: '/glory',         img: '/hanumanji.jpg',                grad: 'from-amber-600 to-yellow-700',  emoji: '⭐', popular: '' },
+];
+
+function ServicesCarousel({ safeNavigate }: { safeNavigate: (href: string) => void }) {
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const visible = 5;
+  const max = ALL_SERVICES.length - visible;
+
+  const prev = () => setIdx(i => (i <= 0 ? max : i - 1));
+  const next = () => setIdx(i => (i >= max ? 0 : i + 1));
+
+  // Auto-play
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => setIdx(i => (i >= max ? 0 : i + 1)), 2800);
+    return () => clearInterval(t);
+  }, [paused, max]);
+
+  return (
+    <div className="relative"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}>
+
+      {/* Prev */}
+      <button onClick={prev}
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-5 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 active:scale-95"
+        style={{ background: 'linear-gradient(135deg, #f9e07a, #d4920a)', color: '#3a0f00' }}>
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+
+      {/* Track */}
+      <div className="overflow-hidden rounded-2xl">
+        <motion.div
+          className="flex gap-4"
+          animate={{ x: `calc(-${idx} * (20% + 0.8rem))` }}
+          transition={{ type: 'spring', stiffness: 280, damping: 28 }}
+        >
+          {ALL_SERVICES.map((svc, i) => (
+            <motion.button
+              key={i}
+              onClick={() => safeNavigate(svc.href)}
+              whileHover={{ y: -8, scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="flex-shrink-0 w-[calc(20%-0.65rem)] rounded-2xl overflow-hidden cursor-pointer relative group"
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(200,130,0,0.3)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+              }}
+            >
+              {/* Image area */}
+              <div className="relative h-40 overflow-hidden">
+                <Image
+                  src={svc.img} alt={svc.title} fill
+                  className="object-cover object-top group-hover:scale-110 transition-transform duration-700"
+                />
+                {/* Gradient overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${svc.grad} opacity-50 mix-blend-multiply`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+
+                {/* Popular badge */}
+                {svc.popular && (
+                  <div className="absolute top-2.5 left-2.5">
+                    <span className="text-[9px] font-black px-2 py-0.5 rounded-full"
+                      style={{ background: 'linear-gradient(135deg, #d4920a, #f9e07a)', color: '#3a0f00' }}>
+                      {svc.popular}
+                    </span>
+                  </div>
+                )}
+
+                {/* Emoji top-right */}
+                <span className="absolute top-2.5 right-2.5 text-xl drop-shadow-lg">{svc.emoji}</span>
+
+                {/* Title on image bottom */}
+                <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
+                  <p className="text-sm font-black text-white leading-tight drop-shadow-lg">{svc.title}</p>
+                  <p className="text-[10px] font-semibold mt-0.5" style={{ color: 'rgba(255,200,120,0.7)' }}>{svc.desc}</p>
+                </div>
+              </div>
+
+              {/* Bottom CTA bar */}
+              <div className="flex items-center justify-between px-3 py-2.5"
+                style={{ background: 'rgba(200,130,0,0.08)', borderTop: '1px solid rgba(200,130,0,0.15)' }}>
+                <span className="text-[10px] font-black" style={{ color: 'rgba(255,200,120,0.6)' }}>अभी देखें</span>
+                <ChevronRightIcon className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" style={{ color: '#f9e07a' }} />
+              </div>
+            </motion.button>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Next */}
+      <button onClick={next}
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-5 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-xl transition-all hover:scale-110 active:scale-95"
+        style={{ background: 'linear-gradient(135deg, #f9e07a, #d4920a)', color: '#3a0f00' }}>
+        <ChevronRightIcon className="w-5 h-5" />
+      </button>
+
+      {/* Dots */}
+      <div className="flex justify-center gap-2 mt-5">
+        {Array.from({ length: max + 1 }).map((_, i) => (
+          <button key={i} onClick={() => setIdx(i)}
+            className="h-1.5 rounded-full transition-all duration-300"
+            style={{
+              width: idx === i ? '2rem' : '0.5rem',
+              background: idx === i ? '#f9e07a' : 'rgba(255,200,120,0.2)',
+            }} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 const slides = [
   {
@@ -227,94 +349,18 @@ export default function HomePage() {
       {/* --- NAAM JAP --- */}
       {!loading && <NaamJapSection user={user} onSaveSuccess={checkAuth} />}
 
-     
-
-      {/* --- FEATURES GRID --- */}
-      <section className="py-20 bg-[#FFFAF3] relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'linear-gradient(90deg, transparent, #d4920a, transparent)' }} />
+      {/* --- SERVICES CAROUSEL (all 8 services including pandit & katha) --- */}
+      <section className="py-14 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #1a0800 0%, #0f0500 100%)' }}>
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #d4920a60, transparent)' }} />
         <div className="container mx-auto px-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <span className="inline-block px-4 py-1 bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest rounded-full mb-3">🚩 हमारी सेवाएं</span>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-3">राम सेना की विशेषताएं</h2>
-            <div className="h-1 w-16 mx-auto rounded-full" style={{ background: 'linear-gradient(90deg, #d4920a, #f9e07a)' }} />
+          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-8">
+            <span className="inline-block px-4 py-1 text-[10px] font-black uppercase tracking-widest rounded-full mb-3"
+              style={{ background: 'rgba(200,130,0,0.2)', border: '1px solid rgba(200,130,0,0.3)', color: '#f9e07a' }}>
+              और भी बहुत कुछ
+            </span>
+            <h2 className="text-2xl md:text-3xl font-black text-white">सभी सेवाएं एक जगह</h2>
           </motion.div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { title: "डिजिटल नाम डायरी", icon: "📿", desc: "कहीं भी, कभी भी राम नाम लिखें। अपनी माला और जाप की प्रगति ट्रैक करें।", href: "/dashboard", color: "from-orange-500 to-red-500", tag: "सबसे लोकप्रिय" },
-              { title: "लीडरबोर्ड", icon: "🏆", desc: "साप्ताहिक और मासिक रैंकिंग में अपना स्थान बनाएं और भक्तों को प्रेरित करें।", href: "/history", color: "from-amber-500 to-orange-500", tag: "" },
-              { title: "मंदिर दर्शन", icon: "🛕", desc: "देश भर के प्रसिद्ध मंदिरों के दर्शन और उनकी महिमा के बारे में जानें।", href: "/mandirs", color: "from-red-500 to-orange-600", tag: "" },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -6 }}
-                className="group relative bg-white rounded-3xl border border-orange-100 shadow-lg shadow-orange-900/5 overflow-hidden cursor-pointer"
-                onClick={() => safeNavigate(item.href)}
-              >
-                {item.tag && (
-                  <div className="absolute top-4 right-4 text-[10px] font-black px-2.5 py-1 rounded-full text-white"
-                    style={{ background: 'linear-gradient(135deg, #d4920a, #f9e07a)' }}>
-                    {item.tag}
-                  </div>
-                )}
-                {/* Top gradient bar */}
-                <div className={`h-1.5 w-full bg-gradient-to-r ${item.color}`} />
-                <div className="p-7">
-                  <div className={`w-14 h-14 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center text-2xl mb-5 shadow-lg group-hover:scale-110 transition-transform`}>
-                    {item.icon}
-                  </div>
-                  <h3 className="text-lg font-black text-slate-900 mb-2">{item.title}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-4">{item.desc}</p>
-                  <span className="inline-flex items-center gap-1 text-xs font-black text-orange-600 group-hover:gap-2 transition-all">
-                    अभी देखें <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- EXPLORE MORE FEATURES --- */}
-      <section className="py-16 bg-white overflow-hidden">
-        <div className="container mx-auto px-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
-            <span className="inline-block px-4 py-1 bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest rounded-full mb-3">और भी बहुत कुछ</span>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900">सभी सेवाएं एक जगह</h2>
-          </motion.div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
-            {[
-              { title: "गैलरी",        desc: "भव्य दर्शन",    href: "/gallery",       icon: ImageIcon,     grad: "from-pink-500 to-rose-500" },
-              { title: "कथा वाचक",    desc: "बुकिंग करें",   href: "/katha-vachaks", icon: BookOpen,      grad: "from-violet-500 to-purple-600" },
-              { title: "भक्त समुदाय", desc: "साथ जुड़ें",    href: "/community",     icon: Users,         grad: "from-orange-500 to-red-500" },
-              { title: "राम महिमा",   desc: "महिमा पढ़ें",   href: "/glory",         icon: Star,          grad: "from-amber-500 to-yellow-500" },
-              { title: "फोरम",         desc: "प्रश्न पूछें",  href: "/forum",         icon: MessageCircle, grad: "from-teal-500 to-cyan-500" },
-              { title: "हमारा मिशन", desc: "उद्देश्य जानें", href: "/mission",       icon: Target,        grad: "from-red-500 to-orange-600" },
-            ].map((item, i) => (
-              <motion.button
-                key={i}
-                onClick={() => safeNavigate(item.href)}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.07 }}
-                whileHover={{ y: -5, scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                className="group flex flex-col items-center gap-2.5 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 p-4 text-center"
-              >
-                <div className={`w-12 h-12 bg-gradient-to-br ${item.grad} rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
-                  <item.icon className="w-5 h-5 text-white" strokeWidth={2.5} />
-                </div>
-                <div>
-                  <p className="text-xs font-black text-slate-800 group-hover:text-orange-600 transition-colors leading-tight">{item.title}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">{item.desc}</p>
-                </div>
-              </motion.button>
-            ))}
-          </div>
+          <ServicesCarousel safeNavigate={safeNavigate} />
         </div>
       </section>
 
@@ -386,106 +432,6 @@ export default function HomePage() {
                 </motion.button>
               ))}
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- PANDIT & KATHA VACHAK PROMO --- */}
-      <section className="py-20 bg-[#FFFAF3] relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #d4920a40, transparent)' }} />
-        <div className="container mx-auto px-6">
-          <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-            <span className="inline-block px-4 py-1 bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest rounded-full mb-3">🙏 बुकिंग सेवाएं</span>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-2">पंडित और कथा वाचक</h2>
-            <p className="text-slate-500 text-sm">अनुभवी पंडितों और कथा वाचकों को घर बैठे बुक करें</p>
-          </motion.div>
-          <div className="grid md:grid-cols-2 gap-6">
-
-            {/* Pandit Card - with Pandit Pradeep Mishra background */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              whileHover={{ y: -6 }}
-              className="group relative overflow-hidden rounded-3xl shadow-xl cursor-pointer min-h-[320px]"
-              onClick={() => safeNavigate('/pandits')}
-            >
-              {/* Background image - Pandit Pradeep Mishra (famous MP pandit) */}
-              <div className="absolute inset-0">
-                <Image
-                  src="/home/Pradeep-Ji-Mishra.webp"
-                  alt="Pandit Pradeep Mishra"
-                  fill
-                  className="object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1a0800]/95 via-[#1a0800]/60 to-[#1a0800]/20" />
-              </div>
-
-              {/* Content */}
-              <div className="relative z-10 p-7 flex flex-col justify-end h-full min-h-[320px]">
-                <div className="mt-auto">
-                  <span className="inline-block text-[10px] font-black px-2.5 py-1 rounded-full text-white mb-3"
-                    style={{ background: 'rgba(200,130,0,0.7)', border: '1px solid rgba(200,130,0,0.5)' }}>
-                    🙏 Pandit Booking
-                  </span>
-                  <h3 className="text-2xl font-black text-white mb-2">पंडित बुकिंग</h3>
-                  <p className="text-orange-100/80 text-sm mb-4 leading-relaxed">पूजा, हवन, विवाह, मुंडन — सभी संस्कारों के लिए अनुभवी पंडित बुक करें।</p>
-                  <div className="flex flex-wrap gap-2 mb-5">
-                    {['पूजा', 'हवन', 'विवाह', 'मुंडन', 'गृह प्रवेश'].map(t => (
-                      <span key={t} className="text-orange-200 text-xs font-bold px-3 py-1 rounded-full"
-                        style={{ background: 'rgba(255,150,50,0.15)', border: '1px solid rgba(200,100,0,0.3)' }}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-black text-white group-hover:gap-3 transition-all"
-                    style={{ textShadow: '0 0 12px rgba(200,130,0,0.6)' }}>
-                    पंडित खोजें <ArrowRight className="w-4 h-4" />
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Katha Vachak Card - with Pandit Pradeep Mishra katha background */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              whileHover={{ y: -6 }}
-              className="group relative overflow-hidden rounded-3xl shadow-xl cursor-pointer min-h-[320px]"
-              onClick={() => safeNavigate('/katha-vachaks')}
-            >
-              {/* Background image - Katha Vachak scene */}
-              <div className="absolute inset-0">
-                <Image
-                  src="/home/kathavachak.webp"
-                  alt="Katha Vachak"
-                  fill
-                  className="object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0f0030]/95 via-[#1a0040]/65 to-[#2d0060]/25" />
-              </div>
-
-              {/* Content */}
-              <div className="relative z-10 p-7 flex flex-col justify-end h-full min-h-[320px]">
-                <div className="mt-auto">
-                  <span className="inline-block text-[10px] font-black px-2.5 py-1 rounded-full text-white mb-3"
-                    style={{ background: 'rgba(120,50,200,0.6)', border: '1px solid rgba(150,80,220,0.4)' }}>
-                    📖 कथा वाचक —  Live And comming
-                  </span>
-                  <h3 className="text-2xl font-black text-white mb-2">कथा वाचक</h3>
-                  <p className="text-purple-100/80 text-sm mb-4 leading-relaxed">रामायण, भागवत, सुंदरकांड — अनुभवी कथा वाचकों को अपने घर या मंदिर में बुलाएं।</p>
-                  <div className="flex flex-wrap gap-2 mb-5">
-                    {['रामायण', 'भागवत', 'सुंदरकांड', 'शिव पुराण'].map(t => (
-                      <span key={t} className="text-purple-200 text-xs font-bold px-3 py-1 rounded-full"
-                        style={{ background: 'rgba(150,80,220,0.2)', border: '1px solid rgba(150,80,220,0.3)' }}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-black text-white group-hover:gap-3 transition-all">
-                    कथा वाचक खोजें <ArrowRight className="w-4 h-4" />
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-
           </div>
         </div>
       </section>

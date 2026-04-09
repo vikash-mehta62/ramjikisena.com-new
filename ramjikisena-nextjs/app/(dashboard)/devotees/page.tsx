@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Flag, Sparkles } from 'lucide-react';
 
 const getAuthHeaders = (): HeadersInit => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -13,173 +11,104 @@ const getAuthHeaders = (): HeadersInit => {
 };
 
 interface User {
-  _id: string;
-  name: string;
-  rank: number;
-  totalCount: number;
-  dailyCounts: Array<{
-    date: string;
-    count: number;
-  }>;
+  _id: string; name: string; rank: number; totalCount: number;
+  dailyCounts: Array<{ date: string; count: number }>;
 }
 
 export default function AllDevoteesPage() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [filtered, setFiltered] = useState<User[]>([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDevotees();
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/devotees`, {
+      headers: getAuthHeaders(), credentials: 'include',
+    }).then(res => {
+      if (!res.ok) { router.push('/login'); return null; }
+      return res.json();
+    }).then(data => {
+      if (data?.success) { setUsers(data.users); setFiltered(data.users); }
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
 
-  const fetchDevotees = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/devotees`, {
-        headers: getAuthHeaders(),
-        credentials: 'include',
-      });
-
-      if (!res.ok) {
-        router.push('/login');
-        return;
-      }
-
-      const data = await res.json();
-      if (data.success) {
-        setUsers(data.users);
-        setFilteredUsers(data.users);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching devotees:', error);
-      setLoading(false);
-    }
+  const handleSearch = (q: string) => {
+    setSearch(q);
+    setFiltered(q.trim() ? users.filter(u => u.name.toLowerCase().includes(q.toLowerCase())) : users);
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    if (query.trim() === '') {
-      setFilteredUsers(users);
-    } else {
-      const filtered = users.filter(user =>
-        user.name.toLowerCase().includes(query.toLowerCase())
-      );
-      setFilteredUsers(filtered);
-    }
-  };
-
-  const getTodayCount = (user: User) => {
-    if (!user.dailyCounts || user.dailyCounts.length === 0) return 0;
-    
+  const getTodayCount = (u: User) => {
+    if (!u.dailyCounts?.length) return 0;
     const today = new Date().toDateString();
-    const lastEntry = user.dailyCounts[user.dailyCounts.length - 1];
-    const lastDate = new Date(lastEntry.date).toDateString();
-    
-    return lastDate === today ? lastEntry.count : 0;
+    const last = u.dailyCounts[u.dailyCounts.length - 1];
+    return new Date(last.date).toDateString() === today ? last.count : 0;
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 flex items-center justify-center">
-        <div className="text-center">
-          <Sparkles className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-          <p className="text-xl text-orange-700">Loading...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <Flag className="w-6 h-6 text-orange-600" />
-              </div>
-              <h1 className="text-2xl font-bold">All Devotees</h1>
-            </div>
-            <Link href="/dashboard" className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition">
-              ← Back
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="max-w-4xl space-y-6">
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Search Box */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-orange-200">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Search devotees by name..."
-              className="w-full px-4 py-3 border-2 border-orange-300 rounded-lg focus:outline-none focus:border-orange-500 text-lg"
-            />
-          </div>
+      {/* Page Header */}
+      <div>
+        <h1 className="text-2xl font-black text-slate-900">All Devotees</h1>
+        <p className="text-slate-500 text-sm mt-1">Sabhi bhakton ki list dekhein</p>
+      </div>
 
-          {/* Stats */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-orange-200">
-            <h2 className="text-2xl font-bold text-orange-700 mb-2">
-              Total Devotees: {filteredUsers.length}
-            </h2>
-            <p className="text-gray-600">Showing all registered devotees</p>
-          </div>
+      {/* Search + Count */}
+      <div className="bg-white rounded-2xl p-4 shadow-sm border-2 border-orange-100 flex flex-col sm:flex-row gap-3 items-center">
+        <input
+          type="text"
+          value={search}
+          onChange={e => handleSearch(e.target.value)}
+          placeholder="Search devotees by name..."
+          className="flex-1 w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:outline-none text-sm"
+        />
+        <span className="text-sm font-bold text-slate-500 whitespace-nowrap">
+          {filtered.length} devotees
+        </span>
+      </div>
 
-          {/* Devotees Table */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-orange-200">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                  <tr>
-                    <th className="px-6 py-4 text-left">Rank</th>
-                    <th className="px-6 py-4 text-left">Name</th>
-                    <th className="px-6 py-4 text-left">Today's Count</th>
-                    <th className="px-6 py-4 text-left">Total Count</th>
+      {/* Table */}
+      <div className="bg-white rounded-2xl shadow-sm border-2 border-orange-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+              <tr>
+                {['Rank', 'Name', "Today's Count", 'Total Count'].map(h => (
+                  <th key={h} className="px-5 py-3 text-left text-sm font-black">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-5 py-10 text-center text-slate-400 font-semibold">
+                    No devotees found
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((u, i) => (
+                  <tr key={u._id} className={`border-b hover:bg-orange-50 transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
+                    <td className="px-5 py-3 font-black text-red-500">#{u.rank}</td>
+                    <td className="px-5 py-3 font-bold text-slate-800">{u.name}</td>
+                    <td className="px-5 py-3 font-bold text-blue-600">{getTodayCount(u)}</td>
+                    <td className="px-5 py-3 font-black text-green-600">{u.totalCount}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
-                        No devotees found
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredUsers.map((user, index) => (
-                      <tr
-                        key={user._id}
-                        className={`border-b hover:bg-orange-50 transition ${
-                          index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                        }`}
-                      >
-                        <td className="px-6 py-4 font-semibold text-red-600">
-                          {user.rank}
-                        </td>
-                        <td className="px-6 py-4 font-medium text-orange-700">
-                          {user.name}
-                        </td>
-                        <td className="px-6 py-4 text-blue-600 font-semibold">
-                          {getTodayCount(user)}
-                        </td>
-                        <td className="px-6 py-4 text-green-600 font-bold">
-                          {user.totalCount}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

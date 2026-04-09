@@ -2,251 +2,234 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { authApi, User } from '@/lib/auth';
-import { User as UserIcon, Sparkles } from 'lucide-react';
+import { Sparkles, Edit2, Check, X } from 'lucide-react';
+import { useToast } from '@/components/Toast';
 
 export default function ProfilePage() {
   const router = useRouter();
+  const toast = useToast();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    city: '',
-    contact: '',
-  });
+  const [formData, setFormData] = useState({ name: '', city: '', contact: '', about: '', dob: '' });
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
-    try {
-      const userData = await authApi.getCurrentUser();
-      if (!userData) {
-        router.push('/login');
-        return;
-      }
-      setUser(userData);
-      setFormData({
-        name: userData.name,
-        city: userData.city,
-        contact: userData.contact,
-      });
+    authApi.getCurrentUser().then(u => {
+      if (!u) { router.push('/login'); return; }
+      setUser(u);
+      setFormData({ name: u.name, city: u.city, contact: u.contact, about: u.about || '', dob: u.dob ? u.dob.slice(0, 10) : '' });
       setLoading(false);
-    } catch (error) {
-      router.push('/login');
-    }
-  };
+    }).catch(() => router.push('/login'));
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
-    setMessage('');
-
     try {
+      const token = localStorage.getItem('token');
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile/update`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         credentials: 'include',
         body: JSON.stringify(formData),
       });
-
       const data = await res.json();
-
       if (data.success) {
-        setMessage('Profile updated successfully! ✅');
+        toast.success('Profile update ho gaya! ✅');
         setEditing(false);
-        fetchProfile();
+        authApi.getCurrentUser().then(u => { if (u) setUser(u); });
       } else {
-        setMessage(data.message || 'Failed to update profile');
+        toast.error(data.message || 'Update failed');
       }
-    } catch (error) {
-      setMessage('Error updating profile');
-    } finally {
-      setSaving(false);
+    } catch {
+      toast.error('Error updating profile');
     }
+    setSaving(false);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 flex items-center justify-center">
-        <div className="text-center">
-          <Sparkles className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-          <p className="text-xl text-orange-700">Loading...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
       </div>
     );
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-orange-600 to-red-600 text-white py-4 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <UserIcon className="w-6 h-6 text-orange-600" />
-              </div>
-              <h1 className="text-2xl font-bold">My Profile</h1>
+    <div className="max-w-2xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-black text-slate-900">My Profile</h1>
+        <p className="text-slate-500 text-sm mt-1">Apni profile manage karein</p>
+      </div>
+
+      {/* Profile Card */}
+      <div className="bg-white rounded-3xl shadow-sm border-2 border-orange-100 overflow-hidden">
+        <div className="h-28 bg-gradient-to-r from-orange-500 to-red-500" />
+        <div className="px-6 pb-6">
+          <div className="flex justify-between items-end -mt-12 mb-4">
+            <div className="w-24 h-24 bg-white rounded-2xl border-4 border-white shadow-lg flex items-center justify-center">
+              <Sparkles className="w-12 h-12 text-orange-500" />
             </div>
-            <Link href="/dashboard" className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition">
-              ← Back
-            </Link>
+            {!editing && (
+              <button
+                onClick={() => setEditing(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors"
+              >
+                <Edit2 className="w-4 h-4" />
+                Edit Profile
+              </button>
+            )}
           </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Profile Card */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-orange-200">
-            {/* Cover */}
-            <div className="h-32 bg-gradient-to-r from-orange-500 to-red-500"></div>
-            
-            {/* Profile Info */}
-            <div className="px-6 pb-6">
-              {/* Avatar */}
-              <div className="flex justify-center -mt-16 mb-4">
-                <div className="w-32 h-32 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                  <Sparkles className="w-16 h-16 text-orange-500" />
-                </div>
+          {editing ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-600 mb-1">Name</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:outline-none text-sm"
+                />
               </div>
-
-              {/* Message */}
-              {message && (
-                <div className={`mb-4 p-3 rounded-lg text-center ${
-                  message.includes('✅') 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-red-100 text-red-700'
-                }`}>
-                  {message}
-                </div>
-              )}
-
-              {/* Edit/View Mode */}
-              {editing ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">Name</label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">City</label>
-                    <input
-                      type="text"
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 font-medium mb-2">Contact</label>
-                    <input
-                      type="tel"
-                      value={formData.contact}
-                      onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                      className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:outline-none"
-                      maxLength={10}
-                    />
-                  </div>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={handleSave}
-                      disabled={saving}
-                      className="flex-1 bg-gradient-to-r from-green-600 to-teal-600 text-white py-2 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
-                    >
-                      {saving ? 'Saving...' : 'Save Changes'}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setEditing(false);
-                        setFormData({
-                          name: user?.name || '',
-                          city: user?.city || '',
-                          contact: user?.contact || '',
-                        });
-                      }}
-                      className="flex-1 bg-gray-500 text-white py-2 rounded-lg font-semibold hover:shadow-lg transition"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-600 mb-1">City</label>
+                <input
+                  type="text"
+                  value={formData.city}
+                  onChange={e => setFormData({ ...formData, city: e.target.value })}
+                  className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-600 mb-1">Contact</label>
+                <input
+                  type="tel"
+                  value={formData.contact}
+                  onChange={e => setFormData({ ...formData, contact: e.target.value })}
+                  className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-600 mb-1">Date of Birth 🎂</label>
+                <input
+                  type="date"
+                  value={formData.dob}
+                  onChange={e => setFormData({ ...formData, dob: e.target.value })}
+                  max={new Date().toISOString().slice(0, 10)}
+                  className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-600 mb-1">
+                  About Me{' '}
+                  <span className="text-xs font-normal text-slate-400">({formData.about.length}/300)</span>
+                </label>
+                <textarea
+                  value={formData.about}
+                  rows={3}
+                  onChange={e => setFormData({ ...formData, about: e.target.value.slice(0, 300) })}
+                  placeholder="Apne baare mein kuch likhein... (optional)"
+                  className="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:outline-none text-sm resize-none"
+                />
+              </div>
+              <div className="flex gap-3 pt-1">
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-green-500 text-white rounded-xl font-bold text-sm hover:bg-green-600 transition-colors disabled:opacity-50"
+                >
+                  <Check className="w-4 h-4" />
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button
+                  onClick={() => {
+                    setEditing(false);
+                    setFormData({
+                      name: user?.name || '',
+                      city: user?.city || '',
+                      contact: user?.contact || '',
+                      about: user?.about || '',
+                      dob: user?.dob ? user.dob.slice(0, 10) : '',
+                    });
+                  }}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-300 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-2xl font-black text-slate-900">{user?.name}</h2>
+              <p className="text-slate-400 text-sm mb-3">@{user?.username}</p>
+              {user?.about ? (
+                <p className="text-slate-600 text-sm mb-4 leading-relaxed bg-orange-50 rounded-xl px-4 py-3 border border-orange-100">
+                  {user.about}
+                </p>
               ) : (
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <h2 className="text-3xl font-bold text-gray-800">{user?.name}</h2>
-                    <p className="text-gray-600">@{user?.username}</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div className="bg-orange-50 p-4 rounded-xl">
-                      <p className="text-sm text-gray-600">City</p>
-                      <p className="text-lg font-semibold text-orange-700">{user?.city}</p>
-                    </div>
-                    <div className="bg-orange-50 p-4 rounded-xl">
-                      <p className="text-sm text-gray-600">Contact</p>
-                      <p className="text-lg font-semibold text-orange-700">{user?.contact}</p>
-                    </div>
-                    <div className="bg-blue-50 p-4 rounded-xl">
-                      <p className="text-sm text-gray-600">Rank</p>
-                      <p className="text-lg font-semibold text-blue-700">#{user?.rank}</p>
-                    </div>
-                    <div className="bg-green-50 p-4 rounded-xl">
-                      <p className="text-sm text-gray-600">Role</p>
-                      <p className="text-lg font-semibold text-green-700 capitalize">{user?.role}</p>
-                    </div>
-                  </div>
-
+                <p className="text-slate-400 text-sm mb-4 italic">
+                  No bio yet.{' '}
                   <button
                     onClick={() => setEditing(true)}
-                    className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition mt-4"
+                    className="text-orange-500 hover:underline not-italic font-semibold"
                   >
-                    Edit Profile
+                    Add one
                   </button>
-                </div>
+                </p>
               )}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-orange-50 text-orange-700 rounded-xl p-3">
+                  <p className="text-xs font-bold opacity-60 mb-0.5">City</p>
+                  <p className="font-bold">{user?.city || '—'}</p>
+                </div>
+                <div className="bg-orange-50 text-orange-700 rounded-xl p-3">
+                  <p className="text-xs font-bold opacity-60 mb-0.5">Contact</p>
+                  <p className="font-bold">{user?.contact || '—'}</p>
+                </div>
+                <div className="bg-blue-50 text-blue-700 rounded-xl p-3">
+                  <p className="text-xs font-bold opacity-60 mb-0.5">Rank</p>
+                  <p className="font-bold">#{user?.rank}</p>
+                </div>
+                <div className="bg-green-50 text-green-700 rounded-xl p-3">
+                  <p className="text-xs font-bold opacity-60 mb-0.5">Role</p>
+                  <p className="font-bold capitalize">{user?.role || '—'}</p>
+                </div>
+                {user?.dob && (
+                  <div className="bg-pink-50 text-pink-700 rounded-xl p-3 col-span-2">
+                    <p className="text-xs font-bold opacity-60 mb-0.5">Date of Birth 🎂</p>
+                    <p className="font-bold">
+                      {new Date(user.dob).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
+        </div>
+      </div>
 
-          {/* Stats Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-orange-200">
-            <h3 className="text-2xl font-bold text-orange-700 mb-4">Spiritual Stats</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-4 rounded-xl text-center">
-                <p className="text-sm text-gray-700">Total Count</p>
-                <p className="text-3xl font-bold text-purple-700">{user?.totalCount || 0}</p>
-              </div>
-              <div className="bg-gradient-to-br from-pink-100 to-pink-200 p-4 rounded-xl text-center">
-                <p className="text-sm text-gray-700">Total Mala</p>
-                <p className="text-3xl font-bold text-pink-700">{user?.mala || 0}</p>
-              </div>
-              <div className="bg-gradient-to-br from-yellow-100 to-yellow-200 p-4 rounded-xl text-center">
-                <p className="text-sm text-gray-700">Days Active</p>
-                <p className="text-3xl font-bold text-yellow-700">{user?.dailyCounts?.length || 0}</p>
-              </div>
-            </div>
+      {/* Spiritual Stats */}
+      <div className="bg-white rounded-2xl shadow-sm border-2 border-orange-100 p-5">
+        <h3 className="font-black text-slate-800 mb-4">Spiritual Stats</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-purple-50 rounded-xl p-3 text-center">
+            <p className="text-2xl font-black text-purple-600">{user?.totalCount || 0}</p>
+            <p className="text-xs font-bold text-slate-500 mt-1">Total Count</p>
+          </div>
+          <div className="bg-pink-50 rounded-xl p-3 text-center">
+            <p className="text-2xl font-black text-pink-600">{Number(user?.mala || 0).toFixed(2)}</p>
+            <p className="text-xs font-bold text-slate-500 mt-1">Total Mala</p>
+          </div>
+          <div className="bg-yellow-50 rounded-xl p-3 text-center">
+            <p className="text-2xl font-black text-yellow-600">{user?.dailyCounts?.length || 0}</p>
+            <p className="text-xs font-bold text-slate-500 mt-1">Days Active</p>
           </div>
         </div>
-      </main>
+      </div>
+
     </div>
   );
 }
