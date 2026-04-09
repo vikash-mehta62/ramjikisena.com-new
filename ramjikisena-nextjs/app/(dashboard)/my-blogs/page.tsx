@@ -15,8 +15,13 @@ export default function MyBlogsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/my/posts`, { credentials: 'include' })
-      .then(r => { if (!r.ok) { router.push('/login'); return null; } return r.json(); })
+    const token = localStorage.getItem('token');
+    if (!token) { router.push('/login'); return; }
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blogs/my/posts`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      credentials: 'include',
+    })
+      .then(r => { if (r.status === 401) { router.push('/login'); return null; } return r.json(); })
       .then(d => { if (d?.success) setBlogs(d.blogs); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);

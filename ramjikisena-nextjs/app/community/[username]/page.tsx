@@ -13,7 +13,8 @@ import api from '@/lib/api';
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface ProfileUser {
   _id: string; name: string; username: string; city?: string;
-  profileImage?: string; totalCount?: number; mala?: number;
+  profileImage?: string; coverImage?: string; about?: string;
+  totalCount?: number; mala?: number;
   rank?: number; joiningDate?: string; role?: string;
   followersCount: number; followingCount: number; postsCount: number;
   isFollowing: boolean; isOwnProfile: boolean;
@@ -408,12 +409,18 @@ export default function UserProfilePage() {
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
 
         {/* Cover / Hero */}
-        <div className="bg-gradient-to-r from-orange-600 via-red-600 to-orange-700 h-40 md:h-52 relative">
-          <div className="absolute inset-0 opacity-20"
-            style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}
-          />
+        <div className="h-44 md:h-56 relative overflow-hidden">
+          {profile.coverImage ? (
+            <img src={profile.coverImage} alt="cover" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-orange-600 via-red-600 to-orange-700">
+              <div className="absolute inset-0 opacity-20"
+                style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }}
+              />
+            </div>
+          )}
           {/* Back button */}
-          <button onClick={() => router.back()} className="absolute top-4 left-4 w-9 h-9 bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+          <button onClick={() => router.back()} className="absolute top-4 left-4 w-9 h-9 bg-black/30 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/50 transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
         </div>
@@ -457,8 +464,13 @@ export default function UserProfilePage() {
                   <MapPin className="w-4 h-4" />{profile.city}
                 </p>
               )}
+              {profile.about && (
+                <p className="text-sm text-gray-600 mt-2 leading-relaxed bg-orange-50 rounded-xl px-3 py-2 border border-orange-100">
+                  {profile.about}
+                </p>
+              )}
               {profile.joiningDate && (
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 mt-1.5">
                   Joined {new Date(profile.joiningDate).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
                 </p>
               )}

@@ -96,7 +96,7 @@ export default function RegisterPage() {
             transition={{ delay: 0.3 }}
             className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 mb-2"
           >
-            Ramji Ki Sena
+            Jai Shri Ram Naam
           </motion.h1>
           <p className="text-gray-600 text-lg font-medium">नये सदस्यता के लिए रजिस्टर करें</p>
         </div>

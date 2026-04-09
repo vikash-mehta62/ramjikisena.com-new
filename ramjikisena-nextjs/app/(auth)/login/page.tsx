@@ -53,7 +53,7 @@ export default function LoginPage() {
             <Flag className="w-7 h-7" style={{ color: '#3a0f00' }} />
           </div>
           <h1 className="text-2xl font-black text-white tracking-tight">
-            RAMJI KI <span style={{ color: '#f9e07a' }}>SENA</span>
+            JAI SHRI <span style={{ color: '#f9e07a' }}>RAM NAAM</span>
           </h1>
           <p className="text-sm mt-1" style={{ color: 'rgba(255,200,120,0.5)' }}>राम नाम लेखन हेतु लॉगिन करें</p>
         </div>

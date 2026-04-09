@@ -24,7 +24,7 @@ const ALL_SERVICES = [
 function ServicesCarousel({ safeNavigate }: { safeNavigate: (href: string) => void }) {
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
-  const visible = 5;
+  const visible = 3;
   const max = ALL_SERVICES.length - visible;
 
   const prev = () => setIdx(i => (i <= 0 ? max : i - 1));
@@ -53,7 +53,7 @@ function ServicesCarousel({ safeNavigate }: { safeNavigate: (href: string) => vo
       <div className="overflow-hidden rounded-2xl">
         <motion.div
           className="flex gap-4"
-          animate={{ x: `calc(-${idx} * (20% + 0.8rem))` }}
+          animate={{ x: `calc(-${idx} * (33.333% + 0.8rem))` }}
           transition={{ type: 'spring', stiffness: 280, damping: 28 }}
         >
           {ALL_SERVICES.map((svc, i) => (
@@ -62,7 +62,7 @@ function ServicesCarousel({ safeNavigate }: { safeNavigate: (href: string) => vo
               onClick={() => safeNavigate(svc.href)}
               whileHover={{ y: -8, scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="flex-shrink-0 w-[calc(20%-0.65rem)] rounded-2xl overflow-hidden cursor-pointer relative group"
+              className="flex-shrink-0 w-[calc(33.333%-0.65rem)] rounded-2xl overflow-hidden cursor-pointer relative group"
               style={{
                 background: 'rgba(255,255,255,0.03)',
                 border: '1px solid rgba(200,130,0,0.3)',
@@ -70,19 +70,19 @@ function ServicesCarousel({ safeNavigate }: { safeNavigate: (href: string) => vo
               }}
             >
               {/* Image area */}
-              <div className="relative h-40 overflow-hidden">
+              <div className="relative h-64 overflow-hidden">
                 <Image
                   src={svc.img} alt={svc.title} fill
                   className="object-cover object-top group-hover:scale-110 transition-transform duration-700"
                 />
                 {/* Gradient overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${svc.grad} opacity-50 mix-blend-multiply`} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent" />
 
                 {/* Popular badge */}
                 {svc.popular && (
-                  <div className="absolute top-2.5 left-2.5">
-                    <span className="text-[9px] font-black px-2 py-0.5 rounded-full"
+                  <div className="absolute top-3 left-3">
+                    <span className="text-[10px] font-black px-2.5 py-1 rounded-full"
                       style={{ background: 'linear-gradient(135deg, #d4920a, #f9e07a)', color: '#3a0f00' }}>
                       {svc.popular}
                     </span>
@@ -90,20 +90,20 @@ function ServicesCarousel({ safeNavigate }: { safeNavigate: (href: string) => vo
                 )}
 
                 {/* Emoji top-right */}
-                <span className="absolute top-2.5 right-2.5 text-xl drop-shadow-lg">{svc.emoji}</span>
+                <span className="absolute top-3 right-3 text-2xl drop-shadow-lg">{svc.emoji}</span>
 
                 {/* Title on image bottom */}
-                <div className="absolute bottom-0 left-0 right-0 px-3 pb-3">
-                  <p className="text-sm font-black text-white leading-tight drop-shadow-lg">{svc.title}</p>
-                  <p className="text-[10px] font-semibold mt-0.5" style={{ color: 'rgba(255,200,120,0.7)' }}>{svc.desc}</p>
+                <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
+                  <p className="text-lg font-black text-white leading-tight drop-shadow-lg">{svc.title}</p>
+                  <p className="text-xs font-semibold mt-1" style={{ color: 'rgba(255,200,120,0.8)' }}>{svc.desc}</p>
                 </div>
               </div>
 
               {/* Bottom CTA bar */}
-              <div className="flex items-center justify-between px-3 py-2.5"
+              <div className="flex items-center justify-between px-4 py-3"
                 style={{ background: 'rgba(200,130,0,0.08)', borderTop: '1px solid rgba(200,130,0,0.15)' }}>
-                <span className="text-[10px] font-black" style={{ color: 'rgba(255,200,120,0.6)' }}>अभी देखें</span>
-                <ChevronRightIcon className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" style={{ color: '#f9e07a' }} />
+                <span className="text-xs font-black" style={{ color: 'rgba(255,200,120,0.7)' }}>अभी देखें</span>
+                <ChevronRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" style={{ color: '#f9e07a' }} />
               </div>
             </motion.button>
           ))}
@@ -247,7 +247,7 @@ export default function HomePage() {
                 {/* Divider line */}
                 <div className="flex items-center gap-3 mb-5 justify-center lg:justify-start">
                   <div className="h-px w-8 bg-orange-500/60" />
-                  <span className="text-orange-300 text-xs font-bold tracking-widest uppercase">रामजी की सेना</span>
+                  <span className="text-orange-300 text-xs font-bold tracking-widest uppercase">जय श्री राम नाम</span>
                   <div className="h-px flex-1 max-w-[80px] bg-orange-500/30" />
                 </div>
 

@@ -81,7 +81,7 @@ export default function AdminDashboard() {
           <h1 className="text-2xl md:text-3xl font-black text-white leading-tight">
             नमस्ते, <span className="text-orange-400">{adminName}</span> 🙏
           </h1>
-          <p className="text-white/50 text-sm font-bold mt-0.5">Ramji Ki Sena — Admin Dashboard</p>
+          <p className="text-white/50 text-sm font-bold mt-0.5">Jai Shri Ram Naam — Admin Dashboard</p>
         </div>
         <div className="ml-auto hidden md:flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl">
           <TrendingUp className="w-4 h-4 text-green-400" />

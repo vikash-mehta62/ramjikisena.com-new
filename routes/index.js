@@ -187,6 +187,8 @@ router.get('/api/me', isLoggedInAPI, async function (req, res) {
         role: loggedInUser.role,
         about: loggedInUser.about || '',
         dob: loggedInUser.dob || null,
+        profileImage: loggedInUser.profileImage || null,
+        coverImage: loggedInUser.coverImage || null,
         customJaapNames: loggedInUser.customJaapNames || [],
         dailyCounts: loggedInUser.dailyCounts
       }
@@ -383,22 +385,17 @@ router.get('/api/birthdays', isLoggedInAPI, async function (req, res) {
 router.post('/api/profile/update', isLoggedInAPI, async function (req, res) {
   try {
     const user = req.user;
-    const { name, city, contact, about, dob } = req.body;
+    const { name, city, contact, about, dob, profileImage, coverImage } = req.body;
 
-    const loggedInUser = await userModel.findOne({ _id: user._id });
-    
-    if (!loggedInUser) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found' 
-      });
-    }
+    const loggedInUser = await userModel.findById(req.user._id);
+    if (!loggedInUser) return res.status(404).json({ success: false, message: 'User not found' });
 
-    // Update fields
     if (name) loggedInUser.name = name;
     if (city) loggedInUser.city = city;
     if (about !== undefined) loggedInUser.about = about.slice(0, 300);
     if (dob !== undefined) loggedInUser.dob = dob ? new Date(dob) : null;
+    if (profileImage !== undefined) loggedInUser.profileImage = profileImage;
+    if (coverImage !== undefined) loggedInUser.coverImage = coverImage;
     if (contact && /^[0-9]{10}$/.test(contact)) {
       // Check if contact already exists for another user
       const existingContact = await userModel.findOne({ 

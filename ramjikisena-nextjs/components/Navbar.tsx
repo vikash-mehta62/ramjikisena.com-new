@@ -23,7 +23,7 @@ const exploreLinks = [
   { href: '/gallery',       label: 'गैलरी',           icon: ImageIcon,    desc: 'Divine moments & events',       color: 'text-pink-600 bg-pink-50' },
   { href: '/glory',         label: 'राम महिमा',       icon: Star,         desc: 'Glory of Ram Naam',             color: 'text-amber-600 bg-amber-50' },
   { href: '/mission',       label: 'हमारा मिशन',      icon: Flag,         desc: 'Our spiritual mission',         color: 'text-red-600 bg-red-50' },
-  { href: '/about',         label: 'हमारे बारे में',  icon: BookOpen,     desc: 'About Ramji Ki Sena',           color: 'text-indigo-600 bg-indigo-50' },
+  { href: '/about',         label: 'हमारे बारे में',  icon: BookOpen,     desc: 'About Jai Shri Ram Naam',       color: 'text-indigo-600 bg-indigo-50' },
   { href: '/contact',       label: 'संपर्क',          icon: Phone,        desc: 'Get in touch with us',          color: 'text-slate-600 bg-slate-50' },
   { href: '/blogs',         label: 'ब्लॉग',           icon: MessageSquare,desc: 'Spiritual blogs & articles',    color: 'text-cyan-600 bg-cyan-50' },
 ];
@@ -146,7 +146,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
             </div>
             <div className="hidden sm:block">
               <p className="text-base font-black tracking-tighter text-white leading-none">
-                RAMJI KI <span style={{ color: '#f9e07a' }}>SENA</span>
+                JAI SHRI <span style={{ color: '#f9e07a' }}>RAM NAAM</span>
               </p>
               <p className="text-[9px] text-white/40 tracking-[0.2em] uppercase">Spiritual Portal</p>
             </div>
@@ -212,7 +212,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                             <p className="text-sm font-black text-slate-800">All Features</p>
                           </div>
                           <div className="flex items-center gap-1.5 text-[10px] font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
-                            🚩 Ramji Ki Sena
+                            🚩 Jai Shri Ram Naam
                           </div>
                         </div>
                       </div>
@@ -381,7 +381,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                   <div className="w-8 h-8 bg-orange-600 rounded-xl flex items-center justify-center">
                     <Flag className="w-4 h-4 text-white" />
                   </div>
-                  <p className="text-sm font-black text-white">RAMJI KI <span className="text-orange-500">SENA</span></p>
+                  <p className="text-sm font-black text-white">JAI SHRI <span className="text-orange-500">RAM NAAM</span></p>
                 </div>
                 <button onClick={() => setMobileOpen(false)} className="w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center text-white">
                   <X className="w-4 h-4" />

@@ -67,7 +67,7 @@ export default function Footer() {
                 🚩
               </div>
               <h2 className="text-xl font-black tracking-tight text-white">
-                RAMJI KI <span className="text-[#f9e07a]">SENA</span>
+                JAI SHRI <span className="text-[#f9e07a]">RAM NAAM</span>
               </h2>
             </div>
             <p className="text-sm leading-relaxed mb-6 text-white/60 max-w-xs">
@@ -109,7 +109,7 @@ export default function Footer() {
       <div className="relative z-10 border-t border-white/5 bg-black/30 backdrop-blur-md">
         <div className="container mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-[12px] text-white/30 flex items-center gap-4">
-            <span>© 2026 Ramji Ki Sena</span>
+            <span>© 2026 Jai Shri Ram Naam</span>
             <Link href="/" className="hover:text-white">Privacy</Link>
             <Link href="/" className="hover:text-white">Terms</Link>
           </div>

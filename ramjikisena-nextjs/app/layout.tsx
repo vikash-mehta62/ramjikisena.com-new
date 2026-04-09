@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ramji Ki Sena - राम नाम लेखन",
-  description: "राम नाम का लिखित जाप - Ram Naam Lekhan",
+  title: "Jai Shri Ram Naam - जय श्री राम नाम",
+  description: "राम नाम का लिखित जाप - Jai Shri Ram Naam Lekhan",
 };
 
 export default function RootLayout({

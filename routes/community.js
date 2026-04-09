@@ -238,7 +238,7 @@ module.exports = router;
 router.get('/profile/:username', isLoggedInAPI, async (req, res) => {
   try {
     const profileUser = await userModel.findOne({ username: req.params.username })
-      .select('name username city profileImage totalCount mala rank joiningDate role');
+      .select('name username city profileImage coverImage about totalCount mala rank joiningDate role');
 
     if (!profileUser) return res.status(404).json({ success: false, message: 'User not found' });
 

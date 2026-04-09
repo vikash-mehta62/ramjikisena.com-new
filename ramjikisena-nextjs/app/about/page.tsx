@@ -37,7 +37,7 @@ export default function AboutPage() {
             </h1>
             <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
             <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-              Ramji Ki Sena — Spiritual Portal
+              Jai Shri Ram Naam — Spiritual Portal
             </p>
           </motion.div>
         </div>
@@ -45,7 +45,7 @@ export default function AboutPage() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="bg-slate-900 rounded-[2.5rem] p-10 text-center mb-10">
-          <h2 className="text-2xl md:text-4xl font-black text-white mb-4">🚩 Ramji Ki Sena 🚩</h2>
+          <h2 className="text-2xl md:text-4xl font-black text-white mb-4">🚩 Jai Shri Ram Naam 🚩</h2>
           <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
             कलयुग में न जप है न तप है और न योग ही है। सिर्फ राम नाम ही इस कलिकाल में प्राणी मात्र का सहारा है।
             श्री राम चन्द्र जी सहज ही कृपा करने वाले और परम दयालु हैं।

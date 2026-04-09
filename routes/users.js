@@ -46,6 +46,7 @@ const userSchema = mongoose.Schema({
     required: true
   },
   profileImage: String,
+  coverImage: String,
   contact: {
     type: String,
     unique: true,

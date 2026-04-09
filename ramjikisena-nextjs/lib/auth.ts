@@ -13,6 +13,8 @@ export interface User {
   role: string;
   about?: string;
   dob?: string | null;
+  profileImage?: string | null;
+  coverImage?: string | null;
   customJaapNames?: Array<{ id: string; label: string; chars: string[] }>;
   dailyCounts: Array<{
     date: string;
