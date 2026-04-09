@@ -33,10 +33,19 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 app.use(cors({
-  origin: ['https://ramjikisena.com', 'http://localhost:3000', 'http://localhost:3001', 'https://ramjikisena-com-new.vercel.app'],
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: [
+    'https://ramjikisena.com',
+    'https://www.ramjikisena.com',
+    'https://jaishriramnaam.com',
+    'https://www.jaishriramnaam.com',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://ramjikisena-com-new.vercel.app',
+  ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   credentials: true,
   optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 
 // view engine setup
