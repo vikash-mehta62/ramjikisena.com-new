@@ -14,64 +14,75 @@ const getAuthHeaders = (isFormData: boolean = false): HeadersInit => {
   const headers: HeadersInit = isFormData ? {} : {
     'Content-Type': 'application/json',
   };
-  
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-  
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   return headers;
+};
+
+// Handle 401 - clear token and redirect to login
+const handle401 = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  // Only redirect if not already on login/register page
+  const path = window.location.pathname;
+  if (!path.includes('/login') && !path.includes('/register') && !path.includes('/forgot')) {
+    window.location.href = '/login';
+  }
+};
+
+// Wrapper that checks for 401 on protected routes
+const safeFetch = async (url: string, options: RequestInit): Promise<Response> => {
+  const res = await fetch(`${API_URL}${url}`, options);
+  if (res.status === 401) {
+    handle401();
+  }
+  return res;
 };
 
 const api = {
   get: async (url: string) => {
-    const res = await fetch(`${API_URL}${url}`, {
+    return safeFetch(url, {
       method: 'GET',
       headers: getAuthHeaders(),
       credentials: 'include',
     });
-    return res;
   },
 
   post: async (url: string, data?: any, options?: RequestInit) => {
     const isFormData = data instanceof FormData;
-    
-    const res = await fetch(`${API_URL}${url}`, {
+    return safeFetch(url, {
       method: 'POST',
       headers: getAuthHeaders(isFormData),
       credentials: 'include',
       body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
-      ...options
+      ...options,
     });
-    return res;
   },
 
   put: async (url: string, data?: any) => {
-    const res = await fetch(`${API_URL}${url}`, {
+    return safeFetch(url, {
       method: 'PUT',
       headers: getAuthHeaders(),
       credentials: 'include',
       body: data ? JSON.stringify(data) : undefined,
     });
-    return res;
   },
 
   patch: async (url: string, data?: any) => {
-    const res = await fetch(`${API_URL}${url}`, {
+    return safeFetch(url, {
       method: 'PATCH',
       headers: getAuthHeaders(),
       credentials: 'include',
       body: data ? JSON.stringify(data) : undefined,
     });
-    return res;
   },
 
   delete: async (url: string) => {
-    const res = await fetch(`${API_URL}${url}`, {
+    return safeFetch(url, {
       method: 'DELETE',
       headers: getAuthHeaders(),
       credentials: 'include',
     });
-    return res;
   },
 
   // Auth endpoints

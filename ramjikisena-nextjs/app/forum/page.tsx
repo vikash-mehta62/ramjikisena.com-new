@@ -149,7 +149,26 @@ export default function ForumPage() {
     const token = localStorage.getItem('token');
     if (!token) { router.push('/login'); return; }
     const u = localStorage.getItem('user');
-    if (u) setCurrentUser(JSON.parse(u));
+    if (u) {
+      try { setCurrentUser(JSON.parse(u)); } catch {}
+    }
+    // Verify in background
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+    fetch(`${API_URL}/api/me`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      credentials: 'include',
+    }).then(res => {
+      if (res.status === 401) {
+        localStorage.removeItem('token'); localStorage.removeItem('user');
+        router.push('/login'); return null;
+      }
+      return res.ok ? res.json() : null;
+    }).then(data => {
+      if (data?.success && data.user) {
+        setCurrentUser(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+    }).catch(() => {});
   }, []);
 
   const fetchThreads = useCallback(async (cat: string, q: string, p: number, reset = false) => {

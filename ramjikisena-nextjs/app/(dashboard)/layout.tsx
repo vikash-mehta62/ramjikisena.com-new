@@ -11,13 +11,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
-
     if (!token) {
       router.push('/login');
       return;
     }
 
+    const userStr = localStorage.getItem('user');
     if (userStr) {
       try {
         const userData = JSON.parse(userStr);
@@ -26,13 +25,40 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           return;
         }
         setUser(userData);
-      } catch (e) {
-        router.push('/login');
+        setLoading(false);
         return;
-      }
+      } catch {}
     }
 
-    setLoading(false);
+    // user object missing - fetch from API
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+    fetch(`${API_URL}/api/me`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .then(res => {
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          router.push('/login');
+          return null;
+        }
+        return res.ok ? res.json() : null;
+      })
+      .then(data => {
+        if (data?.success && data.user) {
+          if (data.user.role === 'admin') {
+            router.push('/admin/admin-dashboard');
+            return;
+          }
+          localStorage.setItem('user', JSON.stringify(data.user));
+          setUser(data.user);
+        } else {
+          router.push('/login');
+        }
+      })
+      .catch(() => router.push('/login'))
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
