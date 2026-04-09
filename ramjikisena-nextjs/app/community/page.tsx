@@ -150,9 +150,21 @@ function PostCard({ post, currentUserId, onUpdate, onDelete }: {
 
   const handleShare = async () => {
     const url = `${window.location.origin}/community#${post._id}`;
-    try { await navigator.clipboard.writeText(url); alert('Link copied!'); } catch { alert(url); }
-    await api.post(`/api/community/posts/${post._id}/share`);
-    onUpdate(post._id, { sharesCount: post.sharesCount + 1 });
+    try {
+      await navigator.clipboard.writeText(url);
+      // Use a non-blocking notification instead of alert
+      const el = document.createElement('div');
+      el.textContent = '🔗 Link copied!';
+      el.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:8px 20px;border-radius:999px;font-size:13px;font-weight:700;z-index:99999;pointer-events:none;';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2000);
+    } catch {
+      // fallback - just copy silently
+    }
+    try {
+      await api.post(`/api/community/posts/${post._id}/share`);
+      onUpdate(post._id, { sharesCount: post.sharesCount + 1 });
+    } catch {}
   };
 
   const handleComment = async () => {
@@ -176,14 +188,15 @@ function PostCard({ post, currentUserId, onUpdate, onDelete }: {
 
   const handleReport = async () => {
     setShowMenu(false);
-    if (!confirm('Report this post?')) return;
-    await api.post(`/api/community/posts/${post._id}/report`);
-    alert('Post reported. Thank you!');
+    if (!window.confirm('Report this post?')) return;
+    try {
+      await api.post(`/api/community/posts/${post._id}/report`);
+    } catch {}
   };
 
   const handleDelete = async () => {
     setShowMenu(false);
-    if (!confirm('Delete this post?')) return;
+    if (!window.confirm('Delete this post?')) return;
     try {
       const res = await api.delete(`/api/community/posts/${post._id}`);
       const data = await res.json();
@@ -397,8 +410,42 @@ export default function CommunityPage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) { router.push('/login'); return; }
+
+    // Try localStorage first for instant load
     const userStr = localStorage.getItem('user');
-    if (userStr) setCurrentUser(JSON.parse(userStr));
+    if (userStr) {
+      try {
+        setCurrentUser(JSON.parse(userStr));
+      } catch {}
+    }
+
+    // Always verify with API to get fresh data
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+    fetch(`${API_URL}/api/me`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .then(res => {
+        if (res.status === 401) {
+          // Only on explicit 401 - clear and redirect
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          router.push('/login');
+          return null;
+        }
+        return res.ok ? res.json() : null;
+      })
+      .then(data => {
+        if (data?.success && data.user) {
+          setCurrentUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+      })
+      .catch(() => {
+        // Network error - keep user logged in if token exists
+        if (!userStr) setCurrentUser({ _id: '', name: 'User', username: 'user', city: '' });
+      });
+
     fetchCities();
     fetchBirthdays();
   }, []);  useEffect(() => {
@@ -458,7 +505,14 @@ export default function CommunityPage() {
   const handleUpdate = (id: string, changes: Partial<Post>) => setPosts(prev => prev.map(p => p._id === id ? { ...p, ...changes } : p));
   const handleDelete = (id: string) => setPosts(prev => prev.filter(p => p._id !== id));
 
-  if (!currentUser) return null;
+  if (!currentUser) return (
+    <div className="min-h-screen bg-[#FFFAF3] flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-14 h-14 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-orange-700 font-bold">जय श्री राम...</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">

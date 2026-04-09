@@ -138,14 +138,18 @@ export const authApi = {
   // Get current user
   getCurrentUser: async (): Promise<User | null> => {
     try {
+      const token = getToken();
+      // No token = not logged in, don't make API call
+      if (!token) return null;
+
       const res = await fetch(`${API_URL}/api/me`, {
         method: 'GET',
         headers: getAuthHeaders(),
         credentials: 'include',
       });
 
-      if (!res.ok) {
-        // Token invalid/expired - clear everything
+      // Only clear token on explicit 401 Unauthorized
+      if (res.status === 401) {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
@@ -155,9 +159,13 @@ export const authApi = {
         return null;
       }
 
+      // For other errors (500, network, etc.) - don't logout, just return null
+      if (!res.ok) return null;
+
       const data = await res.json();
       return data.user;
     } catch (error) {
+      // Network error - don't logout user
       return null;
     }
   },
