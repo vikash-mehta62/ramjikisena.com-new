@@ -365,14 +365,14 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
 
         {/* Header */}
         <div className="text-center mb-4">
-          <span className="inline-block px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-1"
+          <span className="inline-block px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-2"
             style={{ background: 'rgba(200,130,0,0.2)', border: '1px solid rgba(200,130,0,0.3)', color: '#f9e07a' }}>
             🙏 नाम लेखन
           </span>
-          <h2 className="text-xl font-black text-white leading-tight">
+          <h2 className="text-2xl font-black text-white leading-tight">
             {user ? <>जय श्री राम, <span style={{ color: '#f9e07a' }}>{user.name}</span>!</> : <><span style={{ color: '#f9e07a' }}>राम नाम</span> जाप करें</>}
           </h2>
-          <p className="text-[10px]" style={{ color: 'rgba(255,200,120,0.45)' }}>यहाँ से अपना नाम जाप शुरू करें</p>
+          <p className="text-sm mt-1" style={{ color: 'rgba(255,200,120,0.45)' }}>यहाँ से अपना नाम जाप शुरू करें</p>
         </div>
 
         {/* ── MOBILE LAYOUT (< lg) ── */}
@@ -384,9 +384,9 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
               { label: 'Jaap', val: user ? user.totalCount.toLocaleString() : '--', color: '#fb923c' },
               { label: 'Mala', val: user ? Number(user.mala).toFixed(1) : '--', color: '#fbbf24' },
             ].map((s, i) => (
-              <div key={i} className="rounded-xl py-2 px-1 text-center" style={{ background: 'rgba(200,130,0,0.1)', border: '1px solid rgba(200,130,0,0.2)' }}>
-                <p className="text-[7px] uppercase font-black tracking-wide" style={{ color: 'rgba(255,200,120,0.4)' }}>{s.label}</p>
-                <p className="text-sm font-black leading-tight mt-0.5" style={{ color: s.color }}>{s.val}</p>
+              <div key={i} className="rounded-xl py-3 px-2 text-center" style={{ background: 'rgba(200,130,0,0.1)', border: '1px solid rgba(200,130,0,0.2)' }}>
+                <p className="text-[11px] uppercase font-black tracking-wide" style={{ color: 'rgba(255,200,120,0.5)' }}>{s.label}</p>
+                <p className="text-xl font-black leading-tight mt-0.5" style={{ color: s.color }}>{s.val}</p>
               </div>
             ))}
           </div>
@@ -421,20 +421,20 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
           <MiniPlayer />
           {/* Progress */}
           <div>
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: 'rgba(255,200,120,0.4)' }}>माला प्रगति</span>
-              <span className="text-[9px] font-black" style={{ color: cfg.accentColor }}>{currentCount % 108}/108</span>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-sm font-black uppercase tracking-wider" style={{ color: 'rgba(255,200,120,0.5)' }}>माला प्रगति</span>
+              <span className="text-sm font-black" style={{ color: cfg.accentColor }}>{currentCount % 108}/108</span>
             </div>
-            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+            <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
               <motion.div className="h-full rounded-full" style={{ background: `linear-gradient(90deg, ${cfg.beadColor}, ${cfg.accentColor})` }}
                 animate={{ width: `${malaProgress}%` }} transition={{ type: 'spring', stiffness: 120 }} />
             </div>
           </div>
           {/* Count */}
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'rgba(255,200,120,0.4)' }}>वर्तमान जाप</span>
+            <span className="text-base font-black uppercase tracking-wider" style={{ color: 'rgba(255,200,120,0.5)' }}>वर्तमान जाप</span>
             <motion.span key={currentCount} initial={{ scale: 1.3, opacity: 0.5 }} animate={{ scale: 1, opacity: 1 }}
-              className="text-xl font-black px-3 py-0.5 rounded-full"
+              className="text-2xl font-black px-4 py-1 rounded-full"
               style={{ color: cfg.accentColor, background: 'rgba(200,130,0,0.15)', border: '1.5px solid rgba(200,130,0,0.25)' }}>
               {currentCount}
             </motion.span>
@@ -442,11 +442,11 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
           {/* Textarea */}
           <div className="relative rounded-xl overflow-hidden" style={{ border: `1.5px solid ${cfg.beadColor}44`, background: 'rgba(255,255,255,0.04)' }}>
             <textarea readOnly value={textareaValue} rows={2}
-              className="w-full px-3 py-2 bg-transparent text-sm font-bold text-center focus:outline-none resize-none leading-relaxed"
+              className="w-full px-3 py-2 bg-transparent text-base font-bold text-center focus:outline-none resize-none leading-relaxed"
               style={{ color: cfg.accentColor }} />
             {!textareaValue && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-xs" style={{ color: 'rgba(255,200,120,0.2)' }}>नाम यहाँ प्रगट होगा...</span>
+                <span className="text-base" style={{ color: 'rgba(255,200,120,0.2)' }}>नाम यहाँ प्रगट होगा...</span>
               </div>
             )}
           </div>
@@ -456,7 +456,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
               {cfg.keys.map(([char, label]) => (
                 <motion.button key={char} onClick={() => appendCharacter(char)} whileTap={{ scale: 0.88 }}
                   className="relative font-black overflow-hidden rounded-xl"
-                  style={{ color: '#783205', fontSize: cfg.keys.length === 4 ? '1.4rem' : '1.7rem', padding: cfg.keys.length === 4 ? '10px 4px' : '12px 8px', background: 'linear-gradient(160deg, #f9e07a 0%, #d4920a 30%, #f0b429 55%, #b8760a 80%, #e8a820 100%)', boxShadow: '0 5px 16px rgba(140,80,0,0.45), inset 0 2px 3px rgba(255,245,160,0.6), inset 0 -3px 5px rgba(90,40,0,0.3)', border: '2px solid #9a6200' }}>
+                  style={{ color: '#783205', fontSize: cfg.keys.length === 4 ? '1.8rem' : '2.2rem', padding: cfg.keys.length === 4 ? '14px 4px' : '16px 8px', background: 'linear-gradient(160deg, #f9e07a 0%, #d4920a 30%, #f0b429 55%, #b8760a 80%, #e8a820 100%)', boxShadow: '0 5px 16px rgba(140,80,0,0.45), inset 0 2px 3px rgba(255,245,160,0.6), inset 0 -3px 5px rgba(90,40,0,0.3)', border: '2px solid #9a6200' }}>
                   <span className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'linear-gradient(135deg, rgba(255,255,210,0.4) 0%, transparent 50%)' }} />
                   <span className="relative z-10">{label}</span>
                 </motion.button>

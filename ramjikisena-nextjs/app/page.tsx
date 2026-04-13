@@ -372,7 +372,7 @@ export default function HomePage() {
         </div>
         <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #d4920a, transparent)' }} />
         <div className="container mx-auto px-6 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="max-w-2xl">
             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="text-white">
               <div className="inline-flex items-center gap-2 text-[10px] font-black px-3 py-1.5 rounded-full mb-5 uppercase tracking-widest"
                 style={{ background: 'rgba(200,130,0,0.2)', border: '1px solid rgba(200,130,0,0.3)', color: '#f9e07a' }}>
@@ -401,36 +401,7 @@ export default function HomePage() {
                   }}>
                   🛒 अभी खरीदें
                 </button>
-                <button onClick={() => safeNavigate('/samagri')}
-                  className="inline-flex items-center gap-2 text-orange-200 font-bold px-7 py-3.5 rounded-2xl transition-all text-sm"
-                  style={{ background: 'rgba(255,150,50,0.1)', border: '1px solid rgba(200,100,0,0.3)' }}>
-                  🎁 Packages देखें
-                </button>
               </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="grid grid-cols-3 gap-4">
-              {[
-                { tier: 'Basic', price: '₹499', emoji: '🌿', label: 'सामान्य पूजा' },
-                { tier: 'Standard', price: '₹999', emoji: '🪔', label: 'विशेष पूजा' },
-                { tier: 'Premium', price: '₹1999', emoji: '👑', label: 'महा पूजा' },
-              ].map((pkg, i) => (
-                <motion.button
-                  key={pkg.tier}
-                  whileHover={{ y: -6, scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => safeNavigate('/samagri')}
-                  className="rounded-2xl p-4 text-center hover:shadow-2xl transition-all"
-                  style={{
-                    background: 'linear-gradient(145deg, rgba(255,220,100,0.1), rgba(180,100,0,0.15))',
-                    border: '1px solid rgba(200,130,0,0.3)',
-                  }}
-                >
-                  <div className="text-3xl mb-2">{pkg.emoji}</div>
-                  <p className="font-black text-white text-sm">{pkg.tier}</p>
-                  <p className="text-xs text-orange-300/70 mb-1">{pkg.label}</p>
-                  <p className="font-black text-lg" style={{ color: '#f9e07a' }}>{pkg.price}</p>
-                </motion.button>
-              ))}
             </motion.div>
           </div>
         </div>

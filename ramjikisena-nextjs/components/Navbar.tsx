@@ -8,17 +8,13 @@ import {
   ChevronDown, BookOpen, Church, Scroll, User as UserIcon,
   Image as ImageIcon, Phone, Calendar, BarChart3, Flag,
   Sparkles, ShoppingBag, Users, HelpCircle, Compass,
-  LogOut, Crown, Menu, X, Star, MessageSquare
+  LogOut, Crown, Menu, X, Star, MessageSquare, Home
 } from 'lucide-react';
 import { requestGlobalNavigation } from '@/lib/jaapContext';
 interface NavbarProps { showAuthButtons?: boolean; }
 
 const exploreLinks = [
-  { href: '/mandirs',       label: 'मंदिर दर्शन',    icon: Church,       desc: 'Explore divine temples',        color: 'text-orange-600 bg-orange-50' },
-  { href: '/pandits',       label: 'पंडित बुकिंग',   icon: Sparkles,     desc: 'Book experienced pandits',      color: 'text-yellow-600 bg-yellow-50' },
   { href: '/katha-vachaks', label: 'कथा वाचक',       icon: Scroll,       desc: 'Find katha vachaks',            color: 'text-purple-600 bg-purple-50' },
-  { href: '/samagri',       label: 'पूजन सामग्री',   icon: ShoppingBag,  desc: 'Order puja samagri',            color: 'text-green-600 bg-green-50' },
-  { href: '/community',     label: 'भक्त समुदाय',    icon: Users,        desc: 'Connect with devotees',         color: 'text-blue-600 bg-blue-50' },
   { href: '/forum',         label: 'फोरम',            icon: HelpCircle,   desc: 'Ask spiritual questions',       color: 'text-teal-600 bg-teal-50' },
   { href: '/gallery',       label: 'गैलरी',           icon: ImageIcon,    desc: 'Divine moments & events',       color: 'text-pink-600 bg-pink-50' },
   { href: '/glory',         label: 'राम महिमा',       icon: Star,         desc: 'Glory of Ram Naam',             color: 'text-amber-600 bg-amber-50' },
@@ -155,6 +151,21 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1 rounded-2xl p-1 backdrop-blur-md"
             style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(200,130,0,0.2)' }}>
+
+            {/* Home Button */}
+            <button onClick={() => safeNavigate('/')}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                isActive('/')
+                  ? 'text-white shadow-lg'
+                  : 'text-white/75 hover:text-white hover:bg-white/10'
+              }`}
+              style={isActive('/') ? {
+                background: 'linear-gradient(135deg, #d4920a, #f9e07a, #b8760a)',
+                color: '#3a0f00',
+              } : {}}>
+              <Home className="w-3.5 h-3.5" /> Home
+            </button>
+
             {mainLinks.map(({ href, label, icon: Icon }) => (
               <button key={href} onClick={() => safeNavigate(href)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
@@ -190,54 +201,67 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     exit={{ opacity: 0, y: 8, scale: 0.97 }}
                     transition={{ duration: 0.15 }}
                     style={{
-                      position: 'fixed',
-                      top: '64px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: 'min(640px, calc(100vw - 2rem))',
+                      position: 'absolute',
+                      top: 'calc(100% + 10px)',
+                      right: '0',
+                      width: '420px',
                       zIndex: 9999,
                     }}
                   >
-                    {/* Arrow */}
-                    <div className="flex justify-center mb-1">
-                      <div className="w-3 h-3 bg-white rotate-45 shadow-sm border-l border-t border-slate-100" />
+                    {/* Arrow pointing to Explore button */}
+                    <div className="flex justify-end pr-8 mb-1">
+                      <div className="w-3 h-3 rotate-45" style={{ background: 'rgba(15,5,0,0.97)', border: '1px solid rgba(200,130,0,0.3)', borderBottom: 'none', borderRight: 'none' }} />
                     </div>
-                    <div className="bg-white rounded-[1.5rem] shadow-2xl border border-slate-100 overflow-hidden">
+                    <div className="rounded-[1.5rem] shadow-2xl overflow-hidden"
+                      style={{ background: 'rgba(15,5,0,0.97)', border: '1px solid rgba(200,130,0,0.3)', backdropFilter: 'blur(20px)' }}>
                       {/* Header */}
-                      <div className="px-5 py-3 border-b border-slate-100"
-                        style={{ background: 'linear-gradient(135deg, #fff9f0, #fff)' }}>
+                      <div className="px-4 py-3 border-b"
+                        style={{ borderColor: 'rgba(200,130,0,0.2)', background: 'rgba(212,146,10,0.08)' }}>
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">सभी सेवाएं</p>
-                            <p className="text-sm font-black text-slate-800">All Features</p>
+                            <p className="text-[9px] font-black uppercase tracking-[0.25em]" style={{ color: 'rgba(249,224,122,0.5)' }}>सभी सेवाएं</p>
+                            <p className="text-sm font-black text-white">Explore Everything</p>
                           </div>
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+                          <div className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full"
+                            style={{ background: 'rgba(212,146,10,0.15)', color: '#f9e07a', border: '1px solid rgba(212,146,10,0.3)' }}>
                             🚩 Jai Shri Ram Naam
                           </div>
                         </div>
                       </div>
 
                       {/* Grid */}
-                      <div className="p-4 grid grid-cols-3 gap-1.5">
-                        {exploreLinks.map(({ href, label, icon: Icon, desc, color }) => (
+                      <div className="p-3 grid grid-cols-4 gap-1.5">
+                        {exploreLinks.map(({ href, label, icon: Icon, desc }) => (
                           <button key={href} onClick={() => safeNavigate(href)}
-                            className="flex items-center gap-3 p-3 rounded-2xl hover:bg-slate-50 active:bg-orange-50 transition-all group text-left w-full">
-                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${color} group-hover:scale-110 transition-transform`}>
-                              <Icon className="w-4 h-4" />
+                            className="flex flex-col items-center gap-1.5 p-2.5 rounded-xl transition-all group text-center w-full"
+                            style={{ border: '1px solid transparent' }}
+                            onMouseEnter={e => {
+                              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(212,146,10,0.12)';
+                              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(212,146,10,0.25)';
+                            }}
+                            onMouseLeave={e => {
+                              (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                              (e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent';
+                            }}>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform"
+                              style={{ background: 'rgba(212,146,10,0.15)', border: '1px solid rgba(212,146,10,0.25)' }}>
+                              <Icon className="w-4 h-4" style={{ color: '#f9e07a' }} />
                             </div>
-                            <div className="min-w-0">
-                              <p className="text-xs font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight">{label}</p>
-                              <p className="text-[10px] text-slate-400 leading-tight mt-0.5 truncate">{desc}</p>
+                            <div>
+                              <p className="text-xs font-black leading-tight transition-colors" style={{ color: '#fff' }}>{label}</p>
+                              <p className="text-[10px] leading-tight mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>{desc}</p>
                             </div>
                           </button>
                         ))}
                       </div>
 
                       {/* Footer */}
-                      <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                        <p className="text-[10px] text-slate-400">🙏 जय श्री राम</p>
+                      <div className="px-4 py-2.5 flex items-center justify-between"
+                        style={{ borderTop: '1px solid rgba(200,130,0,0.2)', background: 'rgba(212,146,10,0.05)' }}>
+                        <p className="text-[10px] font-medium" style={{ color: 'rgba(249,224,122,0.5)' }}>🙏 जय श्री राम — सेवा में आपका स्वागत है</p>
                         <button onClick={() => safeNavigate('/dashboard')}
-                          className="text-[10px] font-black text-orange-600 hover:text-orange-700 flex items-center gap-1">
+                          className="text-[10px] font-black flex items-center gap-1 px-2.5 py-1 rounded-full transition-all"
+                          style={{ color: '#f9e07a', background: 'rgba(212,146,10,0.15)', border: '1px solid rgba(212,146,10,0.3)' }}>
                           Dashboard →
                         </button>
                       </div>
@@ -393,6 +417,12 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                 <div>
                   <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.25em] mb-2 px-1">Main</p>
                   <div className="grid grid-cols-2 gap-2">
+                    <button onClick={() => safeNavigate('/')}
+                      className={`flex items-center gap-2 p-3 rounded-2xl text-sm font-bold transition-all ${
+                        isActive('/') ? 'bg-orange-600 text-white' : 'bg-white/5 text-white/80 hover:bg-white/10'
+                      }`}>
+                      <Home className="w-4 h-4" /> Home
+                    </button>
                     {mainLinks.map(({ href, label, icon: Icon }) => (
                       <button key={href} onClick={() => safeNavigate(href)}
                         className={`flex items-center gap-2 p-3 rounded-2xl text-sm font-bold transition-all ${
