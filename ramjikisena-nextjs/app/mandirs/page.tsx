@@ -53,16 +53,23 @@ export default function CompactMandirListing() {
       <main className="max-w-6xl mx-auto px-2 sm:px-6 pt-24 pb-12">
         
         {/* --- DYNAMIC HEADER --- */}
-        <div className="mb-6 md:mb-10 text-center md:text-left px-3">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-              पावन <span className="text-orange-600 italic">दर्शन</span>
-            </h1>
-            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-               Explore Divine Destinations
-            </p>
-          </motion.div>
+        <div className="mb-6 md:mb-10 px-3">
+          <div className="flex items-end justify-between flex-wrap gap-3">
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
+                पावन <span className="text-orange-600 italic">दर्शन</span>
+              </h1>
+              <div className="h-1 w-16 bg-orange-500 mt-3 rounded-full" />
+              <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
+                 Explore Divine Destinations
+              </p>
+            </motion.div>
+            <Link href="/mandirs/submit"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg"
+              style={{ background: 'linear-gradient(135deg, #f9e07a, #d4920a)', color: '#3a0f00' }}>
+              🛕 मंदिर जोड़ें
+            </Link>
+          </div>
         </div>
 
         {/* --- SMART SEARCH & FILTERS --- */}

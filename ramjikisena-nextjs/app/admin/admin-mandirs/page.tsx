@@ -63,6 +63,8 @@ interface Mandir {
 
 export default function AdminMandirs() {
   const [mandirs, setMandirs] = useState<Mandir[]>([]);
+  const [pendingMandirs, setPendingMandirs] = useState<Mandir[]>([]);
+  const [activeTab, setActiveTab] = useState<'approved' | 'pending'>('pending');
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -99,7 +101,22 @@ export default function AdminMandirs() {
     'socialMedia.facebook': '',
     'socialMedia.instagram': '',
     'socialMedia.youtube': '',
-    'socialMedia.twitter': ''
+    'socialMedia.twitter': '',
+    // NEW FIELDS
+    'significance': '',
+    'templeType': 'Other',
+    'architecture': '',
+    'builtYear': '',
+    'languages': '',
+    'videos': '',
+    'location.pincode': '',
+    'timing.specialTimings': '',
+    'visitInfo.mobileAllowed': true,
+    'visitInfo.shoeStand': true,
+    'visitInfo.annualVisitors': '',
+    'facilities.cloakroom': false,
+    'facilities.medicalAid': false,
+    'facilities.foodStalls': false,
   });
   const [photoUrl, setPhotoUrl] = useState('');
 
@@ -109,12 +126,14 @@ export default function AdminMandirs() {
 
   const fetchMandirs = async () => {
     try {
-      const response = await api.get('/api/admin/mandirs');
-      const data = await response.json();
-      
-      if (data.success) {
-        setMandirs(data.mandirs);
-      }
+      const [approvedRes, pendingRes] = await Promise.all([
+        api.get('/api/admin/mandirs'),
+        api.get('/api/admin/mandirs/pending'),
+      ]);
+      const approvedData = await approvedRes.json();
+      const pendingData = await pendingRes.json();
+      if (approvedData.success) setMandirs(approvedData.mandirs);
+      if (pendingData.success) setPendingMandirs(pendingData.mandirs);
     } catch (error) {
       console.error('Error fetching mandirs:', error);
     } finally {
@@ -147,6 +166,7 @@ export default function AdminMandirs() {
           address: formData['location.address'],
           city: formData['location.city'],
           state: formData['location.state'],
+          pincode: formData['location.pincode'],
           coordinates: formData['location.coordinates.lat'] && formData['location.coordinates.lng'] ? {
             lat: parseFloat(formData['location.coordinates.lat']),
             lng: parseFloat(formData['location.coordinates.lng'])
@@ -187,7 +207,41 @@ export default function AdminMandirs() {
           instagram: formData['socialMedia.instagram'],
           youtube: formData['socialMedia.youtube'],
           twitter: formData['socialMedia.twitter']
-        }
+        },
+        // NEW FIELDS
+        significance: formData['significance'],
+        templeType: formData['templeType'],
+        architecture: formData['architecture'],
+        builtYear: formData['builtYear'],
+        languages: formData['languages'] ? formData['languages'].split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+        videos: formData['videos'] ? formData['videos'].split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+        'location.pincode': formData['location.pincode'],
+        timing: {
+          opening: formData['timing.opening'],
+          closing: formData['timing.closing'],
+          aarti: formData['timing.aarti'].split(',').map((t: string) => t.trim()).filter((t: string) => t.length > 0),
+          specialTimings: formData['timing.specialTimings'],
+        },
+        visitInfo: {
+          bestTimeToVisit: formData['visitInfo.bestTimeToVisit'],
+          dressCode: formData['visitInfo.dressCode'],
+          entryFee: formData['visitInfo.entryFee'],
+          photographyAllowed: formData['visitInfo.photographyAllowed'],
+          mobileAllowed: formData['visitInfo.mobileAllowed'],
+          shoeStand: formData['visitInfo.shoeStand'],
+          annualVisitors: formData['visitInfo.annualVisitors'],
+        },
+        facilities: {
+          parking: formData['facilities.parking'],
+          prasad: formData['facilities.prasad'],
+          accommodation: formData['facilities.accommodation'],
+          wheelchairAccessible: formData['facilities.wheelchairAccessible'],
+          restrooms: formData['facilities.restrooms'],
+          drinkingWater: formData['facilities.drinkingWater'],
+          cloakroom: formData['facilities.cloakroom'],
+          medicalAid: formData['facilities.medicalAid'],
+          foodStalls: formData['facilities.foodStalls'],
+        },
       };
 
       const url = editingId ? `/api/admin/mandirs/${editingId}` : '/api/admin/mandirs';
@@ -244,7 +298,21 @@ export default function AdminMandirs() {
       'socialMedia.facebook': '',
       'socialMedia.instagram': '',
       'socialMedia.youtube': '',
-      'socialMedia.twitter': ''
+      'socialMedia.twitter': '',
+      'significance': '',
+      'templeType': 'Other',
+      'architecture': '',
+      'builtYear': '',
+      'languages': '',
+      'videos': '',
+      'location.pincode': '',
+      'timing.specialTimings': '',
+      'visitInfo.mobileAllowed': true,
+      'visitInfo.shoeStand': true,
+      'visitInfo.annualVisitors': '',
+      'facilities.cloakroom': false,
+      'facilities.medicalAid': false,
+      'facilities.foodStalls': false,
     });
     setPhotoUrl('');
   };
@@ -283,7 +351,21 @@ export default function AdminMandirs() {
       'socialMedia.facebook': mandir.socialMedia?.facebook || '',
       'socialMedia.instagram': mandir.socialMedia?.instagram || '',
       'socialMedia.youtube': mandir.socialMedia?.youtube || '',
-      'socialMedia.twitter': mandir.socialMedia?.twitter || ''
+      'socialMedia.twitter': mandir.socialMedia?.twitter || '',
+      'significance': (mandir as any).significance || '',
+      'templeType': (mandir as any).templeType || 'Other',
+      'architecture': (mandir as any).architecture || '',
+      'builtYear': (mandir as any).builtYear || '',
+      'languages': (mandir as any).languages?.join(', ') || '',
+      'videos': (mandir as any).videos?.join(', ') || '',
+      'location.pincode': mandir.location?.pincode || '',
+      'timing.specialTimings': mandir.timing?.specialTimings || '',
+      'visitInfo.mobileAllowed': mandir.visitInfo?.mobileAllowed ?? true,
+      'visitInfo.shoeStand': mandir.visitInfo?.shoeStand ?? true,
+      'visitInfo.annualVisitors': mandir.visitInfo?.annualVisitors || '',
+      'facilities.cloakroom': mandir.facilities?.cloakroom || false,
+      'facilities.medicalAid': mandir.facilities?.medicalAid || false,
+      'facilities.foodStalls': mandir.facilities?.foodStalls || false,
     });
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -387,6 +469,23 @@ export default function AdminMandirs() {
     }
   };
 
+  const handleApprove = async (id: string) => {
+    try {
+      const res = await api.put(`/api/admin/mandirs/${id}/approve`, {});
+      const data = await res.json();
+      if (data.success) { alert('✅ Mandir approved!'); fetchMandirs(); }
+    } catch { alert('Error approving mandir'); }
+  };
+
+  const handleReject = async (id: string) => {
+    const reason = prompt('Rejection reason (optional):') || '';
+    try {
+      const res = await api.put(`/api/admin/mandirs/${id}/reject`, { reason });
+      const data = await res.json();
+      if (data.success) { alert('Mandir rejected.'); fetchMandirs(); }
+    } catch { alert('Error rejecting mandir'); }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -408,6 +507,16 @@ export default function AdminMandirs() {
               <h1 className="text-4xl font-bold mb-2">Mandir Management</h1>
               <p className="text-orange-100">Manage all mandirs on the platform</p>
             </div>
+          </div>
+          <div className="flex items-center gap-3 mt-4">
+            <button onClick={() => setActiveTab('pending')}
+              className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${activeTab === 'pending' ? 'bg-white text-orange-600' : 'bg-white/20 text-white'}`}>
+              ⏳ Pending ({pendingMandirs.length})
+            </button>
+            <button onClick={() => setActiveTab('approved')}
+              className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${activeTab === 'approved' ? 'bg-white text-orange-600' : 'bg-white/20 text-white'}`}>
+              ✅ Approved ({mandirs.length})
+            </button>
           </div>
           <button
             onClick={() => {
@@ -817,6 +926,105 @@ export default function AdminMandirs() {
               </div>
             </div>
 
+            {/* Temple Classification */}
+            <div className="border-2 border-indigo-200 rounded-xl p-6">
+              <h3 className="text-lg font-bold text-indigo-700 mb-4">🏛️ Temple Classification</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Temple Type</label>
+                  <select value={formData['templeType']} onChange={e => setFormData({...formData, 'templeType': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    {['Other','Jyotirlinga','Shakti Peeth','Char Dham','Divya Desam','Ashtavinayak'].map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Architecture Style</label>
+                  <input value={formData['architecture']} onChange={e => setFormData({...formData, 'architecture': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
+                    placeholder="e.g. Dravidian, Nagara, Vesara" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Built Year / Century</label>
+                  <input value={formData['builtYear']} onChange={e => setFormData({...formData, 'builtYear': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
+                    placeholder="e.g. 12th Century or 1850" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Annual Visitors</label>
+                  <input value={formData['visitInfo.annualVisitors']} onChange={e => setFormData({...formData, 'visitInfo.annualVisitors': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
+                    placeholder="e.g. 10 Lakh+" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Languages (comma separated)</label>
+                  <input value={formData['languages']} onChange={e => setFormData({...formData, 'languages': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
+                    placeholder="e.g. Hindi, Sanskrit, Tamil" />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Significance / Why Famous</label>
+                  <textarea value={formData['significance']} onChange={e => setFormData({...formData, 'significance': e.target.value})}
+                    rows={3} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 resize-none"
+                    placeholder="Religious importance, why this temple is significant..." />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Video URLs (YouTube embed, comma separated)</label>
+                  <input value={formData['videos']} onChange={e => setFormData({...formData, 'videos': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
+                    placeholder="https://www.youtube.com/embed/..." />
+                </div>
+              </div>
+            </div>
+
+            {/* Extra Visit Info */}
+            <div className="border-2 border-green-200 rounded-xl p-6">
+              <h3 className="text-lg font-bold text-green-700 mb-4">📋 Additional Visit Info</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">PIN Code</label>
+                  <input value={formData['location.pincode']} onChange={e => setFormData({...formData, 'location.pincode': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500"
+                    placeholder="e.g. 623526" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Special Timings Note</label>
+                  <input value={formData['timing.specialTimings']} onChange={e => setFormData({...formData, 'timing.specialTimings': e.target.value})}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500"
+                    placeholder="e.g. Closed on Mondays 12-4 PM" />
+                </div>
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" id="mobileAllowed" checked={formData['visitInfo.mobileAllowed'] as boolean}
+                    onChange={e => setFormData({...formData, 'visitInfo.mobileAllowed': e.target.checked})}
+                    className="w-5 h-5 text-green-600 rounded" />
+                  <label htmlFor="mobileAllowed" className="text-sm font-semibold text-gray-700">Mobile Phones Allowed</label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" id="shoeStand" checked={formData['visitInfo.shoeStand'] as boolean}
+                    onChange={e => setFormData({...formData, 'visitInfo.shoeStand': e.target.checked})}
+                    className="w-5 h-5 text-green-600 rounded" />
+                  <label htmlFor="shoeStand" className="text-sm font-semibold text-gray-700">Shoe Stand Available</label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" id="cloakroom" checked={formData['facilities.cloakroom'] as boolean}
+                    onChange={e => setFormData({...formData, 'facilities.cloakroom': e.target.checked})}
+                    className="w-5 h-5 text-green-600 rounded" />
+                  <label htmlFor="cloakroom" className="text-sm font-semibold text-gray-700">Cloakroom Available</label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" id="medicalAid" checked={formData['facilities.medicalAid'] as boolean}
+                    onChange={e => setFormData({...formData, 'facilities.medicalAid': e.target.checked})}
+                    className="w-5 h-5 text-green-600 rounded" />
+                  <label htmlFor="medicalAid" className="text-sm font-semibold text-gray-700">Medical Aid Available</label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" id="foodStalls" checked={formData['facilities.foodStalls'] as boolean}
+                    onChange={e => setFormData({...formData, 'facilities.foodStalls': e.target.checked})}
+                    className="w-5 h-5 text-green-600 rounded" />
+                  <label htmlFor="foodStalls" className="text-sm font-semibold text-gray-700">Food Stalls Available</label>
+                </div>
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={uploading}
@@ -836,7 +1044,51 @@ export default function AdminMandirs() {
       </div>
 
       {/* Mandirs List */}
-      {mandirs.length === 0 ? (
+      {/* Pending Mandirs Tab */}
+      {activeTab === 'pending' && (
+        pendingMandirs.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-xl p-12 text-center border-2 border-orange-200">
+            <Church className="w-20 h-20 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">कोई Pending Mandir नहीं</h3>
+            <p className="text-gray-500">सभी submissions review हो चुकी हैं।</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4">
+            {pendingMandirs.map((mandir: any) => (
+              <div key={mandir._id} className="bg-white rounded-2xl shadow-lg p-6 border-2 border-yellow-200">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-black bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">⏳ PENDING</span>
+                      {mandir.submittedBy && (
+                        <span className="text-xs text-gray-500">by {mandir.submittedBy.name} ({mandir.submittedBy.email})</span>
+                      )}
+                    </div>
+                    <h3 className="text-xl font-bold text-orange-700">{mandir.name}</h3>
+                    <p className="text-sm text-gray-500">{mandir.location?.city}, {mandir.location?.state}</p>
+                    {mandir.description && <p className="text-sm text-gray-600 mt-1 line-clamp-2">{mandir.description}</p>}
+                    {mandir.deity?.main && <p className="text-xs text-orange-500 mt-1">🛕 {mandir.deity.main}</p>}
+                    <p className="text-xs text-gray-400 mt-1">{new Date(mandir.createdAt).toLocaleDateString('hi-IN')}</p>
+                  </div>
+                  <div className="flex flex-col gap-2 flex-shrink-0">
+                    <button onClick={() => handleApprove(mandir._id)}
+                      className="px-4 py-2 bg-green-600 text-white rounded-xl font-bold text-sm hover:bg-green-700 transition-all">
+                      ✅ Approve
+                    </button>
+                    <button onClick={() => handleReject(mandir._id)}
+                      className="px-4 py-2 bg-red-100 text-red-600 rounded-xl font-bold text-sm hover:bg-red-200 transition-all">
+                      ❌ Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      )}
+
+      {/* Approved Mandirs Tab */}
+      {activeTab === 'approved' && (mandirs.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-xl p-12 text-center border-2 border-orange-200">
           <Church className="w-20 h-20 text-gray-300 mx-auto mb-4" />
           <h3 className="text-3xl font-bold text-gray-800 mb-3">No Mandirs Yet</h3>
@@ -888,7 +1140,7 @@ export default function AdminMandirs() {
             </div>
           ))}
         </div>
-      )}
+      ))}
     </div>
   );
 }

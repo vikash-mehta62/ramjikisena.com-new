@@ -410,6 +410,49 @@ router.delete('/mandirs/:id', async (req, res) => {
   }
 });
 
+// Get pending mandir submissions
+router.get('/mandirs/pending', async (req, res) => {
+  try {
+    const mandirs = await Mandir.find({ status: 'pending' })
+      .populate('submittedBy', 'name email username')
+      .sort({ createdAt: -1 });
+    res.json({ success: true, mandirs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Approve a mandir submission
+router.put('/mandirs/:id/approve', async (req, res) => {
+  try {
+    const mandir = await Mandir.findByIdAndUpdate(
+      req.params.id,
+      { status: 'approved', rejectionReason: '' },
+      { new: true }
+    );
+    if (!mandir) return res.status(404).json({ success: false, message: 'Mandir not found' });
+    res.json({ success: true, message: 'Mandir approved successfully', mandir });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Reject a mandir submission
+router.put('/mandirs/:id/reject', async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const mandir = await Mandir.findByIdAndUpdate(
+      req.params.id,
+      { status: 'rejected', rejectionReason: reason || '' },
+      { new: true }
+    );
+    if (!mandir) return res.status(404).json({ success: false, message: 'Mandir not found' });
+    res.json({ success: true, message: 'Mandir rejected', mandir });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // ============================================
 // ANNOUNCEMENTS (Future Feature)
 // ============================================

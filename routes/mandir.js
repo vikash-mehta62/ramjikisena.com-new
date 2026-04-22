@@ -27,30 +27,24 @@ function isLoggedInAPI(req, res, next) {
   });
 }
 
-// Get all mandirs
+// Get all mandirs (only approved)
 router.get('/', async (req, res) => {
   try {
     const { city, state, search } = req.query;
-    let query = {};
+
+    const conditions = { $or: [{ status: 'approved' }, { status: { $exists: false } }] };
+    if (city) conditions['location.city'] = { $regex: city, $options: 'i' };
+    if (state) conditions['location.state'] = { $regex: state, $options: 'i' };
+    if (search) conditions.name = { $regex: search, $options: 'i' };
     
-    if (city) query['location.city'] = city;
-    if (state) query['location.state'] = state;
-    if (search) query.name = { $regex: search, $options: 'i' };
-    
-    const mandirs = await Mandir.find(query)
+    const mandirs = await Mandir.find(conditions)
       .select('-reviews')
       .sort({ averageRating: -1, createdAt: -1 });
     
-    res.json({
-      success: true,
-      mandirs
-    });
+    res.json({ success: true, mandirs });
   } catch (error) {
     console.error('Get mandirs error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: error.message 
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -137,6 +131,38 @@ router.post('/:id/review', isLoggedInAPI, async (req, res) => {
       success: false, 
       message: error.message 
     });
+  }
+});
+
+// User: Submit a mandir listing (pending approval)
+router.post('/submit', isLoggedInAPI, async (req, res) => {
+  try {
+    const mandirData = {
+      ...req.body,
+      status: 'pending',
+      submittedBy: req.user._id,
+    };
+    const mandir = await Mandir.create(mandirData);
+    res.json({
+      success: true,
+      message: 'मंदिर की जानकारी सबमिट हो गई। Admin approval के बाद यह दिखेगा।',
+      mandir
+    });
+  } catch (error) {
+    console.error('Submit mandir error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// User: Get own submitted mandirs
+router.get('/my-submissions', isLoggedInAPI, async (req, res) => {
+  try {
+    const mandirs = await Mandir.find({ submittedBy: req.user._id })
+      .select('-reviews')
+      .sort({ createdAt: -1 });
+    res.json({ success: true, mandirs });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
