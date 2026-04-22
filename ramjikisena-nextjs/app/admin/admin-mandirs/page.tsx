@@ -11,51 +11,47 @@ interface Mandir {
   name: string;
   description: string;
   history?: string;
+  significance?: string;
+  templeType?: string;
+  architecture?: string;
+  builtYear?: string;
+  languages?: string[];
+  videos?: string[];
   location: {
     address?: string;
     city: string;
     state: string;
-    coordinates?: {
-      lat: number;
-      lng: number;
-    };
+    pincode?: string;
+    coordinates?: { lat: number; lng: number };
   };
   timing?: {
     opening: string;
     closing: string;
-    aarti?: string[];
+    aarti?: Array<{ name: string; time: string } | string>;
+    specialTimings?: string;
+    specialDays?: Array<{ day: string; opening: string; closing: string; note: string }>;
   };
-  contact?: {
-    phone?: string;
-    email?: string;
-    website?: string;
-  };
+  contact?: { phone?: string; email?: string; website?: string };
   photos?: string[];
-  // NEW FIELDS
-  deity?: {
-    main?: string;
-    others?: string[];
-  };
+  deity?: { main?: string; others?: string[] };
   visitInfo?: {
     bestTimeToVisit?: string;
     dressCode?: string;
     entryFee?: string;
     photographyAllowed?: boolean;
+    mobileAllowed?: boolean;
+    shoeStand?: boolean;
+    annualVisitors?: string;
+    donationInfo?: string;
+    trustName?: string;
+    managedBy?: string;
   };
   facilities?: {
-    parking?: boolean;
-    prasad?: boolean;
-    accommodation?: boolean;
-    wheelchairAccessible?: boolean;
-    restrooms?: boolean;
-    drinkingWater?: boolean;
+    parking?: boolean; prasad?: boolean; accommodation?: boolean;
+    wheelchairAccessible?: boolean; restrooms?: boolean; drinkingWater?: boolean;
+    cloakroom?: boolean; medicalAid?: boolean; foodStalls?: boolean;
   };
-  socialMedia?: {
-    facebook?: string;
-    instagram?: string;
-    youtube?: string;
-    twitter?: string;
-  };
+  socialMedia?: { facebook?: string; instagram?: string; youtube?: string; twitter?: string };
   averageRating: number;
   reviews: any[];
   createdAt: string;
@@ -162,6 +158,12 @@ export default function AdminMandirs() {
         name: formData.name,
         description: formData.description,
         history: formData.history,
+        significance: formData['significance'],
+        templeType: formData['templeType'],
+        architecture: formData['architecture'],
+        builtYear: formData['builtYear'],
+        languages: formData['languages'] ? formData['languages'].split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+        videos: formData['videos'] ? formData['videos'].split(',').map((s: string) => s.trim()).filter(Boolean) : [],
         location: {
           address: formData['location.address'],
           city: formData['location.city'],
@@ -175,7 +177,8 @@ export default function AdminMandirs() {
         timing: {
           opening: formData['timing.opening'],
           closing: formData['timing.closing'],
-          aarti: aartiTimes
+          aarti: aartiTimes,
+          specialTimings: formData['timing.specialTimings'],
         },
         contact: {
           phone: formData['contact.phone'],
@@ -183,44 +186,9 @@ export default function AdminMandirs() {
           website: formData['contact.website']
         },
         photos: formData.photos,
-        // NEW FIELDS
         deity: {
           main: formData['deity.main'],
           others: deityOthers
-        },
-        visitInfo: {
-          bestTimeToVisit: formData['visitInfo.bestTimeToVisit'],
-          dressCode: formData['visitInfo.dressCode'],
-          entryFee: formData['visitInfo.entryFee'],
-          photographyAllowed: formData['visitInfo.photographyAllowed']
-        },
-        facilities: {
-          parking: formData['facilities.parking'],
-          prasad: formData['facilities.prasad'],
-          accommodation: formData['facilities.accommodation'],
-          wheelchairAccessible: formData['facilities.wheelchairAccessible'],
-          restrooms: formData['facilities.restrooms'],
-          drinkingWater: formData['facilities.drinkingWater']
-        },
-        socialMedia: {
-          facebook: formData['socialMedia.facebook'],
-          instagram: formData['socialMedia.instagram'],
-          youtube: formData['socialMedia.youtube'],
-          twitter: formData['socialMedia.twitter']
-        },
-        // NEW FIELDS
-        significance: formData['significance'],
-        templeType: formData['templeType'],
-        architecture: formData['architecture'],
-        builtYear: formData['builtYear'],
-        languages: formData['languages'] ? formData['languages'].split(',').map((s: string) => s.trim()).filter(Boolean) : [],
-        videos: formData['videos'] ? formData['videos'].split(',').map((s: string) => s.trim()).filter(Boolean) : [],
-        'location.pincode': formData['location.pincode'],
-        timing: {
-          opening: formData['timing.opening'],
-          closing: formData['timing.closing'],
-          aarti: formData['timing.aarti'].split(',').map((t: string) => t.trim()).filter((t: string) => t.length > 0),
-          specialTimings: formData['timing.specialTimings'],
         },
         visitInfo: {
           bestTimeToVisit: formData['visitInfo.bestTimeToVisit'],
@@ -241,6 +209,12 @@ export default function AdminMandirs() {
           cloakroom: formData['facilities.cloakroom'],
           medicalAid: formData['facilities.medicalAid'],
           foodStalls: formData['facilities.foodStalls'],
+        },
+        socialMedia: {
+          facebook: formData['socialMedia.facebook'],
+          instagram: formData['socialMedia.instagram'],
+          youtube: formData['socialMedia.youtube'],
+          twitter: formData['socialMedia.twitter']
         },
       };
 
