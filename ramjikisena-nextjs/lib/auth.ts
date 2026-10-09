@@ -11,6 +11,7 @@ export interface User {
   totalCount: number;
   mala: number;
   role: string;
+  permissions?: string[];
   about?: string;
   dob?: string | null;
   profileImage?: string | null;
@@ -35,7 +36,7 @@ export interface RegisterResponse {
   user?: User;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
 
 // Helper to get token from localStorage
 const getToken = (): string | null => {
@@ -150,13 +151,11 @@ export const authApi = {
         credentials: 'include',
       });
 
-      // Only clear token on explicit 401 Unauthorized
+      // Only clear devotee token on explicit 401 Unauthorized
       if (res.status === 401) {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
-          localStorage.removeItem('panditToken');
-          localStorage.removeItem('pandit');
         }
         return null;
       }

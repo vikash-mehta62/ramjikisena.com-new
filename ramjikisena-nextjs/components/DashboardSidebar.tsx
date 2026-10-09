@@ -7,28 +7,35 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   BarChart3, Users, Church, Scroll, Sparkles, Calendar,
   FileText, Clock, Home, LogOut, ChevronLeft, ChevronRight,
-  Crown, DollarSign, Menu, X
+  Crown, DollarSign, Menu, X, TrendingUp, Shield
 } from 'lucide-react';
 
-interface SidebarLink { href: string; label: string; icon: React.ReactNode; badge?: number; }
-interface DashboardSidebarProps { role: 'admin' | 'pandit'; userName: string; userPhoto?: string; }
+interface SidebarLink { href: string; label: string; icon: React.ReactNode; badge?: number; key?: string; }
+interface DashboardSidebarProps {
+  role: 'admin' | 'pandit' | 'staff';
+  userName: string;
+  userPhoto?: string;
+  permissions?: string[];
+}
 
-export default function DashboardSidebar({ role, userName, userPhoto }: DashboardSidebarProps) {
+export default function DashboardSidebar({ role, userName, userPhoto, permissions = [] }: DashboardSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const adminLinks: SidebarLink[] = [
-    { href: '/admin/admin-dashboard', label: 'Dashboard', icon: <BarChart3 className="w-5 h-5" /> },
-    { href: '/admin/users', label: 'All Users', icon: <Users className="w-5 h-5" /> },
-    { href: '/admin/admin-mandirs', label: 'Mandirs', icon: <Church className="w-5 h-5" /> },
-    { href: '/admin/admin-katha-vachaks', label: 'Katha Vachaks', icon: <Scroll className="w-5 h-5" /> },
-    { href: '/admin/admin-pandits', label: 'Pandits', icon: <Sparkles className="w-5 h-5" /> },
-    { href: '/admin/admin-bookings', label: 'Bookings', icon: <Calendar className="w-5 h-5" /> },
-    { href: '/admin/admin-blogs', label: 'All Blogs', icon: <FileText className="w-5 h-5" /> },
-    { href: '/admin/admin-blogs/pending', label: 'Pending Blogs', icon: <Clock className="w-5 h-5" /> },
-    { href: '/admin/admin-samagri', label: 'Samagri', icon: <span className="text-base leading-none">🪔</span> },
+    { href: '/admin/admin-dashboard', label: 'Dashboard', icon: <BarChart3 className="w-5 h-5" />, key: 'dashboard' },
+    { href: '/admin/admin-analytics', label: 'Visits & Analytics', icon: <TrendingUp className="w-5 h-5" />, key: 'analytics' },
+    { href: '/admin/users', label: 'All Users', icon: <Users className="w-5 h-5" />, key: 'users' },
+    { href: '/admin/admin-staff', label: 'Staff & Roles', icon: <Shield className="w-5 h-5" />, key: 'staff' },
+    { href: '/admin/admin-mandirs', label: 'Mandirs', icon: <Church className="w-5 h-5" />, key: 'mandirs' },
+    { href: '/admin/admin-katha-vachaks', label: 'Katha Vachaks', icon: <Scroll className="w-5 h-5" />, key: 'kathaVachaks' },
+    { href: '/admin/admin-pandits', label: 'Pandits', icon: <Sparkles className="w-5 h-5" />, key: 'pandits' },
+    { href: '/admin/admin-bookings', label: 'Bookings', icon: <Calendar className="w-5 h-5" />, key: 'bookings' },
+    { href: '/admin/admin-blogs', label: 'All Blogs', icon: <FileText className="w-5 h-5" />, key: 'blogs' },
+    { href: '/admin/admin-blogs/pending', label: 'Pending Blogs', icon: <Clock className="w-5 h-5" />, key: 'blogs' },
+    { href: '/admin/admin-samagri', label: 'Samagri', icon: <span className="text-base leading-none">🪔</span>, key: 'samagri' },
   ];
 
   const panditLinks: SidebarLink[] = [
@@ -38,16 +45,24 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
     { href: '/pandit/earnings', label: 'Earnings', icon: <DollarSign className="w-5 h-5" /> },
   ];
 
-  const links = role === 'admin' ? adminLinks : panditLinks;
+  let links = adminLinks;
+  if (role === 'pandit') {
+    links = panditLinks;
+  } else if (role === 'staff') {
+    // Only show permitted links for staff
+    links = adminLinks.filter(l => !l.key || permissions.includes(l.key));
+  }
 
   const handleLogout = () => {
-    if (role === 'admin') {
+    if (role === 'admin' || role === 'staff') {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      if (typeof window !== 'undefined') window.dispatchEvent(new Event('auth-change'));
       router.push('/login');
     } else {
       localStorage.removeItem('panditToken');
       localStorage.removeItem('pandit');
+      if (typeof window !== 'undefined') window.dispatchEvent(new Event('auth-change'));
       router.push('/pandit/login');
     }
   };
@@ -64,6 +79,8 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
               <img src={userPhoto} alt={userName} className="w-full h-full object-cover" />
             ) : role === 'admin' ? (
               <Crown className="w-5 h-5 text-orange-300" />
+            ) : role === 'staff' ? (
+              <Shield className="w-5 h-5 text-amber-300" />
             ) : (
               <Sparkles className="w-5 h-5 text-orange-300" />
             )}
@@ -71,7 +88,7 @@ export default function DashboardSidebar({ role, userName, userPhoto }: Dashboar
           {!collapsed && (
             <div className="overflow-hidden">
               <p className="text-[10px] font-black text-white/50 uppercase tracking-widest">
-                {role === 'admin' ? 'Admin Panel' : 'Pandit Portal'}
+                {role === 'admin' ? 'Admin Panel' : role === 'staff' ? 'Staff Portal' : 'Pandit Portal'}
               </p>
               <p className="font-black text-white text-sm truncate">{userName}</p>
             </div>

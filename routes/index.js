@@ -29,6 +29,46 @@ router.use('/api/mandirs', mandirRouter);
 // API ROUTES FOR NEXT.JS (JSON RESPONSES)
 // ============================================
 
+// Public Home Statistics Endpoint (No auth required)
+router.get('/api/public/home-stats', async function (req, res) {
+  try {
+    const Pandit = require('../models/Pandit');
+    const Mandir = require('../models/Mandir');
+    const KathaVachak = require('../models/KathaVachak');
+
+    const [userCount, allUsersTotal, panditCount, mandirCount, kathaCount, topDevotees] = await Promise.all([
+      userModel.countDocuments(),
+      userModel.find({}, 'totalCount').lean(),
+      Pandit.countDocuments({ isActive: true }).catch(() => 0),
+      Mandir.countDocuments().catch(() => 0),
+      KathaVachak.countDocuments().catch(() => 0),
+      userModel.find({ totalCount: { $gt: 0 } }, 'name username totalCount mala city profileImage')
+        .sort({ totalCount: -1 })
+        .limit(6)
+        .lean()
+    ]);
+
+    const totalRamNaam = allUsersTotal.reduce((acc, u) => acc + (u.totalCount || 0), 0);
+    const totalMalas = Math.floor(totalRamNaam / 108);
+
+    return res.json({
+      success: true,
+      stats: {
+        totalRamNaam,
+        totalMalas,
+        totalDevotees: userCount,
+        totalPandits: panditCount || 6,
+        totalMandirs: mandirCount || 1,
+        totalKathaVachaks: kathaCount || 5
+      },
+      topDevotees
+    });
+  } catch (error) {
+    console.error('Home stats error:', error);
+    return res.status(500).json({ success: false, message: 'Error fetching stats' });
+  }
+});
+
 // API Login (JSON response)
 router.post('/api/login', async function (req, res) {
   try {
@@ -62,17 +102,19 @@ router.post('/api/login', async function (req, res) {
       return res.json({ 
         success: true, 
         message: 'Login successful',
+        token: token,
         user: {
           _id: userExist._id,
           username: userExist.username,
           name: userExist.name,
           city: userExist.city,
           role: userExist.role,
+          permissions: userExist.permissions || [],
           rank: userExist.rank,
           totalCount: userExist.totalCount,
           mala: userExist.mala
         },
-        redirect: userExist.role === 'admin' ? '/admin/admin-dashboard' : '/dashboard'
+        redirect: (userExist.role === 'admin' || userExist.role === 'staff' || userExist.role === 'subadmin') ? '/admin/admin-dashboard' : '/dashboard'
       });
     } else {
       return res.status(401).json({ 
@@ -142,6 +184,7 @@ router.post('/api/register', async function (req, res) {
     return res.json({ 
       success: true, 
       message: 'Registration successful',
+      token: token,
       user: {
         _id: data._id,
         username: data.username,
@@ -315,9 +358,10 @@ router.post('/api/forgot', async function (req, res) {
           username: user.username,
           name: user.name,
           city: user.city,
-          role: user.role
+          role: user.role,
+          permissions: user.permissions || []
         },
-        redirect: user.role === 'admin' ? '/admin/admin-dashboard' : '/dashboard'
+        redirect: (user.role === 'admin' || user.role === 'staff' || user.role === 'subadmin') ? '/admin/admin-dashboard' : '/dashboard'
       });
     } else {
       return res.status(404).json({ 
@@ -1019,65 +1063,90 @@ function isLoggedIn(req, res, next) {
 
 // API Middleware (returns JSON instead of redirect)
 function isLoggedInAPI(req, res, next) {
-  console.log('=== isLoggedInAPI Middleware Called ===');
-  
-  // Try to get token from cookie first
-  let token = req.cookies.token;
-  console.log('Token from cookie:', token ? 'FOUND' : 'NOT FOUND');
-  
-  // If not in cookie, check Authorization header
-  if (!token) {
-    const authHeader = req.headers.authorization || req.headers.Authorization;
-    console.log('Authorization header:', authHeader ? 'FOUND' : 'NOT FOUND');
-    
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.substring(7);
-      console.log('Token extracted from header:', token ? 'SUCCESS' : 'FAILED');
+  let token = null;
+
+  // 1. Check Authorization header first
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+    const candidate = authHeader.substring(7).trim();
+    if (candidate && candidate !== 'null' && candidate !== 'undefined') {
+      token = candidate;
+    }
+  }
+
+  // 2. Fall back to cookie
+  if (!token && req.cookies && req.cookies.token) {
+    const cookieCandidate = String(req.cookies.token).trim();
+    if (cookieCandidate && cookieCandidate !== 'null' && cookieCandidate !== 'undefined') {
+      token = cookieCandidate;
     }
   }
 
   if (!token) {
-    console.log('❌ No token found - returning 401');
     return res.status(401).json({ 
       success: false, 
-      message: 'Not authenticated',
-      debug: {
-        cookiePresent: !!req.cookies.token,
-        authHeaderPresent: !!(req.headers.authorization || req.headers.Authorization)
-      }
+      message: 'Authentication required. Please login.' 
     });
   }
 
-  console.log('Verifying token...');
   jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
     if (err) {
-      console.log('❌ Token verification failed:', err.message);
-      return res.status(403).json({ 
+      return res.status(401).json({ 
         success: false, 
-        message: 'Invalid token',
+        message: 'Invalid or expired session. Please login again.',
         error: err.message
       });
     }
-    console.log('✅ Token verified for user:', user._id);
     req.user = user;
     next();
   });
 }
 
 async function isAdmin(req, res, next) {
-  const token = req.cookies.token;
+  let token = null;
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+    const candidate = authHeader.substring(7).trim();
+    if (candidate && candidate !== 'null' && candidate !== 'undefined') {
+      token = candidate;
+    }
+  }
+  if (!token && req.cookies && req.cookies.token) {
+    const cookieCandidate = String(req.cookies.token).trim();
+    if (cookieCandidate && cookieCandidate !== 'null' && cookieCandidate !== 'undefined') {
+      token = cookieCandidate;
+    }
+  }
 
-  if (token == null) return res.sendStatus(401);
+  if (!token) {
+    if (req.xhr || req.headers.accept?.includes('application/json')) {
+      return res.status(401).json({ success: false, message: 'Authentication required' });
+    }
+    return res.redirect('/login');
+  }
 
   jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, user) => {
-    if (err) return res.sendStatus(403);
-    const userRole = await userModel.findById(user._id);
-    if (userRole.role != 'admin') {
-      res.status(400).json({ success: false, message: "only admin is allowed" });
-      res.redirect('/login');
-    } else {
+    if (err) {
+      if (req.xhr || req.headers.accept?.includes('application/json')) {
+        return res.status(401).json({ success: false, message: 'Invalid or expired session' });
+      }
+      return res.redirect('/login');
+    }
+
+    try {
+      const userRole = await userModel.findById(user._id);
+      if (!userRole || (userRole.role !== 'admin' && userRole.role !== 'staff' && userRole.role !== 'subadmin')) {
+        if (req.xhr || req.headers.accept?.includes('application/json')) {
+          return res.status(403).json({ success: false, message: 'Only admin or staff is allowed' });
+        }
+        return res.redirect('/login');
+      }
+
       req.user = user;
+      req.userDoc = userRole;
       next();
+    } catch (dbErr) {
+      return res.status(500).json({ success: false, message: 'Server error' });
     }
   });
 }

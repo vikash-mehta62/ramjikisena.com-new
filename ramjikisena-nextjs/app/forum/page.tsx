@@ -153,7 +153,7 @@ export default function ForumPage() {
       try { setCurrentUser(JSON.parse(u)); } catch {}
     }
     // Verify in background
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
     fetch(`${API_URL}/api/me`, {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       credentials: 'include',

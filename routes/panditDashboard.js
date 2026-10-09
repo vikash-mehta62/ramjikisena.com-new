@@ -8,7 +8,15 @@ const isLoggedInAPI = require('./middleware/isLoggedInAPI');
 // Middleware to check if user is a pandit
 const isPandit = async (req, res, next) => {
   try {
-    const pandit = await Pandit.findOne({ user: req.user._id });
+    const queryConditions = [
+      { user: req.user._id },
+      { _id: req.user._id }
+    ];
+    if (req.user.panditId) {
+      queryConditions.push({ _id: req.user.panditId });
+    }
+
+    const pandit = await Pandit.findOne({ $or: queryConditions });
     if (!pandit) {
       return res.status(403).json({
         success: false,

@@ -420,7 +420,7 @@ export default function CommunityPage() {
     }
 
     // Always verify with API to get fresh data
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
     fetch(`${API_URL}/api/me`, {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       credentials: 'include',

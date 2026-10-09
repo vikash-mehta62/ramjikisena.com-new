@@ -347,7 +347,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
       )}
     </AnimatePresence>
 
-    <section className="relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #0f0500 0%, #1a0800 50%, #0f0500 100%)' }}>
+    <section id="jaap" className="relative overflow-hidden scroll-mt-20" style={{ background: 'linear-gradient(160deg, #0f0500 0%, #1a0800 50%, #0f0500 100%)' }}>
       {/* Scrolling background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none flex flex-col justify-around" style={{ opacity: 0.06 }}>
         {[...Array(8)].map((_, row) => (

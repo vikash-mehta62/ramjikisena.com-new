@@ -22,6 +22,8 @@ var panditAuthRouter = require('./routes/panditAuth');
 var samagriRouter = require('./routes/samagri');
 var communityRouter = require('./routes/community');
 var forumRouter = require('./routes/forum');
+var analyticsRouter = require('./routes/analytics');
+var adminRouter = require('./routes/admin');
 
 var app = express();
 
@@ -113,6 +115,8 @@ app.use('/api/pandit-auth', panditAuthRouter);
 app.use('/api/samagri', samagriRouter);
 app.use('/api/community', communityRouter);
 app.use('/api/forum', forumRouter);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -16,7 +16,7 @@ interface ImageUploaderProps {
   label?: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
 
 export default function ImageUploader({
   value,

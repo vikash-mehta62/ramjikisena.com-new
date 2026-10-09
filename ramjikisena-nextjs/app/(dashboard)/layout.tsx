@@ -20,7 +20,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (userStr) {
       try {
         const userData = JSON.parse(userStr);
-        if (userData.role === 'admin') {
+        if (userData.role === 'admin' || userData.role === 'staff' || userData.role === 'subadmin') {
           router.push('/admin/admin-dashboard');
           return;
         }
@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     // user object missing - fetch from API
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
     fetch(`${API_URL}/api/me`, {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       })
       .then(data => {
         if (data?.success && data.user) {
-          if (data.user.role === 'admin') {
+          if (data.user.role === 'admin' || data.user.role === 'staff' || data.user.role === 'subadmin') {
             router.push('/admin/admin-dashboard');
             return;
           }

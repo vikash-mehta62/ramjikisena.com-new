@@ -8,7 +8,8 @@ import {
   ChevronDown, BookOpen, Church, Scroll, User as UserIcon,
   Image as ImageIcon, Phone, Calendar, BarChart3, Flag,
   Sparkles, ShoppingBag, Users, HelpCircle, Compass,
-  LogOut, Crown, Menu, X, Star, MessageSquare, Home
+  LogOut, Crown, Menu, X, Star, MessageSquare, Home,
+  Flame, Shield, ArrowRight
 } from 'lucide-react';
 import { requestGlobalNavigation } from '@/lib/jaapContext';
 interface NavbarProps { showAuthButtons?: boolean; }
@@ -52,19 +53,26 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   };
 
   const [auth, setAuth] = useState({
-    isLoggedIn: false, isPanditLoggedIn: false,
-    userName: '', panditName: '', isAdmin: false,
+    isLoggedIn: false,
+    isPanditLoggedIn: false,
+    userName: '',
+    panditName: '',
+    isAdmin: false,
+    isStaff: false,
+    panditPhoto: '',
   });
   const isHomePage = pathname === '/';
   const [scrolled, setScrolled]           = useState(false);
   const [exploreOpen, setExploreOpen]     = useState(false);
   const [userMenuOpen, setUserMenuOpen]   = useState(false);
+  const [panditMenuOpen, setPanditMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen]         = useState(false);
   const [mobileOpen, setMobileOpen]       = useState(false);
 
-  const exploreRef  = useRef<HTMLDivElement>(null);
-  const userRef     = useRef<HTMLDivElement>(null);
-  const loginRef    = useRef<HTMLDivElement>(null);
+  const exploreRef = useRef<HTMLDivElement>(null);
+  const userRef    = useRef<HTMLDivElement>(null);
+  const panditRef  = useRef<HTMLDivElement>(null);
+  const loginRef   = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -73,32 +81,63 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   }, []);
 
   useEffect(() => {
-    const token      = localStorage.getItem('token');
-    const panditTok  = localStorage.getItem('panditToken');
-    const user       = JSON.parse(localStorage.getItem('user')   || '{}');
-    const pandit     = JSON.parse(localStorage.getItem('pandit') || '{}');
-    setAuth({
-      isLoggedIn:       !!token,
-      isPanditLoggedIn: !!panditTok,
-      userName:         user.name   || 'User',
-      panditName:       pandit.name || 'Pandit',
-      isAdmin:          user.role   === 'admin',
-    });
-  }, []);
+    const syncAuth = () => {
+      try {
+        const token     = localStorage.getItem('token');
+        const panditTok = localStorage.getItem('panditToken');
+        const user      = JSON.parse(localStorage.getItem('user')   || '{}');
+        const pandit    = JSON.parse(localStorage.getItem('pandit') || '{}');
+        setAuth({
+          isLoggedIn:       !!token,
+          isPanditLoggedIn: !!panditTok,
+          userName:         user.name   || 'User',
+          panditName:       pandit.name || 'पंडित जी',
+          isAdmin:          user.role   === 'admin',
+          isStaff:          user.role   === 'staff' || user.role === 'subadmin',
+          panditPhoto:      pandit.photo || '',
+        });
+      } catch (err) {
+        console.error('Navbar syncAuth error:', err);
+      }
+    };
+
+    syncAuth();
+    window.addEventListener('storage', syncAuth);
+    window.addEventListener('auth-change', syncAuth);
+    return () => {
+      window.removeEventListener('storage', syncAuth);
+      window.removeEventListener('auth-change', syncAuth);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (exploreRef.current && !exploreRef.current.contains(e.target as Node)) setExploreOpen(false);
-      if (userRef.current   && !userRef.current.contains(e.target as Node))    setUserMenuOpen(false);
-      if (loginRef.current  && !loginRef.current.contains(e.target as Node))   setLoginOpen(false);
+      if (userRef.current    && !userRef.current.contains(e.target as Node))    setUserMenuOpen(false);
+      if (panditRef.current  && !panditRef.current.contains(e.target as Node))  setPanditMenuOpen(false);
+      if (loginRef.current   && !loginRef.current.contains(e.target as Node))   setLoginOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const logout = (type: 'user' | 'pandit') => {
-    // 1. Clear all localStorage
-    localStorage.clear();
+    if (type === 'pandit') {
+      localStorage.removeItem('panditToken');
+      localStorage.removeItem('pandit');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('auth-change'));
+      }
+      window.location.href = '/pandit/login';
+      return;
+    }
+
+    // 1. Clear user localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('auth-change'));
+    }
 
     // 2. Clear all cookies
     document.cookie.split(';').forEach(c => {
@@ -108,12 +147,12 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
     });
 
     // 3. Call backend logout to clear server-side cookie
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3100';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
     fetch(`${apiUrl}/api/logout`, { method: 'GET', credentials: 'include' })
       .finally(() => { window.location.href = '/'; });
   };
 
-  const dashboardHref = auth.isAdmin ? '/admin/admin-dashboard' : '/dashboard';
+  const dashboardHref = (auth.isAdmin || auth.isStaff) ? '/admin/admin-dashboard' : '/dashboard';
   const isActive = (p: string) => pathname === p;
 
   return (
@@ -281,11 +320,12 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     <button
                       onClick={() => { setUserMenuOpen(o => !o); setExploreOpen(false); }}
                       className="flex items-center gap-2 bg-white/10 border border-white/15 hover:bg-white/15 transition-all px-3 py-2 rounded-2xl">
-                      <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-white text-xs font-black ${auth.isAdmin ? 'bg-orange-600' : 'bg-white/20'}`}>
-                        {auth.isAdmin ? <Crown className="w-4 h-4" /> : auth.userName[0]?.toUpperCase()}
+                      <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-white text-xs font-black ${auth.isAdmin ? 'bg-orange-600' : auth.isStaff ? 'bg-amber-600' : 'bg-white/20'}`}>
+                        {auth.isAdmin ? <Crown className="w-4 h-4" /> : auth.isStaff ? <Shield className="w-4 h-4" /> : auth.userName[0]?.toUpperCase()}
                       </div>
                       <span className="text-white text-sm font-bold max-w-[100px] truncate">{auth.userName}</span>
                       {auth.isAdmin && <span className="text-[9px] bg-orange-600 text-white px-1.5 py-0.5 rounded-full font-black">ADMIN</span>}
+                      {auth.isStaff && <span className="text-[9px] bg-amber-600 text-white px-1.5 py-0.5 rounded-full font-black">STAFF</span>}
                       <ChevronDown className={`w-3.5 h-3.5 text-white/60 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
 
@@ -296,16 +336,18 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                           transition={{ duration: 0.15 }}
                           className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
                           <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
-                            <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Signed in as</p>
+                            <p className="text-xs font-black text-slate-500 uppercase tracking-widest">
+                              {auth.isAdmin ? 'Administrator' : auth.isStaff ? 'Staff Member' : 'Signed in as'}
+                            </p>
                             <p className="text-sm font-black text-slate-900 truncate">{auth.userName}</p>
                           </div>
                           <div className="p-1.5 space-y-0.5">
                             <button onClick={() => safeNavigate(dashboardHref)}
                               className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
                               <BarChart3 className="w-4 h-4" />
-                              {auth.isAdmin ? 'Admin Dashboard' : 'Dashboard'}
+                              {auth.isAdmin ? 'Admin Dashboard' : auth.isStaff ? 'Staff Portal' : 'Dashboard'}
                             </button>
-                            {!auth.isAdmin && (
+                            {!auth.isAdmin && !auth.isStaff && (
                               <>
                                 <button onClick={() => safeNavigate('/my-bookings')}
                                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
@@ -329,25 +371,258 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     </AnimatePresence>
                   </div>
                 ) : auth.isPanditLoggedIn ? (
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => safeNavigate('/pandit/dashboard')}
-                      className="flex items-center gap-2 bg-white/10 border border-white/15 px-3 py-2 rounded-2xl text-white text-sm font-bold hover:bg-white/15 transition-all">
-                      <Sparkles className="w-4 h-4 text-orange-400" />
-                      {auth.panditName}
+                  <div className="relative" ref={panditRef}>
+                    <button
+                      onClick={() => { setPanditMenuOpen(o => !o); setExploreOpen(false); setUserMenuOpen(false); }}
+                      className="flex items-center gap-2 bg-white/10 border border-orange-500/35 hover:bg-white/15 hover:border-orange-400/60 transition-all px-3 py-1.5 rounded-2xl group shadow-lg shadow-black/30"
+                    >
+                      <div className="w-7 h-7 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-600 text-white text-xs font-black shadow-md flex-shrink-0">
+                        {auth.panditPhoto ? (
+                          <img src={auth.panditPhoto} alt={auth.panditName} className="w-full h-full object-cover" />
+                        ) : (
+                          <Sparkles className="w-4 h-4 text-white" />
+                        )}
+                      </div>
+                      <span className="text-white text-sm font-bold max-w-[110px] truncate group-hover:text-amber-300 transition-colors">
+                        {auth.panditName}
+                      </span>
+                      <span className="text-[9px] bg-gradient-to-r from-red-600 to-orange-600 text-white px-1.5 py-0.5 rounded-full font-black tracking-wider uppercase shadow-sm">
+                        🔱 PANDIT
+                      </span>
+                      <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${panditMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
-                    <button onClick={() => logout('pandit')}
-                      className="p-2 bg-red-500/20 text-red-300 hover:bg-red-500 hover:text-white rounded-xl transition-all">
-                      <LogOut className="w-4 h-4" />
-                    </button>
+
+                    <AnimatePresence>
+                      {panditMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute right-0 top-full mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-orange-100 overflow-hidden z-50"
+                        >
+                          {/* Header */}
+                          <div className="px-4 py-3 border-b border-orange-100 bg-gradient-to-r from-orange-50/80 to-amber-50/80">
+                            <div className="flex items-center justify-between">
+                              <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest">
+                                वैदिक पुरोहित पोर्टल
+                              </p>
+                              <span className="text-xs">🕉️</span>
+                            </div>
+                            <p className="text-sm font-black text-slate-900 truncate mt-0.5">{auth.panditName}</p>
+                          </div>
+
+                          {/* Menu items */}
+                          <div className="p-1.5 space-y-0.5">
+                            <button
+                              onClick={() => { setPanditMenuOpen(false); safeNavigate('/pandit/dashboard'); }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all text-left"
+                            >
+                              <BarChart3 className="w-4 h-4 text-orange-500" />
+                              <span>पंडित डैशबोर्ड</span>
+                            </button>
+
+                            <button
+                              onClick={() => { setPanditMenuOpen(false); safeNavigate('/pandit/bookings'); }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all text-left"
+                            >
+                              <Calendar className="w-4 h-4 text-amber-500" />
+                              <span>पूजा बुकिंग्स</span>
+                            </button>
+
+                            <button
+                              onClick={() => { setPanditMenuOpen(false); safeNavigate('/pandit/profile'); }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all text-left"
+                            >
+                              <UserIcon className="w-4 h-4 text-purple-500" />
+                              <span>मेरी प्रोफाइल</span>
+                            </button>
+
+                            <button
+                              onClick={() => { setPanditMenuOpen(false); safeNavigate('/pandit/earnings'); }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all text-left"
+                            >
+                              <Star className="w-4 h-4 text-emerald-500" />
+                              <span>दक्षिणा एवं आय</span>
+                            </button>
+                          </div>
+
+                          {/* Logout */}
+                          <div className="p-1.5 border-t border-slate-100 bg-slate-50/50">
+                            <button
+                              onClick={() => { setPanditMenuOpen(false); logout('pandit'); }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-all text-left"
+                            >
+                              <LogOut className="w-4 h-4 text-red-500" />
+                              <span>पंडित लॉगआउट</span>
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2" ref={loginRef}>
-                    <button onClick={() => { setLoginOpen(o => !o); setExploreOpen(false); }}
-                      className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-bold px-3 py-2 rounded-xl hover:bg-white/10 transition-all">
-                      Login <ChevronDown className={`w-3.5 h-3.5 transition-transform ${loginOpen ? 'rotate-180' : ''}`} />
-                    </button>
+                  <div className="flex items-center gap-2">
+                    <div className="relative" ref={loginRef}>
+                      <button
+                        onClick={() => { setLoginOpen(o => !o); setExploreOpen(false); }}
+                        className={`flex items-center gap-1.5 text-sm font-bold px-3.5 py-2 rounded-xl transition-all ${
+                          loginOpen
+                            ? 'bg-white/15 text-white ring-1 ring-amber-400/40'
+                            : 'text-white/90 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        <UserIcon className="w-4 h-4 text-amber-300" />
+                        <span>Login</span>
+                        <ChevronDown className={`w-3.5 h-3.5 text-amber-300/80 transition-transform duration-200 ${loginOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      <AnimatePresence>
+                        {loginOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                            transition={{ duration: 0.16 }}
+                            style={{
+                              position: 'absolute',
+                              top: 'calc(100% + 8px)',
+                              right: 0,
+                              width: '330px',
+                              zIndex: 9999,
+                            }}
+                          >
+                            {/* Arrow indicator */}
+                            <div className="flex justify-end pr-7 mb-1">
+                              <div
+                                className="w-3 h-3 rotate-45"
+                                style={{
+                                  background: 'rgba(15,5,0,0.98)',
+                                  border: '1px solid rgba(212,146,10,0.3)',
+                                  borderBottom: 'none',
+                                  borderRight: 'none',
+                                }}
+                              />
+                            </div>
+
+                            <div
+                              className="rounded-2xl shadow-2xl overflow-hidden"
+                              style={{
+                                background: 'rgba(15,5,0,0.98)',
+                                border: '1px solid rgba(212,146,10,0.3)',
+                                backdropFilter: 'blur(24px)',
+                                boxShadow: '0 20px 45px rgba(0,0,0,0.7)',
+                              }}
+                            >
+                              {/* Dropdown Header */}
+                              <div
+                                className="px-4 py-3 border-b flex items-center justify-between"
+                                style={{
+                                  borderColor: 'rgba(212,146,10,0.2)',
+                                  background: 'rgba(212,146,10,0.08)',
+                                }}
+                              >
+                                <div>
+                                  <p className="text-[10px] font-black uppercase tracking-wider text-amber-400/80">
+                                    प्रवेश पोर्टल / Login Portals
+                                  </p>
+                                  <p className="text-xs font-bold text-white">लॉगिन प्रकार चुनें</p>
+                                </div>
+                                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                                  🚩 2 Portals
+                                </span>
+                              </div>
+
+                              {/* Dropdown Options */}
+                              <div className="p-2 space-y-1.5">
+                                {/* Option 1: User & Admin Login */}
+                                <button
+                                  onClick={() => safeNavigate('/login')}
+                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/30"
+                                >
+                                  <div
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
+                                    style={{
+                                      background: 'linear-gradient(135deg, rgba(249,224,122,0.2), rgba(212,146,10,0.25))',
+                                      border: '1px solid rgba(249,224,122,0.35)',
+                                    }}
+                                  >
+                                    <UserIcon className="w-5 h-5 text-amber-300" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <p className="text-sm font-black text-white group-hover:text-amber-300 transition-colors">
+                                        भक्त / यूजर लॉगिन
+                                      </p>
+                                    </div>
+                                    <p className="text-[11px] text-white/50 leading-snug mt-0.5">
+                                      राम नाम जप, प्रोफाइल एवं <span className="text-amber-300 font-bold">Admin</span> लॉगिन
+                                    </p>
+                                    <div className="flex items-center gap-1 mt-1.5">
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white/70">
+                                        Devotee
+                                      </span>
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">
+                                        👑 Admin
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all mt-1" />
+                                </button>
+
+                                {/* Option 2: Pandit Login */}
+                                <button
+                                  onClick={() => safeNavigate('/pandit/login')}
+                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-red-500/10 border border-transparent hover:border-red-500/30"
+                                >
+                                  <div
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
+                                    style={{
+                                      background: 'linear-gradient(135deg, rgba(239,68,68,0.2), rgba(249,115,22,0.25))',
+                                      border: '1px solid rgba(249,115,22,0.35)',
+                                    }}
+                                  >
+                                    <Flame className="w-5 h-5 text-orange-400" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <p className="text-sm font-black text-white group-hover:text-orange-400 transition-colors">
+                                        पंडित जी लॉगिन
+                                      </p>
+                                    </div>
+                                    <p className="text-[11px] text-white/50 leading-snug mt-0.5">
+                                      पूजा-अर्चना, यजमान बुकिंग एवं दक्षिणा पोर्टल
+                                    </p>
+                                    <div className="flex items-center gap-1 mt-1.5">
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300">
+                                        🔱 वैदिक पुरोहित
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all mt-1" />
+                                </button>
+                              </div>
+
+                              {/* Dropdown Note */}
+                              <div
+                                className="px-4 py-2 border-t text-[10px] leading-tight flex items-center gap-1.5"
+                                style={{
+                                  borderColor: 'rgba(212,146,10,0.15)',
+                                  background: 'rgba(212,146,10,0.05)',
+                                  color: 'rgba(255,200,120,0.75)',
+                                }}
+                              >
+                                <span>🛡️</span>
+                                <span>व्यवस्थापक (Admin) <strong>User Login</strong> से ही प्रवेश करें</span>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
                     <button onClick={() => safeNavigate('/register')}
-                      className="font-black px-5 py-2 rounded-xl text-sm active:scale-95 transition-all"
+                      className="font-black px-4 py-2 rounded-xl text-sm active:scale-95 transition-all"
                       style={{
                         background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 50%, #b8760a 100%)',
                         color: '#3a0f00',
@@ -355,24 +630,6 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                       }}>
                       Sign Up
                     </button>
-
-                    <AnimatePresence>
-                      {loginOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }}
-                          transition={{ duration: 0.15 }}
-                          className="absolute right-5 top-full mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
-                          <button onClick={() => safeNavigate('/login')}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all border-b border-slate-100">
-                            <UserIcon className="w-4 h-4" /> User Login
-                          </button>
-                          <button onClick={() => safeNavigate('/pandit/login')}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
-                            <Sparkles className="w-4 h-4" /> Pandit Login
-                          </button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </div>
                 )}
               </>
@@ -454,19 +711,20 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                     {auth.isLoggedIn ? (
                       <div className="space-y-2">
                         <div className="flex items-center gap-3 bg-white/5 rounded-2xl p-3">
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black ${auth.isAdmin ? 'bg-orange-600' : 'bg-white/20'}`}>
-                            {auth.isAdmin ? <Crown className="w-4 h-4" /> : auth.userName[0]?.toUpperCase()}
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-black ${auth.isAdmin ? 'bg-orange-600' : auth.isStaff ? 'bg-amber-600' : 'bg-white/20'}`}>
+                            {auth.isAdmin ? <Crown className="w-4 h-4" /> : auth.isStaff ? <Shield className="w-4 h-4" /> : auth.userName[0]?.toUpperCase()}
                           </div>
                           <div>
                             <p className="text-white text-sm font-black">{auth.userName}</p>
                             {auth.isAdmin && <p className="text-orange-400 text-[10px] font-black uppercase">Admin</p>}
+                            {auth.isStaff && <p className="text-amber-400 text-[10px] font-black uppercase">Staff</p>}
                           </div>
                         </div>
                         <button onClick={() => safeNavigate(dashboardHref)}
                           className="w-full flex items-center gap-2 p-3 rounded-2xl bg-orange-600 text-white text-sm font-black">
-                          <BarChart3 className="w-4 h-4" /> {auth.isAdmin ? 'Admin Dashboard' : 'Dashboard'}
+                          <BarChart3 className="w-4 h-4" /> {auth.isAdmin ? 'Admin Dashboard' : auth.isStaff ? 'Staff Portal' : 'Dashboard'}
                         </button>
-                        {!auth.isAdmin && (
+                        {!auth.isAdmin && !auth.isStaff && (
                           <button onClick={() => safeNavigate('/my-bookings')}
                             className="w-full flex items-center gap-2 p-3 rounded-2xl bg-white/5 text-white/80 text-sm font-bold">
                             <Calendar className="w-4 h-4" /> My Bookings
@@ -479,28 +737,102 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                       </div>
                     ) : auth.isPanditLoggedIn ? (
                       <div className="space-y-2">
+                        <div className="flex items-center gap-3 bg-gradient-to-r from-red-950/40 to-orange-950/40 border border-orange-500/25 rounded-2xl p-3">
+                          <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-amber-500 to-orange-600 text-white text-base font-black flex-shrink-0 shadow-md">
+                            {auth.panditPhoto ? (
+                              <img src={auth.panditPhoto} alt={auth.panditName} className="w-full h-full object-cover" />
+                            ) : (
+                              <span>🔱</span>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white text-sm font-black truncate">{auth.panditName}</p>
+                            <p className="text-orange-400 text-[10px] font-black uppercase tracking-wider">वैदिक पुरोहित पोर्टल</p>
+                          </div>
+                        </div>
+
                         <button onClick={() => safeNavigate('/pandit/dashboard')}
-                          className="w-full flex items-center gap-2 p-3 rounded-2xl bg-orange-600 text-white text-sm font-black">
-                          <Sparkles className="w-4 h-4" /> {auth.panditName} Dashboard
+                          className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 text-white text-sm font-black shadow-lg">
+                          <BarChart3 className="w-4 h-4" /> पंडित डैशबोर्ड
                         </button>
+                        <button onClick={() => safeNavigate('/pandit/bookings')}
+                          className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/90 text-sm font-bold hover:bg-white/10 transition-all">
+                          <Calendar className="w-4 h-4 text-amber-300" /> पूजा बुकिंग्स
+                        </button>
+                        <button onClick={() => safeNavigate('/pandit/profile')}
+                          className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/90 text-sm font-bold hover:bg-white/10 transition-all">
+                          <UserIcon className="w-4 h-4 text-purple-300" /> मेरी प्रोफाइल
+                        </button>
+                        <button onClick={() => safeNavigate('/pandit/earnings')}
+                          className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/90 text-sm font-bold hover:bg-white/10 transition-all">
+                          <Star className="w-4 h-4 text-emerald-300" /> दक्षिणा एवं आय
+                        </button>
+
                         <button onClick={() => logout('pandit')}
-                          className="w-full p-3 rounded-2xl bg-red-500/20 text-red-400 text-sm font-bold">
-                          Logout
+                          className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500 hover:text-white transition-all">
+                          <LogOut className="w-4 h-4" /> पंडित लॉगआउट
                         </button>
                       </div>
                     ) : (
-                      <div className="space-y-2">
-                        <div className="grid grid-cols-2 gap-2">
-                          <button onClick={() => safeNavigate('/login')}
-                            className="p-3 rounded-2xl bg-white/10 text-white text-sm font-bold text-center">Login</button>
-                          <button onClick={() => safeNavigate('/register')}
-                            className="p-3 rounded-2xl bg-orange-600 text-white text-sm font-black text-center">Sign Up</button>
+                      <div className="space-y-3">
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-2">
+                          <p className="text-[10px] font-black uppercase tracking-wider text-amber-300/80">
+                            लॉगिन पोर्टल चुनें / Select Login
+                          </p>
+
+                          {/* Mobile User / Admin Login */}
+                          <button
+                            onClick={() => safeNavigate('/login')}
+                            className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-left text-white active:scale-98 transition-all"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-300">
+                                <UserIcon className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <p className="text-xs font-black text-white">भक्त / यूजर लॉगिन</p>
+                                <p className="text-[10px] text-white/50">भक्त एवं Admin लॉगिन</p>
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded">
+                              Devotee & Admin →
+                            </span>
+                          </button>
+
+                          {/* Mobile Pandit Login */}
+                          <button
+                            onClick={() => safeNavigate('/pandit/login')}
+                            className="w-full flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-left text-white active:scale-98 transition-all"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-orange-400">
+                                <Flame className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <p className="text-xs font-black text-white">पंडित जी लॉगिन</p>
+                                <p className="text-[10px] text-white/50">वैदिक पुरोहित पोर्टल</p>
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-bold text-orange-400 bg-red-500/15 px-2 py-0.5 rounded">
+                              Pandit Portal →
+                            </span>
+                          </button>
                         </div>
+
+                        {/* Sign up buttons */}
                         <div className="grid grid-cols-2 gap-2">
-                          <button onClick={() => safeNavigate('/pandit/login')}
-                            className="p-3 rounded-2xl bg-white/5 text-white/70 text-xs font-bold text-center">Pandit Login</button>
-                          <button onClick={() => safeNavigate('/pandit/register')}
-                            className="p-3 rounded-2xl bg-white/5 text-white/70 text-xs font-bold text-center">Pandit Register</button>
+                          <button
+                            onClick={() => safeNavigate('/register')}
+                            className="p-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-xs text-center shadow-lg"
+                          >
+                            भक्त Sign Up ✨
+                          </button>
+                          <button
+                            onClick={() => safeNavigate('/pandit/register')}
+                            className="p-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs text-center border border-white/10"
+                          >
+                            पंडित रजिस्ट्रेशन 🕉️
+                          </button>
                         </div>
                       </div>
                     )}

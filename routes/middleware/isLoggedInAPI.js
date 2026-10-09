@@ -2,46 +2,41 @@
 const jwt = require('jsonwebtoken');
 
 function isLoggedInAPI(req, res, next) {
-  console.log('=== isLoggedInAPI Middleware Called ===');
-  
-  // Try to get token from cookie first
-  let token = req.cookies.token;
-  console.log('Token from cookie:', token ? 'FOUND' : 'NOT FOUND');
-  
-  // If not in cookie, check Authorization header
-  if (!token) {
-    const authHeader = req.headers.authorization || req.headers.Authorization;
-    console.log('Authorization header:', authHeader ? 'FOUND' : 'NOT FOUND');
-    
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.substring(7);
-      console.log('Token extracted from header:', token ? 'SUCCESS' : 'FAILED');
+  let token = null;
+
+  // 1. Check Authorization header first
+  const authHeader = req.headers.authorization || req.headers.Authorization;
+  if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
+    const candidate = authHeader.substring(7).trim();
+    if (candidate && candidate !== 'null' && candidate !== 'undefined') {
+      token = candidate;
+    }
+  }
+
+  // 2. Fall back to cookie
+  if (!token && req.cookies && req.cookies.token) {
+    const cookieCandidate = String(req.cookies.token).trim();
+    if (cookieCandidate && cookieCandidate !== 'null' && cookieCandidate !== 'undefined') {
+      token = cookieCandidate;
     }
   }
 
   if (!token) {
-    console.log('❌ No token found - returning 401');
     return res.status(401).json({ 
       success: false, 
-      message: 'Not authenticated',
-      debug: {
-        cookiePresent: !!req.cookies.token,
-        authHeaderPresent: !!(req.headers.authorization || req.headers.Authorization)
-      }
+      message: 'Authentication required. Please login.' 
     });
   }
 
-  console.log('Verifying token...');
   jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
     if (err) {
-      console.log('❌ Token verification failed:', err.message);
-      return res.status(403).json({ 
+      console.log('❌ isLoggedInAPI token verification failed:', err.message);
+      return res.status(401).json({ 
         success: false, 
-        message: 'Invalid token',
+        message: 'Invalid or expired session. Please login again.',
         error: err.message
       });
     }
-    console.log('✅ Token verified for user:', user._id);
     req.user = user;
     next();
   });

@@ -21,12 +21,14 @@ export const setPanditAuth = (token: string, pandit: any) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem('panditToken', token);
   localStorage.setItem('pandit', JSON.stringify(pandit));
+  window.dispatchEvent(new Event('auth-change'));
 };
 
 export const clearPanditAuth = () => {
   if (typeof window === 'undefined') return;
   localStorage.removeItem('panditToken');
   localStorage.removeItem('pandit');
+  window.dispatchEvent(new Event('auth-change'));
 };
 
 export const isPanditLoggedIn = (): boolean => {
