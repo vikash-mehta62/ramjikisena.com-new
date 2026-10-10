@@ -24,6 +24,7 @@ var communityRouter = require('./routes/community');
 var forumRouter = require('./routes/forum');
 var analyticsRouter = require('./routes/analytics');
 var adminRouter = require('./routes/admin');
+var blogsRouter = require('./routes/blogs');
 
 var app = express();
 
@@ -104,6 +105,7 @@ app.use(fileUpload({
   createParentPath: true
 }));
 
+app.use('/api/blogs', blogsRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/upload', uploadRouter);

@@ -12,14 +12,13 @@ const adminAuth = require('./middleware/adminAuth');
 router.post('/image', adminAuth, async (req, res) => {
   try {
     // Check if file exists
-    if (!req.files || !req.files.image) {
+    const imageFile = req.files ? (req.files.image || req.files.file) : null;
+    if (!imageFile) {
       return res.status(400).json({
         success: false,
         message: 'No image file provided'
       });
     }
-
-    const imageFile = req.files.image;
 
     // Validate file type
     if (!imageFile.mimetype.startsWith('image/')) {

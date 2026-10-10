@@ -123,7 +123,7 @@ router.post('/blogs/:id/approve', async (req, res) => {
   try {
     const blog = await blogModel.findByIdAndUpdate(
       req.params.id,
-      { approved: true },
+      { approved: true, status: 'published', publishedAt: new Date() },
       { new: true }
     ).populate('author', 'name username');
 
