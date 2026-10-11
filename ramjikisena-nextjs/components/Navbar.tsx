@@ -9,12 +9,13 @@ import {
   Image as ImageIcon, Phone, Calendar, BarChart3, Flag,
   Sparkles, ShoppingBag, Users, HelpCircle, Compass,
   LogOut, Crown, Menu, X, Star, MessageSquare, Home,
-  Flame, Shield, ArrowRight
+  Flame, Shield, ArrowRight, UserPlus
 } from 'lucide-react';
 import { requestGlobalNavigation } from '@/lib/jaapContext';
 interface NavbarProps { showAuthButtons?: boolean; }
 
 const exploreLinks = [
+  { href: '/astrology',     label: 'ज्योतिष & टैरो',  icon: Sparkles,     desc: 'Consult Astrologers & Tarot',   color: 'text-amber-600 bg-amber-50' },
   { href: '/katha-vachaks', label: 'कथा वाचक',       icon: Scroll,       desc: 'Find katha vachaks',            color: 'text-purple-600 bg-purple-50' },
   { href: '/forum',         label: 'फोरम',            icon: HelpCircle,   desc: 'Ask spiritual questions',       color: 'text-teal-600 bg-teal-50' },
   { href: '/gallery',       label: 'गैलरी',           icon: ImageIcon,    desc: 'Divine moments & events',       color: 'text-pink-600 bg-pink-50' },
@@ -28,6 +29,7 @@ const exploreLinks = [
 const mainLinks = [
   { href: '/mandirs',   label: 'Mandirs',   icon: Church },
   { href: '/pandits',   label: 'Pandits',   icon: Sparkles },
+  { href: '/astrology', label: 'Astrology', icon: Compass },
   { href: '/samagri',   label: 'Samagri',   icon: ShoppingBag },
   { href: '/community', label: 'Community', icon: Users },
 ];
@@ -41,6 +43,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
     setExploreOpen(false);
     setUserMenuOpen(false);
     setLoginOpen(false);
+    setSignupOpen(false);
     setMobileOpen(false);
   };
 
@@ -49,30 +52,39 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
     setExploreOpen(false);
     setUserMenuOpen(false);
     setLoginOpen(false);
+    setSignupOpen(false);
     setMobileOpen(false);
   };
 
   const [auth, setAuth] = useState({
     isLoggedIn: false,
     isPanditLoggedIn: false,
+    isAstrologerLoggedIn: false,
     userName: '',
     panditName: '',
+    astrologerName: '',
     isAdmin: false,
     isStaff: false,
     panditPhoto: '',
+    astrologerPhoto: '',
   });
   const isHomePage = pathname === '/';
   const [scrolled, setScrolled]           = useState(false);
   const [exploreOpen, setExploreOpen]     = useState(false);
   const [userMenuOpen, setUserMenuOpen]   = useState(false);
   const [panditMenuOpen, setPanditMenuOpen] = useState(false);
+  const [astrologerMenuOpen, setAstrologerMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen]         = useState(false);
+  const [signupOpen, setSignupOpen]       = useState(false);
+  const [mobileAuthTab, setMobileAuthTab] = useState<'login' | 'register'>('login');
   const [mobileOpen, setMobileOpen]       = useState(false);
 
   const exploreRef = useRef<HTMLDivElement>(null);
   const userRef    = useRef<HTMLDivElement>(null);
   const panditRef  = useRef<HTMLDivElement>(null);
+  const astrologerRef = useRef<HTMLDivElement>(null);
   const loginRef   = useRef<HTMLDivElement>(null);
+  const signupRef  = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -85,16 +97,21 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
       try {
         const token     = localStorage.getItem('token');
         const panditTok = localStorage.getItem('panditToken');
-        const user      = JSON.parse(localStorage.getItem('user')   || '{}');
-        const pandit    = JSON.parse(localStorage.getItem('pandit') || '{}');
+        const astroTok  = localStorage.getItem('astrologerToken');
+        const user      = JSON.parse(localStorage.getItem('user')       || '{}');
+        const pandit    = JSON.parse(localStorage.getItem('pandit')     || '{}');
+        const astro     = JSON.parse(localStorage.getItem('astrologer')  || '{}');
         setAuth({
-          isLoggedIn:       !!token,
-          isPanditLoggedIn: !!panditTok,
-          userName:         user.name   || 'User',
-          panditName:       pandit.name || 'पंडित जी',
-          isAdmin:          user.role   === 'admin',
-          isStaff:          user.role   === 'staff' || user.role === 'subadmin',
-          panditPhoto:      pandit.photo || '',
+          isLoggedIn:           !!token,
+          isPanditLoggedIn:     !!panditTok,
+          isAstrologerLoggedIn: !!astroTok,
+          userName:             user.name       || 'User',
+          panditName:           pandit.name     || 'पंडित जी',
+          astrologerName:       astro.name      || 'ज्योतिषी जी',
+          isAdmin:              user.role       === 'admin',
+          isStaff:              user.role       === 'staff' || user.role === 'subadmin',
+          panditPhoto:          pandit.photo    || '',
+          astrologerPhoto:      astro.photo     || '',
         });
       } catch (err) {
         console.error('Navbar syncAuth error:', err);
@@ -112,16 +129,28 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (exploreRef.current && !exploreRef.current.contains(e.target as Node)) setExploreOpen(false);
-      if (userRef.current    && !userRef.current.contains(e.target as Node))    setUserMenuOpen(false);
-      if (panditRef.current  && !panditRef.current.contains(e.target as Node))  setPanditMenuOpen(false);
-      if (loginRef.current   && !loginRef.current.contains(e.target as Node))   setLoginOpen(false);
+      if (exploreRef.current    && !exploreRef.current.contains(e.target as Node))    setExploreOpen(false);
+      if (userRef.current       && !userRef.current.contains(e.target as Node))       setUserMenuOpen(false);
+      if (panditRef.current     && !panditRef.current.contains(e.target as Node))     setPanditMenuOpen(false);
+      if (astrologerRef.current && !astrologerRef.current.contains(e.target as Node)) setAstrologerMenuOpen(false);
+      if (loginRef.current      && !loginRef.current.contains(e.target as Node))      setLoginOpen(false);
+      if (signupRef.current     && !signupRef.current.contains(e.target as Node))     setSignupOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const logout = (type: 'user' | 'pandit') => {
+  const logout = (type: 'user' | 'pandit' | 'astrologer') => {
+    if (type === 'astrologer') {
+      localStorage.removeItem('astrologerToken');
+      localStorage.removeItem('astrologer');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('auth-change'));
+      }
+      window.location.href = '/astrologer/login';
+      return;
+    }
+
     if (type === 'pandit') {
       localStorage.removeItem('panditToken');
       localStorage.removeItem('pandit');
@@ -461,12 +490,85 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                       )}
                     </AnimatePresence>
                   </div>
+                ) : auth.isAstrologerLoggedIn ? (
+                  <div className="relative" ref={astrologerRef}>
+                    <button
+                      onClick={() => { setAstrologerMenuOpen(o => !o); setExploreOpen(false); setUserMenuOpen(false); setPanditMenuOpen(false); }}
+                      className="flex items-center gap-2 bg-white/10 border border-amber-500/35 hover:bg-white/15 hover:border-amber-400/60 transition-all px-3 py-1.5 rounded-2xl group shadow-lg shadow-black/30"
+                    >
+                      <div className="w-7 h-7 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-amber-600 to-amber-700 text-white text-xs font-black shadow-md flex-shrink-0">
+                        {auth.astrologerPhoto ? (
+                          <img src={auth.astrologerPhoto} alt={auth.astrologerName} className="w-full h-full object-cover" />
+                        ) : (
+                          <Sparkles className="w-4 h-4 text-amber-200" />
+                        )}
+                      </div>
+                      <span className="text-white text-sm font-bold max-w-[110px] truncate group-hover:text-amber-300 transition-colors">
+                        {auth.astrologerName}
+                      </span>
+                      <span className="text-[9px] bg-gradient-to-r from-amber-600 to-yellow-600 text-slate-950 px-1.5 py-0.5 rounded-full font-black tracking-wider uppercase shadow-sm">
+                        🔮 ASTROLOGER
+                      </span>
+                      <ChevronDown className={`w-3.5 h-3.5 text-white/70 transition-transform ${astrologerMenuOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                      {astrologerMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute right-0 top-full mt-2 w-60 bg-white rounded-2xl shadow-2xl border border-amber-100 overflow-hidden z-50"
+                        >
+                          <div className="px-4 py-3 border-b border-amber-100 bg-gradient-to-r from-amber-50/80 to-yellow-50/80">
+                            <div className="flex items-center justify-between">
+                              <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest">
+                                ज्योतिषी एवं टैरो पोर्टल
+                              </p>
+                              <span className="text-xs">🔮</span>
+                            </div>
+                            <p className="text-sm font-black text-slate-900 truncate mt-0.5">{auth.astrologerName}</p>
+                          </div>
+
+                          <div className="p-1.5 space-y-0.5">
+                            <button
+                              onClick={() => { setAstrologerMenuOpen(false); safeNavigate('/astrologer/dashboard'); }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition-all text-left"
+                            >
+                              <BarChart3 className="w-4 h-4 text-amber-600" />
+                              <span>ज्योतिषी डैशबोर्ड</span>
+                            </button>
+
+                            <button
+                              onClick={() => { setAstrologerMenuOpen(false); safeNavigate('/astrology'); }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-slate-700 hover:bg-amber-50 hover:text-amber-800 transition-all text-left"
+                            >
+                              <Compass className="w-4 h-4 text-amber-600" />
+                              <span>डायरेक्टरी देखें</span>
+                            </button>
+                          </div>
+
+                          <div className="p-1.5 border-t border-slate-100 bg-slate-50/50">
+                            <button
+                              onClick={() => { setAstrologerMenuOpen(false); logout('astrologer'); }}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-all text-left"
+                            >
+                              <LogOut className="w-4 h-4 text-red-500" />
+                              <span>ज्योतिषी लॉगआउट</span>
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 ) : (
                   <div className="flex items-center gap-2">
+                    {/* Login Dropdown */}
                     <div className="relative" ref={loginRef}>
                       <button
-                        onClick={() => { setLoginOpen(o => !o); setExploreOpen(false); }}
-                        className={`flex items-center gap-1.5 text-sm font-bold px-3.5 py-2 rounded-xl transition-all ${
+                        onClick={() => { setLoginOpen(o => !o); setSignupOpen(false); setExploreOpen(false); }}
+                        className={`flex items-center gap-1.5 text-sm font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
                           loginOpen
                             ? 'bg-white/15 text-white ring-1 ring-amber-400/40'
                             : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -529,7 +631,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                                   <p className="text-xs font-bold text-white">लॉगिन प्रकार चुनें</p>
                                 </div>
                                 <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                                  🚩 2 Portals
+                                  🚩 3 Portals
                                 </span>
                               </div>
 
@@ -538,7 +640,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                                 {/* Option 1: User & Admin Login */}
                                 <button
                                   onClick={() => safeNavigate('/login')}
-                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/30"
+                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/30 cursor-pointer"
                                 >
                                   <div
                                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
@@ -573,7 +675,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                                 {/* Option 2: Pandit Login */}
                                 <button
                                   onClick={() => safeNavigate('/pandit/login')}
-                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-red-500/10 border border-transparent hover:border-red-500/30"
+                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 cursor-pointer"
                                 >
                                   <div
                                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
@@ -601,19 +703,57 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                                   </div>
                                   <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all mt-1" />
                                 </button>
+
+                                {/* Option 3: Astrologer Login */}
+                                <button
+                                  onClick={() => safeNavigate('/astrologer/login')}
+                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/30 cursor-pointer"
+                                >
+                                  <div
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
+                                    style={{
+                                      background: 'linear-gradient(135deg, rgba(217,119,6,0.2), rgba(245,158,11,0.25))',
+                                      border: '1px solid rgba(245,158,11,0.35)',
+                                    }}
+                                  >
+                                    <Sparkles className="w-5 h-5 text-amber-300" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <p className="text-sm font-black text-white group-hover:text-amber-300 transition-colors">
+                                        ज्योतिषी / टैरो रीडर लॉगिन
+                                      </p>
+                                    </div>
+                                    <p className="text-[11px] text-white/50 leading-snug mt-0.5">
+                                      कुंडली विश्लेषण, टैरो परामर्श एवं क्लाइंट प्रबंधन
+                                    </p>
+                                    <div className="flex items-center gap-1 mt-1.5">
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">
+                                        🔮 Astrologer Portal
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all mt-1" />
+                                </button>
                               </div>
 
-                              {/* Dropdown Note */}
+                              {/* Dropdown Note & Switch to Sign Up */}
                               <div
-                                className="px-4 py-2 border-t text-[10px] leading-tight flex items-center gap-1.5"
+                                className="px-4 py-2.5 border-t text-[11px] flex items-center justify-between"
                                 style={{
                                   borderColor: 'rgba(212,146,10,0.15)',
                                   background: 'rgba(212,146,10,0.05)',
-                                  color: 'rgba(255,200,120,0.75)',
+                                  color: 'rgba(255,200,120,0.85)',
                                 }}
                               >
-                                <span>🛡️</span>
-                                <span>व्यवस्थापक (Admin) <strong>User Login</strong> से ही प्रवेश करें</span>
+                                <span>नया खाता बनाना है?</span>
+                                <button
+                                  onClick={() => { setLoginOpen(false); setSignupOpen(true); }}
+                                  className="font-black underline hover:text-white cursor-pointer transition-colors"
+                                  style={{ color: '#f9e07a' }}
+                                >
+                                  साइन अप करें →
+                                </button>
                               </div>
                             </div>
                           </motion.div>
@@ -621,15 +761,203 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                       </AnimatePresence>
                     </div>
 
-                    <button onClick={() => safeNavigate('/register')}
-                      className="font-black px-4 py-2 rounded-xl text-sm active:scale-95 transition-all"
-                      style={{
-                        background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 50%, #b8760a 100%)',
-                        color: '#3a0f00',
-                        boxShadow: '0 4px 14px rgba(180,100,0,0.35)',
-                      }}>
-                      Sign Up
-                    </button>
+                    {/* Sign Up Dropdown */}
+                    <div className="relative" ref={signupRef}>
+                      <button
+                        onClick={() => { setSignupOpen(o => !o); setLoginOpen(false); setExploreOpen(false); }}
+                        className="font-black px-4 py-2 rounded-xl text-sm active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+                        style={{
+                          background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 50%, #b8760a 100%)',
+                          color: '#3a0f00',
+                          boxShadow: '0 4px 14px rgba(180,100,0,0.35)',
+                        }}
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        <span>Sign Up</span>
+                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${signupOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      <AnimatePresence>
+                        {signupOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                            transition={{ duration: 0.16 }}
+                            style={{
+                              position: 'absolute',
+                              top: 'calc(100% + 8px)',
+                              right: 0,
+                              width: '330px',
+                              zIndex: 9999,
+                            }}
+                          >
+                            {/* Arrow indicator */}
+                            <div className="flex justify-end pr-7 mb-1">
+                              <div
+                                className="w-3 h-3 rotate-45"
+                                style={{
+                                  background: 'rgba(15,5,0,0.98)',
+                                  border: '1px solid rgba(212,146,10,0.3)',
+                                  borderBottom: 'none',
+                                  borderRight: 'none',
+                                }}
+                              />
+                            </div>
+
+                            <div
+                              className="rounded-2xl shadow-2xl overflow-hidden"
+                              style={{
+                                background: 'rgba(15,5,0,0.98)',
+                                border: '1px solid rgba(212,146,10,0.3)',
+                                backdropFilter: 'blur(24px)',
+                                boxShadow: '0 20px 45px rgba(0,0,0,0.7)',
+                              }}
+                            >
+                              {/* Dropdown Header */}
+                              <div
+                                className="px-4 py-3 border-b flex items-center justify-between"
+                                style={{
+                                  borderColor: 'rgba(212,146,10,0.2)',
+                                  background: 'rgba(212,146,10,0.08)',
+                                }}
+                              >
+                                <div>
+                                  <p className="text-[10px] font-black uppercase tracking-wider text-amber-400/80">
+                                    नया खाता / Register Portals
+                                  </p>
+                                  <p className="text-xs font-bold text-white">पंजीकरण प्रकार चुनें</p>
+                                </div>
+                                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                                  ✨ 3 Options
+                                </span>
+                              </div>
+
+                              {/* Dropdown Options */}
+                              <div className="p-2 space-y-1.5">
+                                {/* Option 1: Devotee / User Register */}
+                                <button
+                                  onClick={() => safeNavigate('/register')}
+                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/30 cursor-pointer"
+                                >
+                                  <div
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
+                                    style={{
+                                      background: 'linear-gradient(135deg, rgba(249,224,122,0.2), rgba(212,146,10,0.25))',
+                                      border: '1px solid rgba(249,224,122,0.35)',
+                                    }}
+                                  >
+                                    <UserPlus className="w-5 h-5 text-amber-300" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <p className="text-sm font-black text-white group-hover:text-amber-300 transition-colors">
+                                        भक्त / यूजर पंजीकरण
+                                      </p>
+                                    </div>
+                                    <p className="text-[11px] text-white/50 leading-snug mt-0.5">
+                                      राम नाम लिखित जप, व्यक्तिगत प्रोफाइल व समुदाय
+                                    </p>
+                                    <div className="flex items-center gap-1 mt-1.5">
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white/70">
+                                        Devotee
+                                      </span>
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                                        निःशुल्क (Free)
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all mt-1" />
+                                </button>
+
+                                {/* Option 2: Pandit Register */}
+                                <button
+                                  onClick={() => safeNavigate('/pandit/register')}
+                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 cursor-pointer"
+                                >
+                                  <div
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
+                                    style={{
+                                      background: 'linear-gradient(135deg, rgba(239,68,68,0.2), rgba(249,115,22,0.25))',
+                                      border: '1px solid rgba(249,115,22,0.35)',
+                                    }}
+                                  >
+                                    <Flame className="w-5 h-5 text-orange-400" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <p className="text-sm font-black text-white group-hover:text-orange-400 transition-colors">
+                                        पंडित जी पंजीकरण
+                                      </p>
+                                    </div>
+                                    <p className="text-[11px] text-white/50 leading-snug mt-0.5">
+                                      वैदिक पुरोहित प्रोफाइल, पूजा बुकिंग एवं दक्षिणा प्राप्ति
+                                    </p>
+                                    <div className="flex items-center gap-1 mt-1.5">
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300">
+                                        🔱 वैदिक पुरोहित
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all mt-1" />
+                                </button>
+
+                                {/* Option 3: Astrologer Register */}
+                                <button
+                                  onClick={() => safeNavigate('/astrologer/register')}
+                                  className="w-full text-left p-3 rounded-xl transition-all group flex items-start gap-3 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/30 cursor-pointer"
+                                >
+                                  <div
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
+                                    style={{
+                                      background: 'linear-gradient(135deg, rgba(217,119,6,0.2), rgba(245,158,11,0.25))',
+                                      border: '1px solid rgba(245,158,11,0.35)',
+                                    }}
+                                  >
+                                    <Sparkles className="w-5 h-5 text-amber-300" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <p className="text-sm font-black text-white group-hover:text-amber-300 transition-colors">
+                                        ज्योतिषी / टैरो पंजीकरण
+                                      </p>
+                                    </div>
+                                    <p className="text-[11px] text-white/50 leading-snug mt-0.5">
+                                      ज्योतिष विशेषज्ञ, टैरो परामर्शदाता व कुंडली सेवाएं
+                                    </p>
+                                    <div className="flex items-center gap-1 mt-1.5">
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">
+                                        🔮 Astrologer & Tarot
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all mt-1" />
+                                </button>
+                              </div>
+
+                              {/* Dropdown Note & Switch to Login */}
+                              <div
+                                className="px-4 py-2.5 border-t text-[11px] flex items-center justify-between"
+                                style={{
+                                  borderColor: 'rgba(212,146,10,0.15)',
+                                  background: 'rgba(212,146,10,0.05)',
+                                  color: 'rgba(255,200,120,0.85)',
+                                }}
+                              >
+                                <span>पहले से पंजीकृत हैं?</span>
+                                <button
+                                  onClick={() => { setSignupOpen(false); setLoginOpen(true); }}
+                                  className="font-black underline hover:text-white cursor-pointer transition-colors"
+                                  style={{ color: '#f9e07a' }}
+                                >
+                                  लॉगिन करें →
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
                 )}
               </>
@@ -773,67 +1101,211 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                           <LogOut className="w-4 h-4" /> पंडित लॉगआउट
                         </button>
                       </div>
+                    ) : auth.isAstrologerLoggedIn ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3 bg-gradient-to-r from-amber-950/40 to-yellow-950/40 border border-amber-500/25 rounded-2xl p-3">
+                          <div className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-amber-600 to-yellow-600 text-white text-base font-black flex-shrink-0 shadow-md">
+                            {auth.astrologerPhoto ? (
+                              <img src={auth.astrologerPhoto} alt={auth.astrologerName} className="w-full h-full object-cover" />
+                            ) : (
+                              <span>🔮</span>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white text-sm font-black truncate">{auth.astrologerName}</p>
+                            <p className="text-amber-400 text-[10px] font-black uppercase tracking-wider">ज्योतिषी / टैरो पोर्टल</p>
+                          </div>
+                        </div>
+
+                        <button onClick={() => safeNavigate('/astrologer/dashboard')}
+                          className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-gradient-to-r from-amber-600 to-yellow-600 text-slate-950 text-sm font-black shadow-lg">
+                          <BarChart3 className="w-4 h-4" /> ज्योतिषी डैशबोर्ड
+                        </button>
+                        <button onClick={() => safeNavigate('/astrology')}
+                          className="w-full flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/90 text-sm font-bold hover:bg-white/10 transition-all">
+                          <Compass className="w-4 h-4 text-amber-300" /> डायरेक्टरी देखें
+                        </button>
+
+                        <button onClick={() => logout('astrologer')}
+                          className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-red-500/20 text-red-400 text-sm font-bold hover:bg-red-500 hover:text-white transition-all">
+                          <LogOut className="w-4 h-4" /> ज्योतिषी लॉगआउट
+                        </button>
+                      </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-2">
-                          <p className="text-[10px] font-black uppercase tracking-wider text-amber-300/80">
-                            लॉगिन पोर्टल चुनें / Select Login
-                          </p>
-
-                          {/* Mobile User / Admin Login */}
+                        {/* Mobile Tab Switcher */}
+                        <div className="flex bg-white/10 p-1 rounded-2xl border border-white/10">
                           <button
-                            onClick={() => safeNavigate('/login')}
-                            className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-left text-white active:scale-98 transition-all"
+                            type="button"
+                            onClick={() => setMobileAuthTab('login')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                              mobileAuthTab === 'login'
+                                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 shadow-md'
+                                : 'text-white/70 hover:text-white'
+                            }`}
                           >
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-300">
-                                <UserIcon className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <p className="text-xs font-black text-white">भक्त / यूजर लॉगिन</p>
-                                <p className="text-[10px] text-white/50">भक्त एवं Admin लॉगिन</p>
-                              </div>
-                            </div>
-                            <span className="text-[10px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded">
-                              Devotee & Admin →
-                            </span>
+                            <UserIcon className="w-3.5 h-3.5" />
+                            लॉगिन (Login)
                           </button>
-
-                          {/* Mobile Pandit Login */}
                           <button
-                            onClick={() => safeNavigate('/pandit/login')}
-                            className="w-full flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-left text-white active:scale-98 transition-all"
+                            type="button"
+                            onClick={() => setMobileAuthTab('register')}
+                            className={`flex-1 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                              mobileAuthTab === 'register'
+                                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 shadow-md'
+                                : 'text-white/70 hover:text-white'
+                            }`}
                           >
-                            <div className="flex items-center gap-2.5">
-                              <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-orange-400">
-                                <Flame className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <p className="text-xs font-black text-white">पंडित जी लॉगिन</p>
-                                <p className="text-[10px] text-white/50">वैदिक पुरोहित पोर्टल</p>
-                              </div>
-                            </div>
-                            <span className="text-[10px] font-bold text-orange-400 bg-red-500/15 px-2 py-0.5 rounded">
-                              Pandit Portal →
-                            </span>
+                            <UserPlus className="w-3.5 h-3.5" />
+                            साइन अप (Sign Up)
                           </button>
                         </div>
 
-                        {/* Sign up buttons */}
-                        <div className="grid grid-cols-2 gap-2">
-                          <button
-                            onClick={() => safeNavigate('/register')}
-                            className="p-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-xs text-center shadow-lg"
-                          >
-                            भक्त Sign Up ✨
-                          </button>
-                          <button
-                            onClick={() => safeNavigate('/pandit/register')}
-                            className="p-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs text-center border border-white/10"
-                          >
-                            पंडित रजिस्ट्रेशन 🕉️
-                          </button>
-                        </div>
+                        {mobileAuthTab === 'login' ? (
+                          <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-wider text-amber-300/80">
+                              लॉगिन पोर्टल चुनें / Select Login
+                            </p>
+
+                            {/* Mobile User / Admin Login */}
+                            <button
+                              onClick={() => safeNavigate('/login')}
+                              className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-left text-white active:scale-98 transition-all cursor-pointer"
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-300">
+                                  <UserIcon className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black text-white">भक्त / यूजर लॉगिन</p>
+                                  <p className="text-[10px] text-white/50">भक्त एवं Admin लॉगिन</p>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded">
+                                Devotee & Admin →
+                              </span>
+                            </button>
+
+                            {/* Mobile Pandit Login */}
+                            <button
+                              onClick={() => safeNavigate('/pandit/login')}
+                              className="w-full flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-left text-white active:scale-98 transition-all cursor-pointer"
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-orange-400">
+                                  <Flame className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black text-white">पंडित जी लॉगिन</p>
+                                  <p className="text-[10px] text-white/50">वैदिक पुरोहित पोर्टल</p>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-orange-400 bg-red-500/15 px-2 py-0.5 rounded">
+                                Pandit Portal →
+                              </span>
+                            </button>
+
+                            {/* Mobile Astrologer Login */}
+                            <button
+                              onClick={() => safeNavigate('/astrologer/login')}
+                              className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-left text-white active:scale-98 transition-all cursor-pointer"
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-300">
+                                  <Sparkles className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black text-white">ज्योतिषी / टैरो लॉगिन</p>
+                                  <p className="text-[10px] text-white/50">ज्योतिषी & टैरो पोर्टल</p>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded">
+                                Astro Portal →
+                              </span>
+                            </button>
+
+                            <div className="pt-1 text-center">
+                              <button
+                                onClick={() => setMobileAuthTab('register')}
+                                className="text-[11px] text-amber-300/80 hover:text-amber-200 underline cursor-pointer"
+                              >
+                                नया खाता बनाना है? साइन अप करें →
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-2">
+                            <p className="text-[10px] font-black uppercase tracking-wider text-amber-300/80">
+                              नया पंजीकरण चुनें / Select Sign Up
+                            </p>
+
+                            {/* Mobile User Register */}
+                            <button
+                              onClick={() => safeNavigate('/register')}
+                              className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-left text-white active:scale-98 transition-all cursor-pointer"
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-300">
+                                  <UserPlus className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black text-white">भक्त / यूजर पंजीकरण</p>
+                                  <p className="text-[10px] text-white/50">राम नाम जप एवं प्रोफाइल</p>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded">
+                                निःशुल्क Register →
+                              </span>
+                            </button>
+
+                            {/* Mobile Pandit Register */}
+                            <button
+                              onClick={() => safeNavigate('/pandit/register')}
+                              className="w-full flex items-center justify-between p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-left text-white active:scale-98 transition-all cursor-pointer"
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-orange-400">
+                                  <Flame className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black text-white">पंडित जी पंजीकरण</p>
+                                  <p className="text-[10px] text-white/50">वैदिक पुरोहित प्रोफाइल</p>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-orange-400 bg-red-500/15 px-2 py-0.5 rounded">
+                                Pandit Register →
+                              </span>
+                            </button>
+
+                            {/* Mobile Astrologer Register */}
+                            <button
+                              onClick={() => safeNavigate('/astrologer/register')}
+                              className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-left text-white active:scale-98 transition-all cursor-pointer"
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-300">
+                                  <Sparkles className="w-4 h-4" />
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black text-white">ज्योतिषी / टैरो पंजीकरण</p>
+                                  <p className="text-[10px] text-white/50">परामर्शदाता प्रोफाइल</p>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded">
+                                Astro Register →
+                              </span>
+                            </button>
+
+                            <div className="pt-1 text-center">
+                              <button
+                                onClick={() => setMobileAuthTab('login')}
+                                className="text-[11px] text-amber-300/80 hover:text-amber-200 underline cursor-pointer"
+                              >
+                                पहले से खाता है? लॉगिन करें →
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

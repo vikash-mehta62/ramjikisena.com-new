@@ -14,6 +14,7 @@ const ROUTE_PERMISSIONS: { prefix: string; key: string; label: string }[] = [
   { prefix: '/admin/admin-mandirs', key: 'mandirs', label: 'Mandirs' },
   { prefix: '/admin/admin-katha-vachaks', key: 'kathaVachaks', label: 'Katha Vachaks' },
   { prefix: '/admin/admin-pandits', key: 'pandits', label: 'Pandits' },
+  { prefix: '/admin/admin-astrology', key: 'astrology', label: 'Astrology & Tarot' },
   { prefix: '/admin/admin-bookings', key: 'bookings', label: 'Bookings' },
   { prefix: '/admin/admin-blogs', key: 'blogs', label: 'Blogs' },
   { prefix: '/admin/admin-samagri', key: 'samagri', label: 'Samagri' },

@@ -156,13 +156,13 @@ export default function PanditBookingsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl p-4 mb-6 shadow-lg border-2 border-orange-100">
-          <div className="flex flex-wrap gap-3">
+        <div className="bg-white rounded-2xl p-3 sm:p-4 mb-6 shadow-lg border-2 border-orange-100">
+          <div className="flex items-center gap-2 overflow-x-auto sm:flex-wrap pb-1 sm:pb-0 no-scrollbar">
             {['all', 'pending', 'confirmed', 'completed', 'rejected', 'cancelled'].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
-                className={`px-6 py-2 rounded-xl font-bold transition-all ${
+                className={`px-4 sm:px-6 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
                   filter === status
                     ? 'bg-orange-500 text-white shadow-lg'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

@@ -1,9 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Package, ShoppingBag, Plus, Pencil, Trash2, X, ChevronDown } from 'lucide-react';
+import { 
+  Package, ShoppingBag, Plus, Pencil, Trash2, X, ChevronDown, 
+  RefreshCw, Eye, Sparkles, MapPin, Phone, User, Calendar, 
+  CreditCard, CheckCircle2, Clock, AlertCircle 
+} from 'lucide-react';
 import api from '@/lib/api';
 import ImageUploader from '@/components/ImageUploader';
+import AdminPagination from '@/components/AdminPagination';
 
 type AdminTab = 'orders' | 'packages' | 'products';
 
@@ -41,6 +46,13 @@ export default function AdminSamagriPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Selected order for detailed modal
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  // Pagination for orders
+  const [orderPage, setOrderPage] = useState(1);
+  const [orderLimit, setOrderLimit] = useState(10);
+
   // Product form
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -53,6 +65,10 @@ export default function AdminSamagriPage() {
 
   // Order status filter
   const [statusFilter, setStatusFilter] = useState('');
+
+  useEffect(() => {
+    setOrderPage(1);
+  }, [statusFilter]);
 
   useEffect(() => { fetchAll(); }, []);
 
@@ -151,6 +167,8 @@ export default function AdminSamagriPage() {
   };
 
   const filteredOrders = statusFilter ? orders.filter(o => o.status === statusFilter) : orders;
+  const paginatedOrders = filteredOrders.slice((orderPage - 1) * orderLimit, orderPage * orderLimit);
+  const totalOrderPages = Math.max(1, Math.ceil(filteredOrders.length / orderLimit));
 
   if (loading) {
     return (
@@ -162,37 +180,133 @@ export default function AdminSamagriPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="mb-8 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl p-8 text-white shadow-xl">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl">🪔</div>
-          <div>
-            <h1 className="text-4xl font-bold mb-1">Samagri Management</h1>
-            <p className="text-orange-100">Manage products, packages & orders</p>
+      {/* Premium Header Banner */}
+      <div className="bg-slate-900 border border-white/10 rounded-[2rem] p-6 sm:p-8 text-white relative overflow-hidden shadow-2xl mb-6">
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-bold flex-shrink-0">
+              <Sparkles className="w-7 h-7" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/10 text-orange-300 text-[11px] font-black uppercase tracking-wider mb-1">
+                Sacred Pooja Essentials & Store
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">पूजा सामग्री प्रबंधन (Samagri Store)</h1>
+              <p className="text-sm text-slate-300 mt-0.5">सामग्री पैकेजेस, उत्पाद सूची एवं भक्तजनों के ऑर्डर प्रबंधन</p>
+            </div>
           </div>
-        </div>
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mt-6">
-          <div className="bg-white/20 rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold">{orders.length}</p>
-            <p className="text-sm text-orange-100">Total Orders</p>
-          </div>
-          <div className="bg-white/20 rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold">{packages.length}</p>
-            <p className="text-sm text-orange-100">Packages</p>
-          </div>
-          <div className="bg-white/20 rounded-xl p-4 text-center">
-            <p className="text-2xl font-bold">{products.length}</p>
-            <p className="text-sm text-orange-100">Products</p>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={fetchAll}
+              disabled={loading}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-xs font-bold transition-colors cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              रिफ्रेश
+            </button>
+            {tab === 'packages' && (
+              <button
+                onClick={() => { resetPackageForm(); setShowPackageForm(!showPackageForm); }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-xl text-xs shadow-lg shadow-orange-500/20 transition-all hover:scale-105 cursor-pointer"
+              >
+                {showPackageForm ? <><X className="w-4 h-4" /> रद्द करें</> : <><Plus className="w-4 h-4" /> नया पैकेज जोड़ें</>}
+              </button>
+            )}
+            {tab === 'products' && (
+              <button
+                onClick={() => { resetProductForm(); setShowProductForm(!showProductForm); }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-xl text-xs shadow-lg shadow-orange-500/20 transition-all hover:scale-105 cursor-pointer"
+              >
+                {showProductForm ? <><X className="w-4 h-4" /> रद्द करें</> : <><Plus className="w-4 h-4" /> नया उत्पाद जोड़ें</>}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
+      {/* Global Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div
+          onClick={() => setTab('orders')}
+          className={`cursor-pointer bg-white rounded-2xl p-5 border transition-all ${
+            tab === 'orders' ? 'border-slate-900 shadow-md ring-2 ring-slate-900/10' : 'border-slate-100 shadow-sm hover:shadow-md'
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-slate-500">कुल ऑर्डर्स (Total Orders)</span>
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <ShoppingBag className="w-4 h-4" />
+            </div>
+          </div>
+          <p className="text-2xl sm:text-3xl font-black text-slate-900">{orders.length.toLocaleString()}</p>
+          <span className="text-[11px] text-slate-400 font-medium">समस्त ऑर्डर इतिहास</span>
+        </div>
+
+        <div
+          onClick={() => { setTab('orders'); setStatusFilter('pending'); }}
+          className={`cursor-pointer bg-white rounded-2xl p-5 border transition-all ${
+            tab === 'orders' && statusFilter === 'pending' ? 'border-amber-500 shadow-md ring-2 ring-amber-500/10' : 'border-slate-100 shadow-sm hover:shadow-md'
+          } ${orders.filter(o => o.status === 'pending').length > 0 ? 'bg-amber-50/30' : ''}`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-amber-800">लंबित ऑर्डर्स (Pending)</span>
+            <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+              <Clock className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <p className="text-2xl sm:text-3xl font-black text-amber-600">
+              {orders.filter(o => o.status === 'pending').length.toLocaleString()}
+            </p>
+            {orders.filter(o => o.status === 'pending').length > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-black animate-pulse">
+                प्रक्रिया करें
+              </span>
+            )}
+          </div>
+          <span className="text-[11px] text-slate-400 font-medium">नवीनतम ऑर्डर</span>
+        </div>
+
+        <div
+          onClick={() => setTab('packages')}
+          className={`cursor-pointer bg-white rounded-2xl p-5 border transition-all ${
+            tab === 'packages' ? 'border-slate-900 shadow-md ring-2 ring-slate-900/10' : 'border-slate-100 shadow-sm hover:shadow-md'
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-slate-500">पूजा पैकेजेस (Packages)</span>
+            <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+              <Package className="w-4 h-4" />
+            </div>
+          </div>
+          <p className="text-2xl sm:text-3xl font-black text-slate-900">{packages.length.toLocaleString()}</p>
+          <span className="text-[11px] text-slate-400 font-medium">कथा व अनुष्ठान किट</span>
+        </div>
+
+        <div
+          onClick={() => setTab('products')}
+          className={`cursor-pointer bg-white rounded-2xl p-5 border transition-all ${
+            tab === 'products' ? 'border-slate-900 shadow-md ring-2 ring-slate-900/10' : 'border-slate-100 shadow-sm hover:shadow-md'
+          }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-slate-500">उपलब्ध सामग्री (Products)</span>
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+          </div>
+          <p className="text-2xl sm:text-3xl font-black text-slate-900">{products.length.toLocaleString()}</p>
+          <span className="text-[11px] text-slate-400 font-medium">{products.filter(p => p.inStock).length} स्टॉक में उपलब्ध</span>
+        </div>
+      </div>
+
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 bg-white rounded-2xl p-2 shadow-md w-fit">
+      <div className="flex gap-2 mb-6 bg-white rounded-2xl p-2 shadow-md w-full sm:w-fit overflow-x-auto no-scrollbar">
         {(['orders', 'packages', 'products'] as AdminTab[]).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-5 py-2.5 rounded-xl font-bold capitalize transition-all ${tab === t ? 'bg-orange-600 text-white shadow' : 'text-gray-600 hover:bg-orange-50'}`}>
+            className={`px-5 py-2.5 rounded-xl font-bold capitalize transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${tab === t ? 'bg-orange-600 text-white shadow' : 'text-gray-600 hover:bg-orange-50'}`}>
             {t === 'orders' ? '📦 Orders' : t === 'packages' ? '🎁 Packages' : '🛒 Products'}
           </button>
         ))}
@@ -202,10 +316,10 @@ export default function AdminSamagriPage() {
       {tab === 'orders' && (
         <div>
           <div className="flex gap-2 mb-4 flex-wrap">
-            <button onClick={() => setStatusFilter('')} className={`px-4 py-2 rounded-xl text-sm font-semibold transition ${!statusFilter ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>All ({orders.length})</button>
+            <button onClick={() => setStatusFilter('')} className={`px-4 py-2 rounded-xl text-sm font-semibold transition cursor-pointer ${!statusFilter ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>All ({orders.length})</button>
             {STATUSES.map(s => (
               <button key={s} onClick={() => setStatusFilter(s)}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition ${statusFilter === s ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>
+                className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition cursor-pointer ${statusFilter === s ? 'bg-orange-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 {s} ({orders.filter(o => o.status === s).length})
               </button>
             ))}
@@ -213,47 +327,72 @@ export default function AdminSamagriPage() {
 
           <div className="space-y-3">
             {filteredOrders.length === 0 ? (
-              <div className="bg-white rounded-2xl p-12 text-center text-gray-400">
+              <div className="bg-white rounded-2xl p-12 text-center text-gray-400 border border-slate-100">
                 <Package className="w-12 h-12 mx-auto mb-3 opacity-30" />
                 <p>No orders found</p>
               </div>
-            ) : filteredOrders.map(order => (
-              <div key={order._id} className="bg-white rounded-2xl shadow-md p-5 border border-orange-100">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <p className="font-bold text-gray-800">#{order._id.slice(-8).toUpperCase()}</p>
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${STATUS_COLORS[order.status]}`}>{order.status}</span>
+            ) : (
+              <>
+                {paginatedOrders.map(order => (
+                  <div key={order._id} className="bg-white rounded-2xl shadow-md p-5 border border-orange-100 hover:shadow-lg transition-all">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <p className="font-bold text-gray-800">#{order._id.slice(-8).toUpperCase()}</p>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${STATUS_COLORS[order.status]}`}>{order.status}</span>
+                        </div>
+                        <p className="text-sm text-gray-600">{order.user?.name} · {order.user?.contact}</p>
+                        <p className="text-sm text-gray-500">📍 {order.deliveryAddress?.city}, {order.deliveryAddress?.state}</p>
+                        <p className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleString('en-IN')}</p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="font-bold text-orange-700 text-lg">₹{order.totalAmount}</p>
+                          <p className="text-xs text-gray-500 capitalize">{order.payment?.method || 'COD'}</p>
+                        </div>
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="px-3.5 py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-colors border border-blue-200 cursor-pointer"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          विवरण देखें
+                        </button>
+                        <div className="relative">
+                          <select
+                            value={order.status}
+                            onChange={e => updateOrderStatus(order._id, e.target.value)}
+                            className="appearance-none pl-3 pr-8 py-2 border-2 border-orange-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-orange-500 bg-white cursor-pointer">
+                            {STATUSES.map(s => <option key={s} value={s} className="capitalize">{s}</option>)}
+                          </select>
+                          <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600">{order.user?.name} · {order.user?.contact}</p>
-                    <p className="text-sm text-gray-500">📍 {order.deliveryAddress?.city}, {order.deliveryAddress?.state}</p>
-                    <p className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleString('en-IN')}</p>
+                    {/* Items preview */}
+                    <div className="mt-3 pt-3 border-t flex flex-wrap gap-2">
+                      {order.items.slice(0, 4).map((item, i) => (
+                        <span key={i} className="bg-orange-50 text-orange-700 text-xs px-2 py-1 rounded-lg">{item.name} ×{item.quantity}</span>
+                      ))}
+                      {order.items.length > 4 && <span className="text-xs text-gray-400">+{order.items.length - 4} more</span>}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p className="font-bold text-orange-700 text-lg">₹{order.totalAmount}</p>
-                      <p className="text-xs text-gray-500 capitalize">{order.payment?.method || 'COD'}</p>
-                    </div>
-                    <div className="relative">
-                      <select
-                        value={order.status}
-                        onChange={e => updateOrderStatus(order._id, e.target.value)}
-                        className="appearance-none pl-3 pr-8 py-2 border-2 border-orange-200 rounded-xl text-sm font-semibold focus:outline-none focus:border-orange-500 bg-white cursor-pointer">
-                        {STATUSES.map(s => <option key={s} value={s} className="capitalize">{s}</option>)}
-                      </select>
-                      <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-gray-400 pointer-events-none" />
-                    </div>
-                  </div>
-                </div>
-                {/* Items preview */}
-                <div className="mt-3 pt-3 border-t flex flex-wrap gap-2">
-                  {order.items.slice(0, 4).map((item, i) => (
-                    <span key={i} className="bg-orange-50 text-orange-700 text-xs px-2 py-1 rounded-lg">{item.name} ×{item.quantity}</span>
-                  ))}
-                  {order.items.length > 4 && <span className="text-xs text-gray-400">+{order.items.length - 4} more</span>}
-                </div>
-              </div>
-            ))}
+                ))}
+
+                <AdminPagination
+                  page={orderPage}
+                  totalPages={totalOrderPages}
+                  total={filteredOrders.length}
+                  limit={orderLimit}
+                  onPageChange={setOrderPage}
+                  onLimitChange={(l) => {
+                    setOrderLimit(l);
+                    setOrderPage(1);
+                  }}
+                  limitOptions={[5, 10, 20, 50, 100]}
+                  itemName="ऑर्डर"
+                />
+              </>
+            )}
           </div>
         </div>
       )}
@@ -433,6 +572,135 @@ export default function AdminSamagriPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Order Detail Modal */}
+      {selectedOrder && (
+        <div
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedOrder(null);
+          }}
+        >
+          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-orange-200 my-auto flex flex-col max-h-[92vh] animate-in fade-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-2xl shadow-inner">
+                  📦
+                </div>
+                <div>
+                  <h3 className="text-xl font-black">ऑर्डर विवरण (Order Details)</h3>
+                  <p className="text-xs text-orange-100 font-mono">
+                    #{selectedOrder._id.slice(-8).toUpperCase()} · {new Date(selectedOrder.createdAt).toLocaleString('hi-IN')}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition-all hover:scale-105 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto space-y-5 flex-1 bg-slate-50/50">
+              {/* Status and Action */}
+              <div className="bg-white rounded-2xl p-4 border border-slate-200 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-500">वर्तमान स्थिति:</span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${STATUS_COLORS[selectedOrder.status]}`}>
+                    {selectedOrder.status}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-500">स्थिति बदलें:</span>
+                  <select
+                    value={selectedOrder.status}
+                    onChange={(e) => {
+                      const newStatus = e.target.value;
+                      updateOrderStatus(selectedOrder._id, newStatus);
+                      setSelectedOrder({ ...selectedOrder, status: newStatus });
+                    }}
+                    className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 cursor-pointer"
+                  >
+                    {STATUSES.map((s) => (
+                      <option key={s} value={s} className="capitalize">
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Customer & Delivery Information */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-2">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <User className="w-4 h-4 text-orange-600" /> ग्राहक विवरण (Customer)
+                  </h4>
+                  <p className="text-sm font-black text-slate-800">{selectedOrder.user?.name || 'N/A'}</p>
+                  <p className="text-xs text-slate-600 flex items-center gap-1">
+                    <Phone className="w-3.5 h-3.5 text-slate-400" /> {selectedOrder.user?.contact || 'N/A'}
+                  </p>
+                  <p className="text-xs text-slate-500 flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" /> {selectedOrder.user?.city || 'N/A'}
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-2">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-emerald-600" /> डिलीवरी पता (Delivery Address)
+                  </h4>
+                  <p className="text-sm font-black text-slate-800">{selectedOrder.deliveryAddress?.name || selectedOrder.user?.name}</p>
+                  <p className="text-xs text-slate-600">
+                    {selectedOrder.deliveryAddress?.city}, {selectedOrder.deliveryAddress?.state}
+                  </p>
+                  <div className="pt-1 flex items-center gap-2">
+                    <span className="text-[11px] font-bold text-slate-500">भुगतान:</span>
+                    <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-bold uppercase">
+                      {selectedOrder.payment?.method || 'COD'} ({selectedOrder.payment?.status || 'pending'})
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Items Table */}
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+                <div className="p-3.5 bg-slate-100/70 border-b border-slate-200 font-bold text-xs text-slate-700 flex items-center justify-between">
+                  <span>ऑर्डर सामग्री (Ordered Items)</span>
+                  <span>{selectedOrder.items?.length || 0} वस्तुएं</span>
+                </div>
+                <div className="divide-y divide-slate-100">
+                  {selectedOrder.items?.map((item, i) => (
+                    <div key={i} className="p-3.5 flex items-center justify-between text-sm">
+                      <div>
+                        <p className="font-bold text-slate-800">{item.name}</p>
+                        <p className="text-xs text-slate-500">दर: ₹{item.price} × {item.quantity}</p>
+                      </div>
+                      <p className="font-black text-slate-900">₹{item.price * item.quantity}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="p-4 bg-orange-50/50 border-t border-orange-100 flex items-center justify-between">
+                  <span className="font-bold text-slate-800 text-sm">कुल भुगतान (Total Amount):</span>
+                  <span className="text-xl font-black text-orange-600">₹{selectedOrder.totalAmount}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-white border-t border-slate-200 flex justify-end">
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+              >
+                बंद करें (Close)
+              </button>
+            </div>
           </div>
         </div>
       )}

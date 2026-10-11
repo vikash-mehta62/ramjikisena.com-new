@@ -115,6 +115,27 @@ const mandirSchema = mongoose.Schema({
   submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user', default: null },
   rejectionReason: { type: String, default: '' },
 
+  // DATA SOURCE & VERIFICATION INTEGRITY
+  source: {
+    type: String,
+    enum: ['curated', 'osm', 'manual', 'community'],
+    default: 'curated'
+  },
+  sourceId: { type: String, default: '' },
+  verificationStatus: {
+    type: String,
+    enum: ['verified', 'unverified', 'community'],
+    default: 'verified'
+  },
+  timingsVerified: { type: Boolean, default: false },
+  photoAttributions: [{
+    url: String,
+    title: String,
+    author: String,
+    sourceUrl: String,
+    license: String
+  }],
+
   createdAt: { type: Date, default: Date.now }
 });
 

@@ -6,6 +6,8 @@ const blogModel = require('./blog');
 const Mandir = require('../models/Mandir');
 const KathaVachak = require('../models/KathaVachak');
 const Pandit = require('../models/Pandit');
+const Astrologer = require('../models/Astrologer');
+const AstrologyConsultation = require('../models/AstrologyConsultation');
 const Booking = require('../models/Booking');
 const adminAuth = require('./middleware/adminAuth');
 const adminSamagriRouter = require('./adminSamagri');
@@ -89,25 +91,59 @@ router.get('/blogs/pending', async (req, res) => {
   }
 });
 
-// Get all blogs (approved and pending)
+// Get all blogs (approved and pending) with pagination and search
 router.get('/blogs', async (req, res) => {
   try {
-    const { status } = req.query;
+    const { status, search } = req.query;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
     let query = {};
-    
     if (status === 'approved') {
       query.approved = true;
     } else if (status === 'pending') {
       query.approved = false;
+    } else if (status === 'draft') {
+      query.status = 'draft';
     }
 
-    const blogs = await blogModel.find(query)
-      .populate('author', 'name username city')
-      .sort({ createdAt: -1 });
-    
+    if (search && search.trim()) {
+      query.$or = [
+        { title: { $regex: search.trim(), $options: 'i' } },
+        { category: { $regex: search.trim(), $options: 'i' } }
+      ];
+    }
+
+    const [total, blogs, totalCount, approvedCount, pendingCount, draftCount] = await Promise.all([
+      blogModel.countDocuments(query),
+      blogModel.find(query)
+        .populate('author', 'name username city profileImage')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      blogModel.countDocuments(),
+      blogModel.countDocuments({ approved: true }),
+      blogModel.countDocuments({ approved: false }),
+      blogModel.countDocuments({ status: 'draft' })
+    ]);
+
     res.json({
       success: true,
-      blogs
+      blogs,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      },
+      stats: {
+        total: totalCount,
+        approved: approvedCount,
+        pending: pendingCount,
+        draft: draftCount
+      }
     });
   } catch (error) {
     console.error('Get blogs error:', error);
@@ -202,23 +238,30 @@ router.delete('/blogs/:id', async (req, res) => {
 // USER MANAGEMENT
 // ============================================
 
-// Get all users
+// Get all users with pagination, filtering, and stats
 router.get('/users', async (req, res) => {
   try {
-    const { search, sortBy } = req.query;
-    let query = {};
-    let sort = { joiningDate: -1 }; // Default sort
+    const { search, sortBy, role } = req.query;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
 
-    // Search functionality
-    if (search) {
+    let query = {};
+    let sort = { joiningDate: -1 };
+
+    if (role && role !== 'all') {
+      query.role = role;
+    }
+
+    if (search && search.trim()) {
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { username: { $regex: search, $options: 'i' } },
-        { city: { $regex: search, $options: 'i' } }
+        { name: { $regex: search.trim(), $options: 'i' } },
+        { username: { $regex: search.trim(), $options: 'i' } },
+        { contact: { $regex: search.trim(), $options: 'i' } },
+        { city: { $regex: search.trim(), $options: 'i' } }
       ];
     }
 
-    // Sort functionality
     if (sortBy === 'totalCount') {
       sort = { totalCount: -1 };
     } else if (sortBy === 'rank') {
@@ -227,13 +270,35 @@ router.get('/users', async (req, res) => {
       sort = { name: 1 };
     }
 
-    const users = await userModel.find(query)
-      .select('-password')
-      .sort(sort);
-    
+    const [total, users, totalUsers, totalAdmins, totalStaff, totalJaapAgg] = await Promise.all([
+      userModel.countDocuments(query),
+      userModel.find(query)
+        .select('-password')
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      userModel.countDocuments(),
+      userModel.countDocuments({ role: 'admin' }),
+      userModel.countDocuments({ role: { $in: ['staff', 'subadmin'] } }),
+      userModel.aggregate([{ $group: { _id: null, totalJaap: { $sum: '$totalCount' } } }])
+    ]);
+
     res.json({
       success: true,
-      users
+      users,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      },
+      stats: {
+        totalUsers,
+        totalAdmins,
+        totalStaff,
+        totalJaap: totalJaapAgg[0]?.totalJaap || 0
+      }
     });
   } catch (error) {
     console.error('Get users error:', error);
@@ -482,15 +547,53 @@ router.get('/announcements', async (req, res) => {
 // KATHA VACHAK MANAGEMENT
 // ============================================
 
-// Get all katha vachaks
+// Get all katha vachaks with pagination and search
 router.get('/katha-vachaks', async (req, res) => {
   try {
-    const kathaVachaks = await KathaVachak.find()
-      .sort({ createdAt: -1 });
+    const { search } = req.query;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    let query = {};
+    if (search && search.trim()) {
+      query.$or = [
+        { name: { $regex: search.trim(), $options: 'i' } },
+        { specialization: { $regex: search.trim(), $options: 'i' } },
+        { 'contact.phone': { $regex: search.trim(), $options: 'i' } }
+      ];
+    }
+
+    const [total, kathaVachaks, totalCount, withLiveKathas, liveAgg] = await Promise.all([
+      KathaVachak.countDocuments(query),
+      KathaVachak.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      KathaVachak.countDocuments(),
+      KathaVachak.countDocuments({ 'liveKathas.0': { $exists: true } }),
+      KathaVachak.aggregate([
+        { $unwind: '$liveKathas' },
+        { $match: { 'liveKathas.isActive': true } },
+        { $count: 'cnt' }
+      ])
+    ]);
     
     res.json({
       success: true,
-      kathaVachaks
+      kathaVachaks,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      },
+      stats: {
+        total: totalCount,
+        withLiveKathas: withLiveKathas || 0,
+        totalLiveKathas: liveAgg[0]?.cnt || 0
+      }
     });
   } catch (error) {
     console.error('Get katha vachaks error:', error);
@@ -585,6 +688,10 @@ router.delete('/katha-vachaks/:id', async (req, res) => {
 router.get('/pandits', async (req, res) => {
   try {
     const { status, verified, search } = req.query;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
     let query = {};
 
     if (status === 'active') query.isActive = true;
@@ -602,16 +709,24 @@ router.get('/pandits', async (req, res) => {
       ];
     }
 
-    const pandits = await Pandit.find(query).sort({ createdAt: -1 });
-
-    const totalCount = await Pandit.countDocuments();
-    const verifiedCount = await Pandit.countDocuments({ isVerified: true });
-    const pendingCount = await Pandit.countDocuments({ isVerified: false });
-    const activeCount = await Pandit.countDocuments({ isActive: true });
+    const [filteredCount, pandits, totalCount, verifiedCount, pendingCount, activeCount] = await Promise.all([
+      Pandit.countDocuments(query),
+      Pandit.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      Pandit.countDocuments(),
+      Pandit.countDocuments({ isVerified: true }),
+      Pandit.countDocuments({ isVerified: false }),
+      Pandit.countDocuments({ isActive: true })
+    ]);
 
     res.json({
       success: true,
       pandits,
+      pagination: {
+        page,
+        limit,
+        total: filteredCount,
+        totalPages: Math.ceil(filteredCount / limit)
+      },
       stats: {
         total: totalCount,
         verified: verifiedCount,
@@ -767,34 +882,247 @@ router.delete('/pandits/:id', async (req, res) => {
 });
 
 // ============================================
-// BOOKINGS MANAGEMENT
+// ASTROLOGY & TAROT MANAGEMENT
 // ============================================
 
-// Get all bookings
-router.get('/bookings', async (req, res) => {
+// Get all astrologers with stats
+router.get('/astrologers', async (req, res) => {
+  try {
+    const { status, verified, search } = req.query;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    let query = {};
+
+    if (status === 'active') query.isActive = true;
+    if (status === 'inactive') query.isActive = false;
+
+    if (verified === 'true') query.isVerified = true;
+    if (verified === 'false') query.isVerified = false;
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { 'contact.phone': { $regex: search, $options: 'i' } },
+        { 'location.city': { $regex: search, $options: 'i' } },
+        { specialties: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const [filteredCount, astrologers, totalCount, verifiedCount, pendingCount, activeCount] = await Promise.all([
+      Astrologer.countDocuments(query),
+      Astrologer.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+      Astrologer.countDocuments(),
+      Astrologer.countDocuments({ isVerified: true }),
+      Astrologer.countDocuments({ isVerified: false }),
+      Astrologer.countDocuments({ isActive: true })
+    ]);
+
+    res.json({
+      success: true,
+      astrologers,
+      pagination: {
+        page,
+        limit,
+        total: filteredCount,
+        totalPages: Math.ceil(filteredCount / limit)
+      },
+      stats: {
+        total: totalCount,
+        verified: verifiedCount,
+        pending: pendingCount,
+        active: activeCount
+      }
+    });
+  } catch (error) {
+    console.error('Admin get astrologers error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get single astrologer
+router.get('/astrologers/:id', async (req, res) => {
+  try {
+    const astrologer = await Astrologer.findById(req.params.id);
+    if (!astrologer) {
+      return res.status(404).json({ success: false, message: 'Astrologer not found' });
+    }
+    res.json({ success: true, astrologer });
+  } catch (error) {
+    console.error('Admin get single astrologer error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Update astrologer
+router.put('/astrologers/:id', async (req, res) => {
+  try {
+    const { name, tagline, about, fee, experience, specialties, languages, city, state, isVerified, isActive } = req.body;
+    const astrologer = await Astrologer.findById(req.params.id);
+    if (!astrologer) {
+      return res.status(404).json({ success: false, message: 'Astrologer not found' });
+    }
+
+    if (name) astrologer.name = name;
+    if (tagline !== undefined) astrologer.tagline = tagline;
+    if (about !== undefined) astrologer.about = about;
+    if (fee !== undefined) astrologer.fee = Number(fee);
+    if (experience !== undefined) astrologer.experience = Number(experience);
+    if (city) astrologer.location.city = city;
+    if (state) astrologer.location.state = state;
+    if (isVerified !== undefined) astrologer.isVerified = isVerified;
+    if (isActive !== undefined) astrologer.isActive = isActive;
+
+    if (specialties) {
+      astrologer.specialties = Array.isArray(specialties)
+        ? specialties
+        : specialties.split(',').map(s => s.trim()).filter(Boolean);
+    }
+
+    if (languages) {
+      astrologer.languages = Array.isArray(languages)
+        ? languages
+        : languages.split(',').map(l => l.trim()).filter(Boolean);
+    }
+
+    await astrologer.save();
+    res.json({ success: true, message: 'ज्योतिषी विवरण अपडेट कर दिया गया है', astrologer });
+  } catch (error) {
+    console.error('Admin update astrologer error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Toggle astrologer verification
+router.put('/astrologers/:id/verify', async (req, res) => {
+  try {
+    const astrologer = await Astrologer.findById(req.params.id);
+    if (!astrologer) {
+      return res.status(404).json({ success: false, message: 'Astrologer not found' });
+    }
+    astrologer.isVerified = !astrologer.isVerified;
+    await astrologer.save();
+    res.json({
+      success: true,
+      message: astrologer.isVerified ? 'ज्योतिषी को प्रमाणित (Verified) कर दिया गया है' : 'सत्यापन हटा दिया गया है',
+      isVerified: astrologer.isVerified,
+      astrologer
+    });
+  } catch (error) {
+    console.error('Admin toggle astrologer verify error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Toggle astrologer active status
+router.put('/astrologers/:id/status', async (req, res) => {
+  try {
+    const astrologer = await Astrologer.findById(req.params.id);
+    if (!astrologer) {
+      return res.status(404).json({ success: false, message: 'Astrologer not found' });
+    }
+    astrologer.isActive = !astrologer.isActive;
+    await astrologer.save();
+    res.json({
+      success: true,
+      message: astrologer.isActive ? 'ज्योतिषी को सक्रिय (Active) कर दिया गया है' : 'ज्योतिषी को निष्क्रिय (Inactive) कर दिया गया है',
+      isActive: astrologer.isActive,
+      astrologer
+    });
+  } catch (error) {
+    console.error('Admin toggle astrologer status error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Delete astrologer
+router.delete('/astrologers/:id', async (req, res) => {
+  try {
+    const astrologer = await Astrologer.findByIdAndDelete(req.params.id);
+    if (!astrologer) {
+      return res.status(404).json({ success: false, message: 'Astrologer not found' });
+    }
+    res.json({ success: true, message: 'ज्योतिषी का रिकॉर्ड हटा दिया गया है' });
+  } catch (error) {
+    console.error('Admin delete astrologer error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get all consultations for admin
+router.get('/astrology-consultations', async (req, res) => {
   try {
     const { status } = req.query;
     let query = {};
-    if (status) query.status = status;
+    if (status && status !== 'all') query.status = status;
 
-    const bookings = await Booking.find(query)
-      .populate('user', 'name contact username email')
-      .populate('pandit', 'name contact location photo')
-      .sort({ createdAt: -1 });
+    const consultations = await AstrologyConsultation.find(query)
+      .populate('astrologer', 'name contact photo location fee')
+      .sort({ createdAt: -1 })
+      .lean();
 
-    const totalCount = await Booking.countDocuments();
-    const pendingCount = await Booking.countDocuments({ status: 'pending' });
-    const confirmedCount = await Booking.countDocuments({ status: 'confirmed' });
-    const completedCount = await Booking.countDocuments({ status: 'completed' });
+    res.json({ success: true, count: consultations.length, consultations });
+  } catch (error) {
+    console.error('Admin get consultations error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ============================================
+// BOOKINGS MANAGEMENT
+// ============================================
+
+// Get all bookings with pagination and search
+router.get('/bookings', async (req, res) => {
+  try {
+    const { status, search } = req.query;
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    let query = {};
+    if (status && status !== 'all') query.status = status;
+
+    if (search && search.trim()) {
+      query.$or = [
+        { poojaType: { $regex: search.trim(), $options: 'i' } },
+        { 'location.city': { $regex: search.trim(), $options: 'i' } },
+        { 'location.address': { $regex: search.trim(), $options: 'i' } }
+      ];
+    }
+
+    const [total, bookings, totalCount, pendingCount, confirmedCount, completedCount, cancelledCount] = await Promise.all([
+      Booking.countDocuments(query),
+      Booking.find(query)
+        .populate('user', 'name contact username email')
+        .populate('pandit', 'name contact location photo')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Booking.countDocuments(),
+      Booking.countDocuments({ status: 'pending' }),
+      Booking.countDocuments({ status: 'confirmed' }),
+      Booking.countDocuments({ status: 'completed' }),
+      Booking.countDocuments({ status: { $in: ['cancelled', 'rejected'] } })
+    ]);
 
     res.json({
       success: true,
       bookings,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      },
       stats: {
         total: totalCount,
         pending: pendingCount,
         confirmed: confirmedCount,
-        completed: completedCount
+        completed: completedCount,
+        cancelled: cancelledCount
       }
     });
   } catch (error) {

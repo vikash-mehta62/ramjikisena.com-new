@@ -11,6 +11,7 @@ import {
   Building2, Users, Video, ExternalLink
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import MandirImage from '@/components/MandirImage';
 
 interface Mandir {
   _id: string; name: string; description: string; history: string; significance?: string;
@@ -36,6 +37,16 @@ interface Mandir {
   socialMedia?: { facebook?: string; instagram?: string; youtube?: string; twitter?: string };
   reviews: Array<{ _id: string; user: { name: string; username: string }; rating: number; text: string; createdAt: string }>;
   averageRating: number;
+  verificationStatus?: 'verified' | 'unverified' | 'community';
+  timingsVerified?: boolean;
+  source?: string;
+  photoAttributions?: Array<{
+    url: string;
+    title: string;
+    author: string;
+    sourceUrl: string;
+    license: string;
+  }>;
 }
 
 export default function PublicMandirDetail() {
@@ -132,11 +143,16 @@ export default function PublicMandirDetail() {
 
       {/* Hero with photo gallery */}
       <div className="relative h-[50vh] overflow-hidden bg-slate-900">
-        <img src={mandir.photos[activePhoto] || 'https://images.unsplash.com/photo-1590059536214-6a6839674092'}
-          className="w-full h-full object-cover opacity-60 transition-all duration-500" alt={mandir.name} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <MandirImage 
+          src={mandir.photos?.[activePhoto]}
+          alt={mandir.name}
+          templeName={mandir.name}
+          cityName={mandir.location?.city}
+          className="w-full h-full object-cover opacity-70 transition-all duration-500" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
         {/* Photo thumbnails */}
-        {mandir.photos.length > 1 && (
+        {mandir.photos && mandir.photos.length > 1 && (
           <div className="absolute bottom-24 left-4 flex gap-2">
             {mandir.photos.slice(0, 5).map((p, i) => (
               <button key={i} onClick={() => setActivePhoto(i)}
@@ -149,6 +165,15 @@ export default function PublicMandirDetail() {
         <div className="absolute bottom-6 left-0 w-full px-4">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
+              {mandir.verificationStatus === 'verified' ? (
+                <span className="bg-emerald-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
+                  ✓ सत्यापित (Verified)
+                </span>
+              ) : (
+                <span className="bg-slate-700/90 text-white/90 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-md">
+                  📍 स्थानीय सूची (Local Directory)
+                </span>
+              )}
               {mandir.templeType && mandir.templeType !== 'Other' && (
                 <span className="bg-orange-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest">{mandir.templeType}</span>
               )}
@@ -181,7 +206,13 @@ export default function PublicMandirDetail() {
                 { emoji: '🏛️', label: 'Architecture', value: mandir.architecture || '—' },
                 { emoji: '📅', label: 'Built', value: mandir.builtYear || '—' },
                 { emoji: '💰', label: 'Entry Fee', value: mandir.visitInfo?.entryFee || 'Free' },
-                { emoji: '🕐', label: 'Timings', value: mandir.timing.opening && mandir.timing.closing ? `${mandir.timing.opening} – ${mandir.timing.closing}` : '—' },
+                { 
+                  emoji: '🕐', 
+                  label: 'Timings', 
+                  value: mandir.timingsVerified && mandir.timing.opening && mandir.timing.closing 
+                    ? `${mandir.timing.opening} – ${mandir.timing.closing}` 
+                    : (mandir.timingsVerified ? 'विशेष समय' : 'पुष्टि प्रतीक्षित') 
+                },
               ].map((item, i) => (
                 <div key={i} className="bg-white rounded-2xl p-4 border border-orange-100 text-center shadow-sm">
                   <p className="text-2xl mb-1">{item.emoji}</p>
@@ -247,6 +278,14 @@ export default function PublicMandirDetail() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Timings unverified warning note */}
+              {!mandir.timingsVerified && (
+                <div className="mt-4 p-3.5 bg-amber-50/80 border border-amber-200/90 rounded-2xl flex items-start gap-2.5 text-xs text-amber-900 font-medium">
+                  <span className="text-base shrink-0">ℹ️</span>
+                  <span>इस मंदिर के आरती व दर्शन समय की आधिकारिक पुष्टि प्रतीक्षित है। दर्शन के लिए जाने से पूर्व कृपया स्थानीय स्तर पर समय की पुष्टि अवश्य करें।</span>
                 </div>
               )}
             </Card>
@@ -334,6 +373,31 @@ export default function PublicMandirDetail() {
                     <div key={i} onClick={() => setActivePhoto(i)}
                       className="rounded-2xl overflow-hidden aspect-square cursor-pointer hover:opacity-90 transition-opacity">
                       <img src={img} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" alt="Gallery" />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            {/* Photo Attribution (Wikimedia Commons / Photographer Credits) */}
+            {mandir.photoAttributions && mandir.photoAttributions.length > 0 && (
+              <Card className="border-dashed border-orange-200 bg-orange-50/20">
+                <SectionTitle icon={<Camera size={18} className="text-slate-500" />} title="चित्र श्रेय (Photo Attribution & License)" />
+                <div className="space-y-2">
+                  {mandir.photoAttributions.map((attr, idx) => (
+                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 p-3 bg-white rounded-xl border border-orange-100 text-xs">
+                      <div>
+                        <span className="font-bold text-slate-800">{attr.title || `फ़ोटो ${idx + 1}`}</span>
+                        {attr.author && <span className="text-slate-500 ml-1.5">• फ़ोटोग्राफ़र: <strong className="text-slate-700">{attr.author}</strong></span>}
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px]">
+                        {attr.license && <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono font-medium">{attr.license}</span>}
+                        {attr.sourceUrl && (
+                          <a href={attr.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:text-orange-700 hover:underline flex items-center gap-0.5 font-bold">
+                            स्रोत <ExternalLink size={10} />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

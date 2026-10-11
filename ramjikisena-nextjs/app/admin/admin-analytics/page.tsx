@@ -404,7 +404,7 @@ export default function AdminAnalyticsPage() {
                 </h3>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-left">
+                  <table className="w-full text-xs text-left min-w-[450px]">
                     <thead>
                       <tr className="border-b border-slate-200 text-slate-400 font-black uppercase text-[10px]">
                         <th className="pb-3">राज्य (State)</th>
@@ -435,7 +435,7 @@ export default function AdminAnalyticsPage() {
                 </h3>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-left">
+                  <table className="w-full text-xs text-left min-w-[450px]">
                     <thead>
                       <tr className="border-b border-slate-200 text-slate-400 font-black uppercase text-[10px]">
                         <th className="pb-3">शहर (City)</th>
@@ -467,7 +467,7 @@ export default function AdminAnalyticsPage() {
               </h3>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
+                <table className="w-full text-xs text-left min-w-[600px]">
                   <thead>
                     <tr className="border-b border-slate-200 text-slate-400 font-black uppercase text-[10px]">
                       <th className="pb-3">पेज पाथ (Page URL)</th>
@@ -507,7 +507,7 @@ export default function AdminAnalyticsPage() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
+                <table className="w-full text-xs text-left min-w-[750px]">
                   <thead>
                     <tr className="border-b border-slate-200 text-slate-400 font-black uppercase text-[10px]">
                       <th className="pb-3">समय (Time)</th>

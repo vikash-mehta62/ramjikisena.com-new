@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Clock, Star, FilterX, ArrowRight, Shrub, Navigation } from 'lucide-react';
+import MandirImage from '@/components/MandirImage';
 
 interface Mandir {
   _id: string;
@@ -18,6 +19,8 @@ interface Mandir {
   };
   averageRating: number;
   timing?: { opening: string; closing: string; };
+  verificationStatus?: 'verified' | 'unverified' | 'community';
+  timingsVerified?: boolean;
 }
 
 export default function CompactMandirListing() {
@@ -114,23 +117,32 @@ export default function CompactMandirListing() {
                 className="group bg-white rounded-2xl md:rounded-[2.5rem] border border-orange-50 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
               >
                 {/* Photo with Glass Badge */}
-                <div className="relative aspect-[4/3] md:h-52 overflow-hidden bg-slate-100">
-                  {mandir.photos?.[0] ? (
-                    <img 
-                      src={mandir.photos[0]} 
-                      alt={mandir.name} 
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl opacity-20 bg-orange-50">🛕</div>
-                  )}
+                <div className="relative aspect-[4/3] md:h-52 overflow-hidden bg-slate-900">
+                  <MandirImage 
+                    src={mandir.photos?.[0]} 
+                    alt={mandir.name} 
+                    templeName={mandir.name}
+                    cityName={mandir.location?.city}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                  />
                   
-                  {/* Glass Rating */}
-                  <div className="absolute top-2 right-2 md:top-4 md:right-4 bg-white/80 backdrop-blur-md px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-lg flex items-center gap-1 shadow-sm border border-white/40">
-                    <Star size={10} className="fill-orange-500 text-orange-500 sm:w-3 sm:h-3" />
-                    <span className="text-[9px] sm:text-xs font-black text-slate-800">
-                      {mandir.averageRating > 0 ? mandir.averageRating.toFixed(1) : 'NEW'}
-                    </span>
+                  {/* Badges container */}
+                  <div className="absolute top-2 right-2 md:top-4 md:right-4 flex items-center gap-1.5">
+                    {mandir.verificationStatus === 'verified' ? (
+                      <span className="bg-emerald-600/90 backdrop-blur-md text-white text-[8px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-lg shadow-sm">
+                        ✓ सत्यापित
+                      </span>
+                    ) : (
+                      <span className="bg-slate-800/70 backdrop-blur-md text-white/90 text-[8px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-lg shadow-sm">
+                        📍 स्थानीय
+                      </span>
+                    )}
+                    <div className="bg-white/90 backdrop-blur-md px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-lg flex items-center gap-1 shadow-sm border border-white/40">
+                      <Star size={10} className="fill-orange-500 text-orange-500 sm:w-3 sm:h-3" />
+                      <span className="text-[9px] sm:text-xs font-black text-slate-800">
+                        {mandir.averageRating > 0 ? mandir.averageRating.toFixed(1) : 'NEW'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -148,9 +160,11 @@ export default function CompactMandirListing() {
                   {/* Actions & Timings */}
                   <div className="flex flex-col gap-2 pt-2 sm:pt-4 border-t border-orange-50">
                     <div className="flex items-center gap-1.5 text-slate-500">
-                      <Clock size={10} className="text-orange-400" />
-                      <span className="text-[8px] sm:text-xs font-black uppercase tracking-tighter">
-                        {mandir.timing?.opening || 'Dawn'} - {mandir.timing?.closing || 'Dusk'}
+                      <Clock size={10} className="text-orange-400 shrink-0" />
+                      <span className="text-[8px] sm:text-xs font-bold uppercase tracking-tight truncate">
+                        {mandir.timingsVerified && mandir.timing?.opening
+                          ? `${mandir.timing.opening} - ${mandir.timing?.closing || ''}`
+                          : 'दर्शन समय: पुष्टि प्रतीक्षित'}
                       </span>
                     </div>
                     

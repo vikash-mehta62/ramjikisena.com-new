@@ -32,9 +32,9 @@ export default function DashboardSidebar({ role, userName, userPhoto, permission
     { href: '/admin/admin-mandirs', label: 'Mandirs', icon: <Church className="w-5 h-5" />, key: 'mandirs' },
     { href: '/admin/admin-katha-vachaks', label: 'Katha Vachaks', icon: <Scroll className="w-5 h-5" />, key: 'kathaVachaks' },
     { href: '/admin/admin-pandits', label: 'Pandits', icon: <Sparkles className="w-5 h-5" />, key: 'pandits' },
+    { href: '/admin/admin-astrology', label: 'Astrology (ज्योतिष)', icon: <span className="text-base leading-none">🔮</span>, key: 'astrology' },
     { href: '/admin/admin-bookings', label: 'Bookings', icon: <Calendar className="w-5 h-5" />, key: 'bookings' },
-    { href: '/admin/admin-blogs', label: 'All Blogs', icon: <FileText className="w-5 h-5" />, key: 'blogs' },
-    { href: '/admin/admin-blogs/pending', label: 'Pending Blogs', icon: <Clock className="w-5 h-5" />, key: 'blogs' },
+    { href: '/admin/admin-blogs', label: 'Blogs (ब्लॉग)', icon: <FileText className="w-5 h-5" />, key: 'blogs' },
     { href: '/admin/admin-samagri', label: 'Samagri', icon: <span className="text-base leading-none">🪔</span>, key: 'samagri' },
   ];
 
@@ -150,7 +150,8 @@ export default function DashboardSidebar({ role, userName, userPhoto, permission
     <>
       {/* Mobile toggle button */}
       <button onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 w-11 h-11 bg-slate-900 text-white rounded-2xl shadow-xl flex items-center justify-center border border-white/10">
+        className="lg:hidden fixed top-3.5 left-3.5 z-40 w-11 h-11 bg-slate-900 text-white rounded-2xl shadow-xl flex items-center justify-center border border-white/10 active:scale-95 transition-transform"
+        aria-label="Open Sidebar Menu">
         <Menu className="w-5 h-5" />
       </button>
 
@@ -165,13 +166,14 @@ export default function DashboardSidebar({ role, userName, userPhoto, permission
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40" />
+              className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]" />
             <motion.aside
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="lg:hidden fixed left-0 top-0 h-screen w-72 bg-slate-900 border-r border-white/5 z-50 flex flex-col">
+              className="lg:hidden fixed left-0 top-0 h-screen w-72 max-w-[85vw] bg-slate-900 border-r border-white/5 z-[70] flex flex-col shadow-2xl">
               <button onClick={() => setMobileOpen(false)}
-                className="absolute top-4 right-4 w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center text-white hover:bg-white/20 transition-all">
+                className="absolute top-4 right-4 w-8 h-8 bg-white/10 rounded-xl flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                aria-label="Close Sidebar Menu">
                 <X className="w-4 h-4" />
               </button>
               <SidebarContent />

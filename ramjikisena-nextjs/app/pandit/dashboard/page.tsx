@@ -135,10 +135,10 @@ export default function PanditDashboard() {
       <div className="container mx-auto max-w-7xl">
         
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-3xl p-8 mb-8 shadow-xl text-white">
+        <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-3xl p-6 sm:p-8 mb-8 shadow-xl text-white">
           <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-4xl shadow-lg">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center text-3xl sm:text-4xl shadow-lg flex-shrink-0">
                 {pandit?.photo ? (
                   <img src={pandit.photo} alt={pandit.name} className="w-full h-full rounded-full object-cover" />
                 ) : (
@@ -146,13 +146,13 @@ export default function PanditDashboard() {
                 )}
               </div>
               <div>
-                <h1 className="text-3xl font-black mb-1">
+                <h1 className="text-2xl sm:text-3xl font-black mb-1">
                   Namaste, {pandit?.name}
                 </h1>
-                <p className="text-orange-100">
+                <p className="text-orange-100 text-sm">
                   {pandit?.city}, {pandit?.state}
                 </p>
-                <div className="flex items-center gap-3 mt-2">
+                <div className="flex items-center justify-center sm:justify-start gap-3 mt-2 flex-wrap">
                   {pandit?.isVerified ? (
                     <span className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
                       ✓ Verified
@@ -162,20 +162,20 @@ export default function PanditDashboard() {
                       ⏳ Pending Verification
                     </span>
                   )}
-                  <span className="text-sm">⭐ {pandit?.averageRating ? pandit.averageRating.toFixed(1) : '0.0'} Rating</span>
+                  <span className="text-xs sm:text-sm">⭐ {pandit?.averageRating ? pandit.averageRating.toFixed(1) : '0.0'} Rating</span>
                 </div>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-center sm:justify-start flex-wrap">
               <Link
                 href="/pandit/profile"
-                className="px-6 py-3 bg-white text-orange-600 rounded-xl font-bold hover:bg-orange-50 transition-all"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 bg-white text-orange-600 rounded-xl font-bold text-xs sm:text-sm hover:bg-orange-50 transition-all shadow-md active:scale-95"
               >
                 Edit Profile
               </Link>
               <Link
                 href="/"
-                className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-xl font-bold hover:bg-white/30 transition-all"
+                className="px-5 sm:px-6 py-2.5 sm:py-3 bg-white/20 backdrop-blur-sm text-white rounded-xl font-bold text-xs sm:text-sm hover:bg-white/30 transition-all border border-white/20"
               >
                 Home
               </Link>
@@ -293,16 +293,16 @@ export default function PanditDashboard() {
 
       {/* Quick View Modal */}
       {selectedBooking && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-red-600 text-white p-6 rounded-t-3xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col my-6">
+            <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-red-600 text-white p-5 sm:p-6 rounded-t-3xl z-10 flex-shrink-0">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-black">Booking Details</h2>
+                <h2 className="text-xl sm:text-2xl font-black">Booking Details</h2>
                 <button onClick={() => setSelectedBooking(null)} className="text-3xl hover:scale-110 transition-transform">×</button>
               </div>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-5 flex-1">
               {/* Status */}
               <div className="text-center">
                 <span className={`inline-block px-6 py-3 text-lg font-bold rounded-full border-2 ${getStatusColor(selectedBooking.status)}`}>

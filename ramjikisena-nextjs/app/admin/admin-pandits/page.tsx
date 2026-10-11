@@ -5,9 +5,10 @@ import api from '@/lib/api';
 import {
   Sparkles, Phone, Mail, MapPin, Star, Calendar, Trash2, Pencil,
   Plus, X, CheckCircle2, Clock, ShieldCheck, ShieldAlert,
-  Search, Flame, AlertCircle, RefreshCw, User, Award, Check, ExternalLink
+  Search, Flame, AlertCircle, RefreshCw, User, Award, Check, ExternalLink, Eye, Globe, MessageSquare
 } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
+import AdminPagination from '@/components/AdminPagination';
 
 interface Pandit {
   _id: string;
@@ -43,6 +44,10 @@ export default function AdminPanditsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'verified' | 'inactive'>('all');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(12);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [stats, setStats] = useState({
     total: 0,
     verified: 0,
@@ -53,6 +58,7 @@ export default function AdminPanditsPage() {
   // Modal State
   const [showModal, setShowModal] = useState(false);
   const [editingPandit, setEditingPandit] = useState<Pandit | null>(null);
+  const [selectedPanditDetails, setSelectedPanditDetails] = useState<Pandit | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -75,20 +81,26 @@ export default function AdminPanditsPage() {
 
   useEffect(() => {
     fetchPandits();
-  }, [activeTab]);
+  }, [activeTab, page, limit]);
 
   const fetchPandits = async () => {
     setLoading(true);
     try {
-      let queryParam = '';
-      if (activeTab === 'pending') queryParam = '?verified=false';
-      else if (activeTab === 'verified') queryParam = '?verified=true';
-      else if (activeTab === 'inactive') queryParam = '?status=inactive';
+      const params = new URLSearchParams();
+      params.set('page', String(page));
+      params.set('limit', String(limit));
+      if (activeTab === 'pending') params.set('verified', 'false');
+      else if (activeTab === 'verified') params.set('verified', 'true');
+      else if (activeTab === 'inactive') params.set('status', 'inactive');
 
-      const response = await api.get(`/api/admin/pandits${queryParam}`);
+      const response = await api.get(`/api/admin/pandits?${params.toString()}`);
       const data = await response.json();
       if (data.success) {
         setPandits(data.pandits || []);
+        if (data.pagination) {
+          setTotalPages(data.pagination.totalPages || 1);
+          setTotalCount(data.pagination.total || 0);
+        }
         if (data.stats) {
           setStats(data.stats);
         }
@@ -276,35 +288,39 @@ export default function AdminPanditsPage() {
         </div>
       )}
 
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-orange-100 shadow-sm">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-white shadow-md">
-              <Sparkles className="w-5 h-5" />
+      {/* Premium Header Banner */}
+      <div className="bg-slate-900 border border-white/10 rounded-[2rem] p-6 sm:p-8 text-white relative overflow-hidden shadow-2xl">
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-bold flex-shrink-0">
+              <Sparkles className="w-7 h-7" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900">पंडित प्रबंधन (Pandits Management)</h1>
-              <p className="text-xs text-slate-500 font-medium">पंजीकृत पंडित, यजमान बुकिंग्स एवं सत्यापन नियंत्रण</p>
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/10 text-orange-300 text-[11px] font-black uppercase tracking-wider mb-1">
+                Purohit Directory & Services
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">पंडित प्रबंधन (Pandits Management)</h1>
+              <p className="text-sm text-slate-300 mt-0.5">पंजीकृत पंडित, यजमान बुकिंग्स एवं प्रोफाइल सत्यापन नियंत्रण</p>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={fetchPandits}
-            className="p-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl transition-all"
-            title="रिफ्रेश करें"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          </button>
-          <button
-            onClick={handleOpenAddModal}
-            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-black text-sm rounded-2xl shadow-lg shadow-orange-600/20 active:scale-95 transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            <span>नया पंडित जोड़ें (+ Add Pandit)</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={fetchPandits}
+              disabled={loading}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 text-xs font-bold transition-colors"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              रिफ्रेश
+            </button>
+            <button
+              onClick={handleOpenAddModal}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-xl text-xs shadow-lg shadow-orange-500/20 transition-all hover:scale-105"
+            >
+              <Plus className="w-4 h-4" /> नया पंडित जोड़ें (+ Add Pandit)
+            </button>
+          </div>
         </div>
       </div>
 
@@ -601,6 +617,15 @@ export default function AdminPanditsPage() {
                   {pandit.isActive ? 'Pause' : 'Activate'}
                 </button>
 
+                {/* View Details Button */}
+                <button
+                  onClick={() => setSelectedPanditDetails(pandit)}
+                  className="p-2 bg-white text-slate-700 hover:bg-slate-900 hover:text-white rounded-xl border border-slate-200 transition-all"
+                  title="पूर्ण विवरण देखें"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+
                 {/* Edit Button */}
                 <button
                   onClick={() => handleOpenEditModal(pandit)}
@@ -623,6 +648,17 @@ export default function AdminPanditsPage() {
           ))}
         </div>
       )}
+
+      {/* Server-Side Pagination */}
+      <AdminPagination
+        page={page}
+        totalPages={totalPages}
+        total={totalCount}
+        limit={limit}
+        onPageChange={(p) => setPage(p)}
+        onLimitChange={(l) => { setLimit(l); setPage(1); }}
+        itemName="पंडित"
+      />
 
       {/* Add / Edit Pandit Modal */}
       {showModal && (
@@ -841,6 +877,196 @@ export default function AdminPanditsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Pandit Detail Inspection Modal */}
+      {selectedPanditDetails && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-8 animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="bg-slate-900 p-6 text-white relative flex-shrink-0">
+              <button
+                onClick={() => setSelectedPanditDetails(null)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <div className="flex items-center gap-4">
+                {selectedPanditDetails.photo ? (
+                  <img
+                    src={selectedPanditDetails.photo}
+                    alt={selectedPanditDetails.name}
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-orange-500/50 flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl font-black flex-shrink-0">
+                    {selectedPanditDetails.name?.charAt(0) || 'P'}
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-xl font-black text-white flex items-center gap-2">
+                    {selectedPanditDetails.name}
+                    {selectedPanditDetails.isVerified && (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    )}
+                  </h3>
+                  <p className="text-xs text-slate-300 font-medium">@{selectedPanditDetails.username || 'pandit'}</p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        selectedPanditDetails.isVerified
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      }`}
+                    >
+                      {selectedPanditDetails.isVerified ? 'सत्यापित (Verified)' : 'सत्यापन लंबित (Pending)'}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        selectedPanditDetails.isActive
+                          ? 'bg-blue-500/20 text-blue-300'
+                          : 'bg-rose-500/20 text-rose-300'
+                      }`}
+                    >
+                      {selectedPanditDetails.isActive ? 'सक्रिय' : 'निष्क्रिय'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="p-6 overflow-y-auto space-y-5 text-xs text-slate-700">
+              {/* Quick Metrics */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-center">
+                  <span className="text-[10px] font-bold text-slate-400 block mb-0.5">औसत रेटिंग</span>
+                  <div className="flex items-center justify-center gap-1 text-sm font-black text-amber-600">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span>{selectedPanditDetails.averageRating?.toFixed(1) || '0.0'}</span>
+                  </div>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-center">
+                  <span className="text-[10px] font-bold text-slate-400 block mb-0.5">कुल बुकिंग्स</span>
+                  <span className="text-sm font-black text-slate-800">
+                    {selectedPanditDetails.totalBookings || 0}
+                  </span>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 text-center">
+                  <span className="text-[10px] font-bold text-slate-400 block mb-0.5">अनुभव</span>
+                  <span className="text-sm font-black text-orange-600">
+                    {selectedPanditDetails.experience || 0} वर्ष
+                  </span>
+                </div>
+              </div>
+
+              {/* Contact & Location Information */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2">
+                  <span className="font-bold text-slate-800 block text-xs">संपर्क सूत्र</span>
+                  <div className="space-y-1.5 text-slate-600">
+                    <p className="flex items-center gap-2">
+                      <Phone className="w-3.5 h-3.5 text-orange-500" />
+                      <span>फ़ोन: <strong className="text-slate-800">{selectedPanditDetails.contact?.phone || 'उपलब्ध नहीं'}</strong></span>
+                    </p>
+                    {selectedPanditDetails.contact?.whatsapp && (
+                      <p className="flex items-center gap-2">
+                        <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>व्हाट्सएप: {selectedPanditDetails.contact.whatsapp}</span>
+                      </p>
+                    )}
+                    <p className="flex items-center gap-2">
+                      <Mail className="w-3.5 h-3.5 text-orange-500" />
+                      <span>ईमेल: {selectedPanditDetails.contact?.email || 'उपलब्ध नहीं'}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-2">
+                  <span className="font-bold text-slate-800 block text-xs">स्थान एवं पता</span>
+                  <div className="space-y-1 text-slate-600">
+                    <p className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-orange-500" />
+                      <span>शहर: <strong className="text-slate-800">{selectedPanditDetails.location?.city || 'उपलब्ध नहीं'}</strong></span>
+                    </p>
+                    <p className="text-slate-500 pl-5.5">
+                      राज्य: {selectedPanditDetails.location?.state || 'Uttar Pradesh'}
+                    </p>
+                    {selectedPanditDetails.location?.address && (
+                      <p className="text-slate-500 pl-5.5">
+                        पता: {selectedPanditDetails.location.address}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Specialization List */}
+              <div>
+                <h4 className="font-bold text-slate-900 mb-2 uppercase tracking-wider text-[11px]">
+                  पूजा विशेषज्ञता (Specializations)
+                </h4>
+                {selectedPanditDetails.specialization && selectedPanditDetails.specialization.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedPanditDetails.specialization.map((spec, i) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 bg-orange-50 text-orange-800 border border-orange-200 rounded-xl font-bold text-xs"
+                      >
+                        {spec}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-400 italic">कोई विशेषज्ञता दर्ज नहीं है</p>
+                )}
+              </div>
+
+              {/* Languages */}
+              <div>
+                <h4 className="font-bold text-slate-900 mb-2 uppercase tracking-wider text-[11px]">
+                  भाषाएँ (Languages)
+                </h4>
+                <p className="text-slate-700 font-medium">
+                  {selectedPanditDetails.languages && selectedPanditDetails.languages.length > 0
+                    ? selectedPanditDetails.languages.join(', ')
+                    : 'Hindi, Sanskrit'}
+                </p>
+              </div>
+
+              {/* Bio / About */}
+              {selectedPanditDetails.about && (
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                  <span className="font-bold text-slate-800 block mb-1">परिचय (About)</span>
+                  <p className="text-slate-600 leading-relaxed whitespace-pre-line">
+                    {selectedPanditDetails.about}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions Footer */}
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between flex-shrink-0">
+              <button
+                onClick={() => {
+                  const p = selectedPanditDetails;
+                  setSelectedPanditDetails(null);
+                  handleOpenEditModal(p);
+                }}
+                className="px-4 py-2 bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-bold transition-colors inline-flex items-center gap-1.5"
+              >
+                <Pencil className="w-3.5 h-3.5" /> संपादित करें (Edit)
+              </button>
+
+              <button
+                onClick={() => setSelectedPanditDetails(null)}
+                className="px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 rounded-xl text-xs font-bold transition-colors"
+              >
+                बंद करें (Close)
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -62,8 +62,8 @@ export default function PanditLayout({ children }: { children: React.ReactNode }
       />
       
       {/* Main Content */}
-      <div className="lg:ml-72 transition-all duration-300">
-        <div className="p-4 md:p-8">
+      <div className="lg:ml-64 transition-all duration-300">
+        <div className="p-4 md:p-8 pt-16 lg:pt-8">
           {children}
         </div>
       </div>

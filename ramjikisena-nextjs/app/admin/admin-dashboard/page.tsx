@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   Users, BookOpen, Clock, CheckCircle, Hand,
-  UserPlus, FileText, BarChart3, Crown, ArrowRight, TrendingUp
+  UserPlus, FileText, BarChart3, Crown, ArrowRight, TrendingUp, Sparkles
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -62,6 +62,7 @@ export default function AdminDashboard() {
   const quickActions = [
     { label: 'Review Pending Blogs', sub: `${stats.pendingBlogs} awaiting approval`, href: '/admin/admin-blogs/pending', color: 'from-yellow-500 to-amber-500', Icon: Clock },
     { label: 'Manage Users', sub: `${stats.totalUsers} total users`, href: '/admin/users', color: 'from-blue-500 to-blue-600', Icon: Users },
+    { label: 'Astrology & Tarot', sub: 'विशेषज्ञ एवं परामर्श प्रबंधन', href: '/admin/admin-astrology', color: 'from-amber-500 to-yellow-600', Icon: Sparkles },
     { label: 'All Blogs', sub: `${stats.totalBlogs} total blogs`, href: '/admin/admin-blogs', color: 'from-purple-500 to-violet-600', Icon: BookOpen },
   ];
 
@@ -112,7 +113,7 @@ export default function AdminDashboard() {
           <h2 className="text-lg font-black text-slate-900">Quick Actions</h2>
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin Tools</span>
         </div>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action) => (
             <Link key={action.href} href={action.href}
               className={`group flex items-center gap-4 p-5 bg-gradient-to-br ${action.color} text-white rounded-2xl hover:shadow-xl hover:-translate-y-0.5 transition-all`}>

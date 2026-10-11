@@ -260,17 +260,17 @@ export default function PanditProfilePage() {
               Profile Photo
             </h3>
             
-            <div className="flex items-center gap-6">
-              <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-orange-200 to-red-200 flex items-center justify-center">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
+              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-gradient-to-br from-orange-200 to-red-200 flex items-center justify-center flex-shrink-0 shadow-md">
                 {panditData?.photo ? (
                   <img src={panditData.photo} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-5xl">🕉️</span>
+                  <span className="text-4xl sm:text-5xl">🕉️</span>
                 )}
               </div>
               
               <div>
-                <label className="px-6 py-3 bg-orange-500 text-white rounded-xl font-bold cursor-pointer hover:bg-orange-600 transition-all inline-block">
+                <label className="px-6 py-3 bg-orange-500 text-white rounded-xl font-bold cursor-pointer hover:bg-orange-600 transition-all inline-block shadow-md active:scale-95 text-xs sm:text-sm">
                   {uploadingPhoto ? 'Uploading...' : 'Upload Photo'}
                   <input
                     type="file"

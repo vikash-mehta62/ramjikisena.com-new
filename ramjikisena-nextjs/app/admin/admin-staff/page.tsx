@@ -27,6 +27,7 @@ const ALL_PERMISSION_MODULES = [
   { key: 'mandirs', label: 'Mandirs', desc: 'मंदिर सूची व स्वीकृति', icon: '🛕', group: 'Services' },
   { key: 'kathaVachaks', label: 'Katha Vachaks', desc: 'कथा वाचक प्रोफाइल प्रबंधन', icon: '📜', group: 'Services' },
   { key: 'pandits', label: 'Pandits', desc: 'पंडित प्रोफ़ाइल व सत्यापन', icon: '🔱', group: 'Services' },
+  { key: 'astrology', label: 'Astrology (ज्योतिष)', desc: 'ज्योतिषी प्रोफ़ाइल व परामर्श प्रबंधन', icon: '🔮', group: 'Services' },
   { key: 'bookings', label: 'Bookings', desc: 'पूजा बुकिंग्स एवं स्थिति नियंत्रण', icon: '📅', group: 'Services' },
   { key: 'blogs', label: 'Blogs & Approvals', desc: 'आध्यात्मिक ब्लॉग स्वीकृति', icon: '✍️', group: 'Content' },
   { key: 'samagri', label: 'Samagri Store', desc: 'पूजन सामग्री एवं ऑर्डर्स', icon: '🪔', group: 'Content' },
