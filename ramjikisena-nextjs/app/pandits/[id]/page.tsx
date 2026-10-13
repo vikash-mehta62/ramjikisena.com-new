@@ -12,10 +12,10 @@ interface Pandit {
   username: string;
   photo: string;
   photos: string[];
-  contact: {
-    phone: string;
-    email: string;
-    whatsapp: string;
+  contact?: {
+    phone?: string;
+    email?: string;
+    whatsapp?: string;
   };
   location: {
     city: string;
@@ -316,7 +316,7 @@ export default function PanditDetailPage() {
               </button>
 
               <div className="space-y-3 pt-2">
-                {pandit.contact.phone && (
+                {pandit.contact?.phone && (
                   <a href={`tel:${pandit.contact.phone}`}
                     className="flex items-center gap-3 p-4 bg-green-50 rounded-2xl hover:bg-green-100 transition border border-green-100">
                     <Phone size={18} className="text-green-600 shrink-0" />
@@ -326,7 +326,7 @@ export default function PanditDetailPage() {
                     </div>
                   </a>
                 )}
-                {pandit.contact.whatsapp && (
+                {pandit.contact?.whatsapp && (
                   <a href={`https://wa.me/${pandit.contact.whatsapp}`} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-3 p-4 bg-green-50 rounded-2xl hover:bg-green-100 transition border border-green-100">
                     <span className="text-xl shrink-0">💬</span>
@@ -336,7 +336,7 @@ export default function PanditDetailPage() {
                     </div>
                   </a>
                 )}
-                {pandit.contact.email && (
+                {pandit.contact?.email && (
                   <a href={`mailto:${pandit.contact.email}`}
                     className="flex items-center gap-3 p-4 bg-blue-50 rounded-2xl hover:bg-blue-100 transition border border-blue-100">
                     <Mail size={18} className="text-blue-600 shrink-0" />

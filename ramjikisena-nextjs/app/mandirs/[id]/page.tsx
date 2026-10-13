@@ -14,38 +14,38 @@ import Navbar from '@/components/Navbar';
 import MandirImage from '@/components/MandirImage';
 
 interface Mandir {
-  _id: string; name: string; description: string; history: string; significance?: string;
+  _id: string; name: string; description?: string; history?: string; significance?: string;
   templeType?: string; architecture?: string; builtYear?: string; languages?: string[];
-  location: { address: string; city: string; state: string; pincode?: string; country?: string; coordinates?: { lat: number; lng: number } };
-  timing: {
-    opening: string; closing: string;
-    aarti: Array<{ name: string; time: string } | string>;
+  location?: { address?: string; city?: string; state?: string; pincode?: string; country?: string; coordinates?: { lat?: number; lng?: number } };
+  timing?: {
+    opening?: string; closing?: string;
+    aarti?: Array<{ name: string; time: string } | string>;
     specialTimings?: string;
     specialDays?: Array<{ day: string; opening: string; closing: string; note: string }>;
   };
-  contact: { phone: string; email: string; website: string };
-  photos: string[]; videos?: string[];
+  contact?: { phone?: string; email?: string; website?: string };
+  photos?: string[]; videos?: string[];
   deity?: { main?: string; others?: string[] };
-  festivals?: Array<{ name: string; month: string; description: string }>;
+  festivals?: Array<{ name: string; month?: string; description?: string }>;
   visitInfo?: {
     bestTimeToVisit?: string; dressCode?: string; entryFee?: string;
     photographyAllowed?: boolean; mobileAllowed?: boolean; shoeStand?: boolean;
     annualVisitors?: string; donationInfo?: string; trustName?: string; managedBy?: string;
   };
   facilities?: { parking?: boolean; prasad?: boolean; accommodation?: boolean; wheelchairAccessible?: boolean; restrooms?: boolean; drinkingWater?: boolean; cloakroom?: boolean; medicalAid?: boolean; foodStalls?: boolean };
-  nearbyAttractions?: Array<{ name: string; distance: string; type: string }>;
+  nearbyAttractions?: Array<{ name: string; distance?: string; type?: string }>;
   socialMedia?: { facebook?: string; instagram?: string; youtube?: string; twitter?: string };
-  reviews: Array<{ _id: string; user: { name: string; username: string }; rating: number; text: string; createdAt: string }>;
-  averageRating: number;
-  verificationStatus?: 'verified' | 'unverified' | 'community';
+  reviews?: Array<{ _id: string; user?: { name?: string; username?: string }; rating?: number; text?: string; createdAt?: string }>;
+  averageRating?: number;
+  verificationStatus?: 'verified' | 'unverified' | 'community' | string;
   timingsVerified?: boolean;
   source?: string;
   photoAttributions?: Array<{
     url: string;
-    title: string;
-    author: string;
-    sourceUrl: string;
-    license: string;
+    title?: string;
+    author?: string;
+    sourceUrl?: string;
+    license?: string;
   }>;
 }
 
@@ -179,7 +179,7 @@ export default function PublicMandirDetail() {
               )}
               <div className="flex items-center gap-1 bg-white/10 backdrop-blur-md px-3 py-1 rounded-xl border border-white/20">
                 <Star size={13} className="fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-black text-white">{mandir.averageRating.toFixed(1)}</span>
+                <span className="text-sm font-black text-white">{(mandir.averageRating || 0).toFixed(1)}</span>
               </div>
               {mandir.visitInfo?.annualVisitors && (
                 <span className="bg-white/10 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-xl border border-white/20">
@@ -190,7 +190,7 @@ export default function PublicMandirDetail() {
             <h1 className="text-3xl md:text-5xl font-black text-white drop-shadow">{mandir.name}</h1>
             <p className="flex items-center gap-2 text-white/80 mt-1 font-medium text-sm">
               <MapPin size={14} className="text-orange-400" />
-              {[mandir.location.address, mandir.location.city, mandir.location.state, mandir.location.pincode].filter(Boolean).join(', ')}
+              {[mandir.location?.address, mandir.location?.city, mandir.location?.state, mandir.location?.pincode].filter(Boolean).join(', ')}
             </p>
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function PublicMandirDetail() {
                 { 
                   emoji: '🕐', 
                   label: 'Timings', 
-                  value: mandir.timingsVerified && mandir.timing.opening && mandir.timing.closing 
+                  value: mandir.timingsVerified && mandir.timing?.opening && mandir.timing?.closing 
                     ? `${mandir.timing.opening} – ${mandir.timing.closing}` 
                     : (mandir.timingsVerified ? 'विशेष समय' : 'पुष्टि प्रतीक्षित') 
                 },
@@ -232,7 +232,7 @@ export default function PublicMandirDetail() {
                   <p className="text-slate-700 text-sm leading-relaxed">{mandir.significance}</p>
                 </div>
               )}
-              {mandir.timing.aarti?.length > 0 && (
+              {mandir.timing?.aarti && mandir.timing.aarti.length > 0 && (
                 <div className="mt-4">
                   <p className="text-xs font-black text-orange-600 uppercase tracking-widest mb-3 flex items-center gap-1">
                     🔔 आरती समय
@@ -254,7 +254,7 @@ export default function PublicMandirDetail() {
                   </div>
                 </div>
               )}
-              {mandir.timing.specialTimings && (
+              {mandir.timing?.specialTimings && (
                 <div className="mt-3 flex gap-3 p-4 bg-yellow-50 rounded-2xl border border-yellow-100">
                   <span className="text-xl shrink-0">⚠️</span>
                   <div><p className="font-black text-slate-800 text-sm">Special Timings</p>
@@ -262,7 +262,7 @@ export default function PublicMandirDetail() {
                 </div>
               )}
               {/* Special Days */}
-              {mandir.timing.specialDays && mandir.timing.specialDays.length > 0 && (
+              {mandir.timing?.specialDays && mandir.timing.specialDays.length > 0 && (
                 <div className="mt-4">
                   <p className="text-xs font-black text-orange-600 uppercase tracking-widest mb-3">📅 विशेष दिन</p>
                   <div className="space-y-2">
@@ -365,7 +365,7 @@ export default function PublicMandirDetail() {
             )}
 
             {/* Gallery */}
-            {mandir.photos?.length > 0 && (
+            {mandir.photos && mandir.photos.length > 0 && (
               <Card>
                 <SectionTitle icon={<Camera size={20} className="text-pink-600" />} title="फोटो गैलरी" />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -466,7 +466,7 @@ export default function PublicMandirDetail() {
                 <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
                   <MessageSquare size={20} className="text-orange-600" /> भक्तों के अनुभव
                 </h2>
-                <span className="text-xs font-black text-slate-400">{mandir.reviews.length} reviews</span>
+                <span className="text-xs font-black text-slate-400">{mandir.reviews?.length || 0} reviews</span>
               </div>
 
               {/* Write Review — inline in main content */}
@@ -538,7 +538,7 @@ export default function PublicMandirDetail() {
               </div>
 
               {/* Reviews List */}
-              {mandir.reviews.length === 0 ? (
+              {(!mandir.reviews || mandir.reviews.length === 0) ? (
                 <p className="text-slate-400 text-sm text-center py-4">अभी तक कोई review नहीं। पहले review लिखें!</p>
               ) : (
                 <div className="space-y-5">
@@ -546,15 +546,17 @@ export default function PublicMandirDetail() {
                     <div key={rev._id} className="border-b border-orange-50 pb-5 last:border-none">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="w-9 h-9 rounded-full bg-orange-600 flex items-center justify-center text-white font-black text-sm shrink-0">
-                          {rev.user.name[0].toUpperCase()}
+                          {(rev.user?.name?.[0] || 'U').toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-black text-slate-800 text-sm">{rev.user.name}</p>
+                          <p className="font-black text-slate-800 text-sm">{rev.user?.name || 'भक्त'}</p>
                           <div className="flex gap-0.5 text-yellow-500">
-                            {[...Array(5)].map((_, i) => <Star key={i} size={11} fill={i < rev.rating ? 'currentColor' : 'none'} />)}
+                            {[...Array(5)].map((_, i) => <Star key={i} size={11} fill={i < (rev.rating || 5) ? 'currentColor' : 'none'} />)}
                           </div>
                         </div>
-                        <span className="ml-auto text-xs text-slate-400">{new Date(rev.createdAt).toLocaleDateString('hi-IN')}</span>
+                        <span className="ml-auto text-xs text-slate-400">
+                          {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('hi-IN') : ''}
+                        </span>
                       </div>
                       {rev.text && <p className="text-slate-600 text-sm italic pl-12">&quot;{rev.text}&quot;</p>}
                     </div>
@@ -607,25 +609,25 @@ export default function PublicMandirDetail() {
             <div className="bg-white rounded-[2rem] border border-orange-100 shadow-sm p-6 sticky top-24">
               <div className="text-center mb-5 pb-5 border-b border-orange-50">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Rating</p>
-                <h2 className="text-5xl font-black text-slate-900">{mandir.averageRating.toFixed(1)}</h2>
+                <h2 className="text-5xl font-black text-slate-900">{(mandir.averageRating || 0).toFixed(1)}</h2>
                 <div className="flex justify-center gap-1 text-yellow-500 mt-2">
-                  {[...Array(5)].map((_, i) => <Star key={i} size={18} fill={i < Math.round(mandir.averageRating) ? 'currentColor' : 'none'} />)}
+                  {[...Array(5)].map((_, i) => <Star key={i} size={18} fill={i < Math.round(mandir.averageRating || 0) ? 'currentColor' : 'none'} />)}
                 </div>
-                <p className="text-xs text-slate-400 mt-1">{mandir.reviews.length} reviews</p>
+                <p className="text-xs text-slate-400 mt-1">{mandir.reviews?.length || 0} reviews</p>
               </div>
 
               <div className="space-y-3 mb-5">
-                <button onClick={() => window.open(`https://maps.google.com/?q=${mandir.location.coordinates?.lat},${mandir.location.coordinates?.lng}`)}
+                <button onClick={() => window.open(`https://maps.google.com/?q=${mandir.location?.coordinates?.lat || ''},${mandir.location?.coordinates?.lng || ''}`)}
                   className="w-full bg-orange-600 text-white rounded-2xl font-black py-3.5 flex items-center justify-center gap-2 hover:bg-orange-700 transition-all active:scale-95">
                   <Navigation size={18} /> Get Directions
                 </button>
-                <div className="grid grid-cols-3 gap-2">
-                  {mandir.contact.phone && (
+                <div className={`grid ${mandir.contact?.phone && mandir.contact?.website ? 'grid-cols-3' : (mandir.contact?.phone || mandir.contact?.website ? 'grid-cols-2' : 'grid-cols-1')} gap-2`}>
+                  {mandir.contact?.phone && (
                     <a href={`tel:${mandir.contact.phone}`} className="flex flex-col items-center justify-center p-3 bg-orange-50 rounded-2xl text-orange-600 hover:bg-orange-100 transition font-black text-xs gap-1">
                       <Phone size={16} /> Call
                     </a>
                   )}
-                  {mandir.contact.website && (
+                  {mandir.contact?.website && (
                     <a href={mandir.contact.website} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-3 bg-orange-50 rounded-2xl text-orange-600 hover:bg-orange-100 transition font-black text-xs gap-1">
                       <ExternalLink size={16} /> Website
                     </a>
@@ -637,11 +639,11 @@ export default function PublicMandirDetail() {
               </div>
 
               {/* Quick Info */}
-              {(mandir.location.city || mandir.location.state) && (
+              {(mandir.location?.city || mandir.location?.state) && (
                 <div className="space-y-2 mb-5 pb-5 border-b border-orange-50">
                   <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Location</p>
-                  <p className="text-sm font-bold text-slate-700">{[mandir.location.city, mandir.location.state, mandir.location.country].filter(Boolean).join(', ')}</p>
-                  {mandir.location.pincode && <p className="text-xs text-slate-400">PIN: {mandir.location.pincode}</p>}
+                  <p className="text-sm font-bold text-slate-700">{[mandir.location?.city, mandir.location?.state, mandir.location?.country].filter(Boolean).join(', ')}</p>
+                  {mandir.location?.pincode && <p className="text-xs text-slate-400">PIN: {mandir.location.pincode}</p>}
                 </div>
               )}
 

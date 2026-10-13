@@ -10,7 +10,7 @@ import Navbar from '@/components/Navbar';
 interface KathaVachak {
   _id: string; name: string; photo: string; photos?: string[];
   experience: number; specialization: string; description: string;
-  contact: { phone?: string; email?: string; whatsapp?: string };
+  contact?: { phone?: string; email?: string; whatsapp?: string };
   liveKathas: Array<{
     _id: string; addressLine1?: string; addressLine2?: string;
     city: string; state: string; country: string; pincode?: string;
@@ -310,7 +310,7 @@ export default function KathaVachakDetail() {
                 <p className="text-xs text-slate-400 mt-1">{kathaVachak.reviews.length} reviews</p>
               </div>
               <div className="space-y-3 mb-6">
-                {kathaVachak.contact.phone && (
+                {kathaVachak.contact?.phone && (
                   <a href={`tel:${kathaVachak.contact.phone}`} className="flex items-center gap-3 p-4 bg-orange-50 rounded-2xl hover:bg-orange-100 transition">
                     <Phone size={18} className="text-orange-600 shrink-0" />
                     <div>
@@ -319,7 +319,7 @@ export default function KathaVachakDetail() {
                     </div>
                   </a>
                 )}
-                {kathaVachak.contact.email && (
+                {kathaVachak.contact?.email && (
                   <a href={`mailto:${kathaVachak.contact.email}`} className="flex items-center gap-3 p-4 bg-orange-50 rounded-2xl hover:bg-orange-100 transition">
                     <Mail size={18} className="text-orange-600 shrink-0" />
                     <div>
