@@ -420,21 +420,8 @@ router.post('/upload-photo', async (req, res) => {
       });
     }
 
-    let photoUrl;
-    if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-      const { uploadToS3 } = require('../lib/s3');
-      photoUrl = await uploadToS3(photo, 'pandits');
-    } else {
-      const { cloudinary } = require('../lib/cloudinary');
-      const result = await cloudinary.uploader.upload(photo.tempFilePath, {
-        folder: 'INEXT - RAM-JI-Ki-SENA/pandits',
-        transformation: [
-          { width: 500, height: 500, crop: 'fill', gravity: 'face' },
-          { quality: 'auto' }
-        ]
-      });
-      photoUrl = result.secure_url;
-    }
+    const { uploadToS3 } = require('../lib/s3');
+    const photoUrl = await uploadToS3(photo, 'pandits');
 
     // Update pandit profile
     const pandit = await Pandit.findByIdAndUpdate(
@@ -472,22 +459,10 @@ router.post('/upload-photos', async (req, res) => {
     const uploadedUrls = [];
 
     // Upload each photo
+    const { uploadToS3 } = require('../lib/s3');
     for (const photo of photos) {
-      if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-        const { uploadToS3 } = require('../lib/s3');
-        const url = await uploadToS3(photo, 'pandits/gallery');
-        uploadedUrls.push(url);
-      } else {
-        const { cloudinary } = require('../lib/cloudinary');
-        const result = await cloudinary.uploader.upload(photo.tempFilePath, {
-          folder: 'INEXT - RAM-JI-Ki-SENA/pandits/gallery',
-          transformation: [
-            { width: 1200, height: 800, crop: 'limit' },
-            { quality: 'auto' }
-          ]
-        });
-        uploadedUrls.push(result.secure_url);
-      }
+      const url = await uploadToS3(photo, 'pandits/gallery');
+      uploadedUrls.push(url);
     }
 
     // Add to pandit photos array

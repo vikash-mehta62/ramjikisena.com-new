@@ -633,7 +633,10 @@ async function seedBhopal() {
   console.log('👋 Disconnected.');
 }
 
-seedBhopal().catch(err => {
-  console.error('Bhopal seed error:', err);
-  process.exit(1);
-});
+// Auto-seed execution disabled to prevent accidental data overwrites
+// seedBhopal().catch(err => {
+//   console.error('Bhopal seed error:', err);
+//   process.exit(1);
+// });
+
+module.exports = seedBhopal;

@@ -348,4 +348,8 @@ async function seed() {
   }
 }
 
-seed();
+// Auto-seed execution disabled to prevent accidental data overwrites
+// To run manually: node -e "require('./seedData')()"
+// seed();
+
+module.exports = seed;

@@ -409,7 +409,7 @@ export default function AdminMandirs() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const uploadToCloudinary = async (file: File) => {
+  const uploadImageToS3 = async (file: File) => {
     try {
       setUploading(true);
       
@@ -464,7 +464,7 @@ export default function AdminMandirs() {
       return;
     }
 
-    const url = await uploadToCloudinary(file);
+    const url = await uploadImageToS3(file);
     if (url) {
       setFormData({
         ...formData,
@@ -993,10 +993,10 @@ export default function AdminMandirs() {
                     <span>मंदिर फोटोज़ एवं मीडिया (Temple Photos & Videos)</span>
                   </h3>
 
-                  {/* Cloudinary Image Uploader */}
+                  {/* S3 Image Uploader */}
                   <div className="bg-pink-50/60 rounded-xl p-4 border border-pink-200">
                     <ImageUploader
-                      label="📸 Cloudinary Upload (Multiple Photos Allowed)"
+                      label="📸 Upload Photos (Multiple Photos Allowed)"
                       value={formData.photos}
                       onChange={(v) => setFormData({ ...formData, photos: v as string[] })}
                       multiple

@@ -284,6 +284,7 @@ async function seed() {
     console.error('Seeding error:', err);
     process.exit(1);
   }
-}
+// Auto-seed execution disabled to prevent accidental data overwrites
+// seed();
 
-seed();
+module.exports = seed;

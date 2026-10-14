@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const { uploadToS3 } = require('../lib/s3');
-const { uploadToCloudinary } = require('../lib/cloudinary');
 const fs = require('fs').promises;
 const adminAuth = require('./middleware/adminAuth');
 const isLoggedInAPI = require('./middleware/isLoggedInAPI');
@@ -17,18 +16,8 @@ const uploadAuth = (req, res, next) => {
 };
 
 /**
- * Universal upload helper (uses S3 if AWS credentials exist, else Cloudinary)
- */
-const uploadImageHelper = async (file, folder) => {
-  if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-    return await uploadToS3(file, folder);
-  }
-  return await uploadToCloudinary(file, folder);
-};
-
-/**
  * POST /api/upload/image
- * Upload single image to S3 / Cloudinary
+ * Upload single image to AWS S3
  */
 router.post('/image', uploadAuth, async (req, res) => {
   try {
@@ -49,7 +38,7 @@ router.post('/image', uploadAuth, async (req, res) => {
       });
     }
 
-    // Create temp file object
+    // Create temp file object for S3
     const tempFile = {
       path: imageFile.tempFilePath,
       originalname: imageFile.name,
@@ -57,7 +46,7 @@ router.post('/image', uploadAuth, async (req, res) => {
     };
 
     const folder = req.query.folder || 'mandirs';
-    const imageUrl = await uploadImageHelper(tempFile, folder);
+    const imageUrl = await uploadToS3(tempFile, folder);
 
     // Delete temporary file
     try {
@@ -68,7 +57,7 @@ router.post('/image', uploadAuth, async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Image uploaded successfully',
+      message: 'Image uploaded successfully to S3',
       url: imageUrl
     });
 
@@ -94,7 +83,7 @@ router.post('/image', uploadAuth, async (req, res) => {
 
 /**
  * POST /api/upload/images
- * Upload multiple images to S3 / Cloudinary
+ * Upload multiple images to AWS S3
  */
 router.post('/images', uploadAuth, async (req, res) => {
   try {
@@ -112,14 +101,14 @@ router.post('/images', uploadAuth, async (req, res) => {
 
     const folder = req.query.folder || 'mandirs';
     
-    // Upload all images
+    // Upload all images to S3
     const uploadPromises = images.map(imageFile => {
       const tempFile = {
         path: imageFile.tempFilePath,
         originalname: imageFile.name,
         mimetype: imageFile.mimetype
       };
-      return uploadImageHelper(tempFile, folder);
+      return uploadToS3(tempFile, folder);
     });
     
     const imageUrls = await Promise.all(uploadPromises);
@@ -134,7 +123,7 @@ router.post('/images', uploadAuth, async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Images uploaded successfully',
+      message: 'Images uploaded successfully to S3',
       urls: imageUrls
     });
 

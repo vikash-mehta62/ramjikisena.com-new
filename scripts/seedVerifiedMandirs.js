@@ -1430,7 +1430,10 @@ async function seedVerified() {
   console.log('👋 Disconnected.');
 }
 
-seedVerified().catch(err => {
-  console.error('Seed error:', err);
-  process.exit(1);
-});
+// Auto-seed execution disabled to prevent accidental data overwrites
+// seedVerified().catch(err => {
+//   console.error('Seed error:', err);
+//   process.exit(1);
+// });
+
+module.exports = seedVerified;

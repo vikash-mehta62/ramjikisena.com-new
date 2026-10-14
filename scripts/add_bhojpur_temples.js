@@ -99,4 +99,7 @@ async function addBhojpurTemples() {
   await mongoose.disconnect();
 }
 
-addBhojpurTemples();
+// Auto-seed execution disabled to prevent accidental data overwrites
+// addBhojpurTemples();
+
+module.exports = addBhojpurTemples;

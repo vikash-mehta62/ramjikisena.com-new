@@ -213,7 +213,7 @@ export default function AdminKathaVachaks() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const uploadToCloudinary = async (file: File) => {
+  const uploadImageToS3 = async (file: File) => {
     try {
       setUploading(true);
       const data = new FormData();
@@ -251,7 +251,7 @@ export default function AdminKathaVachaks() {
       alert('Image size should be less than 5MB');
       return;
     }
-    const url = await uploadToCloudinary(file);
+    const url = await uploadImageToS3(file);
     if (url) {
       setFormData({ ...formData, photos: [...formData.photos, url] });
       alert('✅ Image uploaded!');

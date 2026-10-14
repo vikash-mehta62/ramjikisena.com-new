@@ -1268,6 +1268,8 @@ async function seedMandirs() {
     console.error('❌ Seeding failed:', err);
     process.exit(1);
   }
-}
+// Auto-seed execution disabled to prevent accidental data overwrites
+// To run manually: node -e "require('./seedMandirs')()"
+// seedMandirs();
 
-seedMandirs();
+module.exports = seedMandirs;

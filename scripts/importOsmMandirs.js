@@ -191,7 +191,10 @@ async function runImporter() {
   console.log('👋 Disconnected.');
 }
 
-runImporter().catch(err => {
-  console.error('Importer error:', err);
-  process.exit(1);
-});
+// Auto-seed execution disabled to prevent accidental data overwrites
+// runImporter().catch(err => {
+//   console.error('Importer error:', err);
+//   process.exit(1);
+// });
+
+module.exports = runImporter;

@@ -10,7 +10,7 @@ interface ImageUploaderProps {
   onChange: (value: string | string[]) => void;
   /** Allow multiple images */
   multiple?: boolean;
-  /** Cloudinary folder name */
+  /** S3 folder name */
   folder?: string;
   /** Label shown above uploader */
   label?: string;
@@ -117,7 +117,7 @@ export default function ImageUploader({
         {uploading ? (
           <>
             <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
-            <p className="text-sm text-orange-600 font-medium">Uploading to Cloudinary...</p>
+            <p className="text-sm text-orange-600 font-medium">Uploading image...</p>
           </>
         ) : (
           <>

@@ -12,7 +12,7 @@ const postSchema = new mongoose.Schema({
 
   // Content
   text: { type: String, trim: true, default: '' },
-  images: [{ type: String }], // Cloudinary URLs
+  images: [{ type: String }], // S3 image URLs
 
   // Category
   category: {

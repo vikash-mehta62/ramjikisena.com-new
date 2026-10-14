@@ -672,7 +672,7 @@ export default function BlogEditorPage() {
                 {uploadingImage ? (
                   <div className="flex flex-col items-center">
                     <RefreshCw className="w-6 h-6 text-orange-500 animate-spin mb-2" />
-                    <span className="text-xs font-bold text-slate-500">Uploading to Cloudinary...</span>
+                    <span className="text-xs font-bold text-slate-500">Uploading image...</span>
                   </div>
                 ) : (
                   <>
