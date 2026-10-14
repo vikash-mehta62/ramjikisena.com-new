@@ -31,11 +31,11 @@ export interface ServiceItem {
 }
 
 const SERVICE_CATEGORIES = [
-  { id: 'all', label: 'समस्त सेवाएं', icon: '🕉️', count: 8 },
+  { id: 'all', label: 'समस्त सेवाएं', icon: '🕉️', count: 7 },
   { id: 'purohit', label: 'पुरोहित व कथा', icon: '🔱', count: 2 },
   { id: 'satsang', label: 'संकीर्तन व सत्संग', icon: '📿', count: 3 },
   { id: 'darshan', label: 'तीर्थ व दर्शन', icon: '🛕', count: 2 },
-  { id: 'samagri', label: 'पूजन सामग्री', icon: '🪔', count: 1 },
+  // { id: 'samagri', label: 'पूजन सामग्री', icon: '🪔', count: 1 },
 ];
 
 const ALL_SERVICES: ServiceItem[] = [
@@ -99,7 +99,7 @@ const ALL_SERVICES: ServiceItem[] = [
     ctaText: 'मंदिर दर्शन करें',
     stats: 'पावन तीर्थ',
   },
-  {
+  /* {
     id: 'samagri',
     category: 'samagri',
     title: 'शुद्ध वैदिक पूजन सामग्री',
@@ -113,7 +113,7 @@ const ALL_SERVICES: ServiceItem[] = [
     features: ['शास्त्रोक्त शुद्धता', 'घर पर डिलीवरी', 'रेडी पैकेजेस'],
     ctaText: 'सामग्री खरीदें',
     stats: 'होम डिलीवरी',
-  },
+  }, */
   {
     id: 'community',
     category: 'satsang',
@@ -203,10 +203,10 @@ const SPIRITUAL_PILLARS = [
     tag: '100% प्रामाणिक',
   },
   {
-    icon: '🪔',
-    title: 'शुद्ध वैदिक पूजन सामग्री',
-    desc: 'हवन सामग्री, धूप, गाय का शुद्ध घी व पूजा किट्स सीधे आपके द्वार तक। शास्त्रों के अनुरूप तैयार।',
-    tag: 'घर पर डिलीवरी',
+    icon: '🔮',
+    title: 'ज्योतिष व कुंडली परामर्श',
+    desc: 'अनुभवी ज्योतिषाचार्यों एवं टैरो रीडर्स से कुंडली विश्लेषण, मुहूर्त, ग्रह शांति व सटीक मार्गदर्शन।',
+    tag: 'विशेषज्ञ ज्योतिषी',
   },
   {
     icon: '🤝',
@@ -1039,10 +1039,10 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex items-center justify-center gap-2.5">
-                <span className="text-2xl">🚚</span>
+                <span className="text-2xl">🔮</span>
                 <div className="text-left">
-                  <p className="text-xs font-black text-white">शुद्ध पूजन सामग्री</p>
-                  <p className="text-[10px] text-orange-200/60">घर पर सुरक्षित डिलीवरी</p>
+                  <p className="text-xs font-black text-white">ज्योतिष मार्गदर्शन</p>
+                  <p className="text-[10px] text-orange-200/60">कुंडली व टैरो परामर्श</p>
                 </div>
               </div>
               <div className="flex items-center justify-center gap-2.5">
@@ -1171,8 +1171,8 @@ export default function HomePage() {
 
 
 
-      {/* --- SAMAGRI PROMO --- */}
-      <section className="py-20 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1a0800 0%, #3d1200 50%, #1a0800 100%)' }}>
+      {/* --- SAMAGRI PROMO (Temporarily hidden while products are unavailable) --- */}
+      {/* <section className="py-20 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1a0800 0%, #3d1200 50%, #1a0800 100%)' }}>
         <div className="absolute inset-0 pointer-events-none opacity-[0.06]">
           <div className="absolute top-0 left-0 text-[18rem] leading-none select-none">🪔</div>
           <div className="absolute bottom-0 right-0 text-[18rem] leading-none select-none">🌸</div>
@@ -1212,7 +1212,7 @@ export default function HomePage() {
             </motion.div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* --- QUOTE SECTION --- */}
       <section className="py-24 relative overflow-hidden" style={{ background: '#0f0500' }}>

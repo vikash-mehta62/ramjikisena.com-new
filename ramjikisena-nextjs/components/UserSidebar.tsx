@@ -36,7 +36,7 @@ export default function UserSidebar({ userName, userPhoto, rank }: UserSidebarPr
     { href: '/my-bookings',  label: 'My Bookings',     icon: <Calendar className="w-5 h-5" /> },
     { href: '/blogs',        label: 'Blogs',           icon: <BookOpen className="w-5 h-5" /> },
     { href: '/my-blogs',     label: 'My Blogs',        icon: <PenSquare className="w-5 h-5" /> },
-    { href: '/my-orders',    label: 'My Orders',       icon: <ShoppingBag className="w-5 h-5" /> },
+    // { href: '/my-orders',    label: 'My Orders',       icon: <ShoppingBag className="w-5 h-5" /> }, // Temporarily disabled while store is inactive
     { href: '/community',    label: 'Community',       icon: <MessageSquare className="w-5 h-5" /> },
   ];
 

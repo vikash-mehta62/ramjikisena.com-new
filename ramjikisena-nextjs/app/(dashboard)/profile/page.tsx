@@ -6,18 +6,42 @@ import { authApi, User } from '@/lib/auth';
 import { Edit2, Check, X, Camera, Upload } from 'lucide-react';
 import { useToast } from '@/components/Toast';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
-async function uploadToCloudinary(file: File, folder: string): Promise<string> {
-  const fd = new FormData();
-  fd.append('file', file);
-  fd.append('upload_preset', UPLOAD_PRESET!);
-  fd.append('folder', folder);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
-  const data = await res.json();
-  if (!data.secure_url) throw new Error('Upload failed');
-  return data.secure_url;
+async function uploadImage(file: File, folder: string): Promise<string> {
+  // 1. Try uploading to backend API (AWS S3)
+  try {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+    const fd = new FormData();
+    fd.append('image', file);
+
+    const res = await fetch(`${API_URL}/api/upload/image?folder=${folder}`, {
+      method: 'POST',
+      headers,
+      credentials: 'include',
+      body: fd,
+    });
+    const data = await res.json();
+    if (data.success && data.url) return data.url;
+  } catch (backendErr) {
+    console.warn('Backend S3 upload failed, trying Cloudinary fallback...', backendErr);
+  }
+
+  // 2. Fallback to Cloudinary if available
+  if (CLOUD_NAME && UPLOAD_PRESET) {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', UPLOAD_PRESET);
+    fd.append('folder', folder);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.secure_url) return data.secure_url;
+  }
+
+  throw new Error('Upload failed');
 }
 
 function AvatarUpload({ src, name, onChange }: { src?: string | null; name: string; onChange: (url: string) => void }) {
@@ -29,7 +53,7 @@ function AvatarUpload({ src, name, onChange }: { src?: string | null; name: stri
     if (!file) return;
     setUploading(true);
     try {
-      const url = await uploadToCloudinary(file, 'profile_avatars');
+      const url = await uploadImage(file, 'profile_avatars');
       onChange(url);
     } catch { alert('Upload failed'); }
     setUploading(false);
@@ -62,7 +86,7 @@ function CoverUpload({ src, onChange }: { src?: string | null; onChange: (url: s
     if (!file) return;
     setUploading(true);
     try {
-      const url = await uploadToCloudinary(file, 'profile_covers');
+      const url = await uploadImage(file, 'profile_covers');
       onChange(url);
     } catch { alert('Upload failed'); }
     setUploading(false);

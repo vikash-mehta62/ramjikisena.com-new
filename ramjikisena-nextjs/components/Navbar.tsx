@@ -30,7 +30,7 @@ const mainLinks = [
   { href: '/mandirs',   label: 'Mandirs',   icon: Church },
   { href: '/pandits',   label: 'Pandits',   icon: Sparkles },
   { href: '/astrology', label: 'Astrology', icon: Compass },
-  { href: '/samagri',   label: 'Samagri',   icon: ShoppingBag },
+  // { href: '/samagri',   label: 'Samagri',   icon: ShoppingBag }, // Temporarily disabled while products are unavailable
   { href: '/community', label: 'Community', icon: Users },
 ];
 
@@ -382,10 +382,10 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
                                   <Calendar className="w-4 h-4" /> My Bookings
                                 </button>
-                                <button onClick={() => safeNavigate('/samagri/orders')}
+                                {/* <button onClick={() => safeNavigate('/samagri/orders')}
                                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-slate-700 hover:bg-orange-50 hover:text-orange-700 transition-all">
                                   <ShoppingBag className="w-4 h-4" /> My Orders
-                                </button>
+                                </button> */}
                               </>
                             )}
                           </div>

@@ -251,8 +251,24 @@ export default function SamagriPage() {
           </div>
         )}
 
+        {/* Empty State / Coming Soon */}
+        {!loading && ((tab === 'packages' && packages.length === 0) || (tab === 'products' && filteredProducts.length === 0)) && (
+          <div className="bg-white rounded-[2.5rem] border border-orange-100 p-8 sm:p-12 text-center max-w-lg mx-auto shadow-sm my-8">
+            <div className="w-20 h-20 bg-orange-50 text-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+              🪔
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black text-slate-800 mb-2">जल्द आ रहा है (Coming Soon)</h3>
+            <p className="text-slate-500 text-xs sm:text-sm leading-relaxed mb-6">
+              शुद्ध और प्रामाणिक वैदिक पूजन सामग्री सेवा जल्द ही शुरू की जा रही है। तब तक आप मंदिर दर्शन और पंडित जी सेवा का लाभ ले सकते हैं।
+            </p>
+            <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-black text-xs rounded-2xl shadow-lg shadow-orange-600/20 active:scale-95 transition-all">
+              मुख्य पृष्ठ पर जाएं (Go Home)
+            </Link>
+          </div>
+        )}
+
         {/* Packages Grid */}
-        {tab === 'packages' && (
+        {tab === 'packages' && packages.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 px-2">
             {packages.map(pkg => <PackageCard key={pkg._id} pkg={pkg} />)}
           </div>

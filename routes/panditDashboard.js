@@ -420,29 +420,33 @@ router.post('/upload-photo', async (req, res) => {
       });
     }
 
-    const { cloudinary } = require('../lib/cloudinary');
-    const photo = req.files.photo;
-
-    // Upload to Cloudinary
-    const result = await cloudinary.uploader.upload(photo.tempFilePath, {
-      folder: 'INEXT - RAM-JI-Ki-SENA/pandits',
-      transformation: [
-        { width: 500, height: 500, crop: 'fill', gravity: 'face' },
-        { quality: 'auto' }
-      ]
-    });
+    let photoUrl;
+    if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+      const { uploadToS3 } = require('../lib/s3');
+      photoUrl = await uploadToS3(photo, 'pandits');
+    } else {
+      const { cloudinary } = require('../lib/cloudinary');
+      const result = await cloudinary.uploader.upload(photo.tempFilePath, {
+        folder: 'INEXT - RAM-JI-Ki-SENA/pandits',
+        transformation: [
+          { width: 500, height: 500, crop: 'fill', gravity: 'face' },
+          { quality: 'auto' }
+        ]
+      });
+      photoUrl = result.secure_url;
+    }
 
     // Update pandit profile
     const pandit = await Pandit.findByIdAndUpdate(
       req.pandit._id,
-      { photo: result.secure_url },
+      { photo: photoUrl },
       { new: true }
     );
 
     res.json({
       success: true,
       message: 'Photo uploaded successfully',
-      photo: result.secure_url,
+      photo: photoUrl,
       pandit
     });
   } catch (error) {
@@ -464,20 +468,26 @@ router.post('/upload-photos', async (req, res) => {
       });
     }
 
-    const { cloudinary } = require('../lib/cloudinary');
     const photos = Array.isArray(req.files.photos) ? req.files.photos : [req.files.photos];
     const uploadedUrls = [];
 
     // Upload each photo
     for (const photo of photos) {
-      const result = await cloudinary.uploader.upload(photo.tempFilePath, {
-        folder: 'INEXT - RAM-JI-Ki-SENA/pandits/gallery',
-        transformation: [
-          { width: 1200, height: 800, crop: 'limit' },
-          { quality: 'auto' }
-        ]
-      });
-      uploadedUrls.push(result.secure_url);
+      if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+        const { uploadToS3 } = require('../lib/s3');
+        const url = await uploadToS3(photo, 'pandits/gallery');
+        uploadedUrls.push(url);
+      } else {
+        const { cloudinary } = require('../lib/cloudinary');
+        const result = await cloudinary.uploader.upload(photo.tempFilePath, {
+          folder: 'INEXT - RAM-JI-Ki-SENA/pandits/gallery',
+          transformation: [
+            { width: 1200, height: 800, crop: 'limit' },
+            { quality: 'auto' }
+          ]
+        });
+        uploadedUrls.push(result.secure_url);
+      }
     }
 
     // Add to pandit photos array
