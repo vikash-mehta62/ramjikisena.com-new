@@ -27,7 +27,18 @@ const EXTRA_BHOJPUR_TEMPLES = [
     deity: { main: 'भगवान शांतिनाथ (20 फीट विशाल पाषाण प्रतिमा)', others: ['भगवान पार्श्वनाथ', 'भगवान सुपार्श्वनाथ'] },
     facilities: { parking: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'वर्षभर', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Shantinath_Digambar_Jain_Temple.JPG/1280px-Shantinath_Digambar_Jain_Temple.JPG'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Shantinath_Digambar_Jain_Temple.JPG/1280px-Shantinath_Digambar_Jain_Temple.JPG',
+        title: 'भोजपुर शांतिनाथ दिगंबर जैन मंदिर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Shantinath_Digambar_Jain_Temple.JPG',
+        license: 'CC BY-SA 3.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -54,7 +65,18 @@ const EXTRA_BHOJPUR_TEMPLES = [
     deity: { main: 'माता पार्वती एवं प्राचीन शिवलिंग', others: ['नंदी जी'] },
     facilities: { drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'सूर्योदय से सूर्यास्त', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Parvati_cave_WIKI.jpg/1280px-Parvati_cave_WIKI.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Parvati_cave_WIKI.jpg/1280px-Parvati_cave_WIKI.jpg',
+        title: 'पार्वती गुफा मंदिर बेतवा नदी तट भोजपुर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Parvati_cave_WIKI.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,

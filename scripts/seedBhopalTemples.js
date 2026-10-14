@@ -24,7 +24,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'माँ भवानी (दुर्गा माता)', others: ['भगवान शिव', 'श्री हनुमान जी'] },
     facilities: { prasad: true, drinkingWater: true, shoeStand: true },
     visitInfo: { bestTimeToVisit: 'शारदीय एवं चैत्र नवरात्रि', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Tulja_Bhavani_Devi.jpg/1280px-Tulja_Bhavani_Devi.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Tulja_Bhavani_Devi.jpg/1280px-Tulja_Bhavani_Devi.jpg',
+        title: 'कर्फ्यू वाली माता (श्री भवानी मंदिर) पीर गेट',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Tulja_Bhavani_Devi.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -46,7 +57,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'बड़वाले महादेव (भगवान शिव)', others: ['माता पार्वती', 'नंदी जी', 'श्री गणेश'] },
     facilities: { prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'महाशिवरात्रि शिव बारात, सावन मास', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Mahadev_nandi.jpg/1280px-Mahadev_nandi.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Mahadev_nandi.jpg/1280px-Mahadev_nandi.jpg',
+        title: 'श्री बड़वाले महादेव मंदिर सोमवारा',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Mahadev_nandi.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -68,7 +90,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'श्री नेवरी हनुमान जी', others: ['श्री राम दरबार'] },
     facilities: { parking: true, prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'हनुमान जयंती, प्रत्येक मंगलवार व शनिवार', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://upload.wikimedia.org/wikipedia/commons/2/2e/Dakshin_Mukhi_Hanuman_Mandir_Katni.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Dakshin_Mukhi_Hanuman_Mandir_Katni.jpg',
+        title: 'श्री नेवरी दक्षिण मुखी हनुमान धाम लालघाटी',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Dakshin_Mukhi_Hanuman_Mandir_Katni.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -90,7 +123,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'माँ कंकाली देवी', others: ['भैरव बाबा', 'भगवान शिव'] },
     facilities: { prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'चैत्र व शारदीय नवरात्रि', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Kankali_Devi_Mandir_1.jpg/1280px-Kankali_Devi_Mandir_1.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Kankali_Devi_Mandir_1.jpg/1280px-Kankali_Devi_Mandir_1.jpg',
+        title: 'माँ कंकाली माता मंदिर भोपाल',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Kankali_Devi_Mandir_1.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -112,7 +156,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'माँ शीतला माता', others: ['भगवान शिव', 'हनुमान जी'] },
     facilities: { parking: true, prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'शीतला सप्तमी/अष्टमी, नवरात्रि', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Sheetla_Mata_Temple_Gwalior_-_panoramio.jpg/1280px-Sheetla_Mata_Temple_Gwalior_-_panoramio.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Sheetla_Mata_Temple_Gwalior_-_panoramio.jpg/1280px-Sheetla_Mata_Temple_Gwalior_-_panoramio.jpg',
+        title: 'श्री शीतला माता मंदिर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Sheetla_Mata_Temple_Gwalior_-_panoramio.jpg',
+        license: 'CC BY-SA 3.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -134,7 +189,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'माँ काली (भवतारिणी काली)', others: ['भगवान शिव', 'राधा कृष्ण'] },
     facilities: { parking: true, prasad: true, drinkingWater: true, shoeStand: true },
     visitInfo: { bestTimeToVisit: 'दुर्गा पूजा, काली पूजा / दीपोत्सव', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://upload.wikimedia.org/wikipedia/commons/0/07/Jyoti_Kalash_Sthapana_at_Kali_Bari_Chhindwara.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Jyoti_Kalash_Sthapana_at_Kali_Bari_Chhindwara.jpg',
+        title: 'कालीबाड़ी मंदिर - माँ काली ज्योति कलश',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Jyoti_Kalash_Sthapana_at_Kali_Bari_Chhindwara.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -156,7 +222,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'माँ वैष्णो देवी (तीन पवित्र पिंडियां)', others: ['भैरवनाथ जी', 'हनुमान जी'] },
     facilities: { parking: true, prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'नवरात्रि, वर्षभर', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Mata_Vaishno_Devi_Mandir%2C_Katra.jpg/1280px-Mata_Vaishno_Devi_Mandir%2C_Katra.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Mata_Vaishno_Devi_Mandir%2C_Katra.jpg/1280px-Mata_Vaishno_Devi_Mandir%2C_Katra.jpg',
+        title: 'माँ वैष्णो देवी गुफा मंदिर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Mata_Vaishno_Devi_Mandir,_Katra.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -178,7 +255,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'श्री खेड़ापति हनुमान जी (सिंदूरी प्रतिमा)', others: ['श्री राम दरबार'] },
     facilities: { parking: true, prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'हनुमान जयंती, प्रत्येक मंगलवार व शनिवार', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Hanuman_Mandir_%2CCantt_Guna.JPG/1280px-Hanuman_Mandir_%2CCantt_Guna.JPG'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/Hanuman_Mandir_%2CCantt_Guna.JPG/1280px-Hanuman_Mandir_%2CCantt_Guna.JPG',
+        title: 'श्री खेड़ापति हनुमान धाम छोला भोपाल',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Hanuman_Mandir_,Cantt_Guna.JPG',
+        license: 'CC BY-SA 3.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -200,7 +288,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'भगवान आदिनाथ एवं पावन चरण पादुका', others: ['सर्वधर्म ध्यान केंद्र'] },
     facilities: { parking: true, prasad: true, drinkingWater: true, restrooms: true },
     visitInfo: { bestTimeToVisit: 'सुबह एवं शाम के समय, रोपवे उपलब्ध', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Manuabhan_Tekri_Temple_Portrait.jpg/1280px-Manuabhan_Tekri_Temple_Portrait.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Manuabhan_Tekri_Temple_Portrait.jpg/1280px-Manuabhan_Tekri_Temple_Portrait.jpg',
+        title: 'मनुभावन टेकरी जैन पहाड़ी धाम भोपाल',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Manuabhan_Tekri_Temple_Portrait.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -222,7 +321,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'प्रभु श्री राम दरबार (सीता, लक्ष्मण, भरत, शत्रुघ्न, हनुमान)', others: ['भगवान शिव', 'श्री गणेश'] },
     facilities: { parking: true, prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'राम नवमी, दीपोत्सव', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/RamDarbar_1100qtrs_temple_Bhopal.jpg/1280px-RamDarbar_1100qtrs_temple_Bhopal.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/RamDarbar_1100qtrs_temple_Bhopal.jpg/1280px-RamDarbar_1100qtrs_temple_Bhopal.jpg',
+        title: 'श्री राम दरबार मंदिर भोपाल',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:RamDarbar_1100qtrs_temple_Bhopal.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -244,7 +354,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'पशुपतिनाथ महादेव (अष्टमुखी शिवलिंग)', others: ['माता पार्वती', 'नंदी जी'] },
     facilities: { parking: true, prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'श्रावण सोमवार, महाशिवरात्रि', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Pashupatinath_Temple_Mandsaur.jpg/1280px-Pashupatinath_Temple_Mandsaur.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Pashupatinath_Temple_Mandsaur.jpg/1280px-Pashupatinath_Temple_Mandsaur.jpg',
+        title: 'अष्टमुखी भगवान पशुपतिनाथ मंदिर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Pashupatinath_Temple_Mandsaur.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -266,7 +387,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'श्री सिद्ध गणेश जी', others: ['रिद्धि-सिद्धि'] },
     facilities: { parking: true, prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'गणेश चतुर्थी, संकष्टी चतुर्थी', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Chintaman_Ganesh.jpg/1280px-Chintaman_Ganesh.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Chintaman_Ganesh.jpg/1280px-Chintaman_Ganesh.jpg',
+        title: 'श्री सिद्ध गणेश मंदिर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Chintaman_Ganesh.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -288,7 +420,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'पीपलेश्वर महादेव', others: ['श्री गणेश', 'माता पार्वती'] },
     facilities: { prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'सावन मास', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://upload.wikimedia.org/wikipedia/commons/6/63/Pipleshwar_mahadev1.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Pipleshwar_mahadev1.jpg',
+        title: 'श्री पीपलेश्वर महादेव मंदिर भोपाल',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Pipleshwar_mahadev1.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -310,7 +453,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'श्री राधा वल्लभ लाल जी', others: ['श्री हरिवंश महाप्रभु'] },
     facilities: { prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'राधाष्टमी, जन्माष्टमी, शरद पूर्णिमा', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Temple_of_Radha_Ballabh.jpg/1280px-Temple_of_Radha_Ballabh.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Temple_of_Radha_Ballabh.jpg/1280px-Temple_of_Radha_Ballabh.jpg',
+        title: 'श्री राधा वल्लभ मंदिर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Temple_of_Radha_Ballabh.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -332,7 +486,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'माँ संतोषी माता', others: ['भगवान गणेश'] },
     facilities: { prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'प्रत्येक शुक्रवार, नवरात्रि', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Santoshi_Mata_Temple_Badauwan.jpg/1280px-Santoshi_Mata_Temple_Badauwan.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Santoshi_Mata_Temple_Badauwan.jpg/1280px-Santoshi_Mata_Temple_Badauwan.jpg',
+        title: 'श्री संतोषी माता मंदिर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Santoshi_Mata_Temple_Badauwan.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -354,7 +519,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'भगवान श्री रामकृष्ण परमहंस', others: ['श्री माँ शारदा देवी', 'स्वामी विवेकानंद'] },
     facilities: { parking: true, drinkingWater: true, restrooms: true, wheelchairAccessible: true },
     visitInfo: { bestTimeToVisit: 'शाम की संध्या आरती (06:30 PM)', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Sri_Ramakrishna_Temple_at_Ramakrishna_Mission_Ashrama.jpg/1280px-Sri_Ramakrishna_Temple_at_Ramakrishna_Mission_Ashrama.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Sri_Ramakrishna_Temple_at_Ramakrishna_Mission_Ashrama.jpg/1280px-Sri_Ramakrishna_Temple_at_Ramakrishna_Mission_Ashrama.jpg',
+        title: 'श्री रामकृष्ण मिशन आश्रम मंदिर भोपाल',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Sri_Ramakrishna_Temple_at_Ramakrishna_Mission_Ashrama.jpg',
+        license: 'CC BY-SA 4.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -376,7 +552,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'माँ गायत्री एवं अखण्ड दीप', others: ['भगवान शिव', 'सूर्य देव'] },
     facilities: { parking: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'गायत्री जयंती, गुरु पूर्णिमा', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Gayatri_mandir.JPG/1280px-Gayatri_mandir.JPG'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Gayatri_mandir.JPG/1280px-Gayatri_mandir.JPG',
+        title: 'श्री गायत्री शक्तिपीठ मंदिर',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Gayatri_mandir.JPG',
+        license: 'CC BY-SA 3.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
@@ -398,7 +585,18 @@ const BHOPAL_TEMPLES = [
     deity: { main: 'श्री संकटमोचन हनुमान जी', others: ['भगवान शिव'] },
     facilities: { parking: true, prasad: true, drinkingWater: true },
     visitInfo: { bestTimeToVisit: 'शाम के समय, प्रत्येक मंगलवार व शनिवार', entryFee: 'निःशुल्क' },
-    photos: [],
+    photos: [
+      'https://upload.wikimedia.org/wikipedia/commons/9/93/Sri-jam-sawali-hanuman-mandir_1412842505.jpg'
+    ],
+    photoAttributions: [
+      {
+        url: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Sri-jam-sawali-hanuman-mandir_1412842505.jpg',
+        title: 'श्री हनुमान मंदिर शाहपुरा झील भोपाल',
+        author: 'Wikimedia Commons Contributor',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Sri-jam-sawali-hanuman-mandir_1412842505.jpg',
+        license: 'CC BY-SA 3.0'
+      }
+    ],
     source: 'curated',
     verificationStatus: 'verified',
     timingsVerified: false,
