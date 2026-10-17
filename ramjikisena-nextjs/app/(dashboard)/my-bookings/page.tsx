@@ -173,17 +173,17 @@ export default function MyBookingsPage() {
 
       {/* Detail Modal */}
       {selected && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-red-600 text-white p-5 rounded-t-3xl flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-5 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl my-auto">
+            {/* Pinned Header */}
+            <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white p-5 flex items-center justify-between shrink-0">
               <h2 className="text-xl font-black">Booking Details</h2>
-              <button onClick={() => setSelected(null)} className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center hover:bg-white/30 transition-all">
+              <button onClick={() => setSelected(null)} className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center hover:bg-white/30 transition-all cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="p-5 space-y-4 overflow-y-auto flex-1">
               {/* Status */}
               <div className="text-center">
                 <span className={`inline-block px-5 py-2 text-sm font-black rounded-full border-2 ${statusColor(selected.status)}`}>
@@ -248,9 +248,12 @@ export default function MyBookingsPage() {
                 <p className="text-xs text-gray-500 break-all"><span className="font-bold">ID:</span> {selected._id}</p>
                 <p className="text-xs text-gray-500"><span className="font-bold">Booked On:</span> {new Date(selected.createdAt).toLocaleDateString('en-IN')}</p>
               </div>
+            </div>
 
+            {/* Pinned Footer */}
+            <div className="p-4 bg-slate-50 border-t border-slate-100 shrink-0">
               <button onClick={() => setSelected(null)}
-                className="w-full py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors text-sm">
+                className="w-full py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-100 transition-colors text-sm cursor-pointer shadow-sm">
                 Close
               </button>
             </div>

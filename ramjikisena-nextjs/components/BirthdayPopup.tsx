@@ -87,7 +87,7 @@ export default function BirthdayPopup() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
             onClick={handleClose}
           >
             <motion.div
@@ -96,7 +96,7 @@ export default function BirthdayPopup() {
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ type: 'spring', damping: 20, stiffness: 200 }}
               onClick={e => e.stopPropagation()}
-              className="bg-gradient-to-br from-pink-50 via-white to-orange-50 rounded-[3rem] p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden border-4 border-pink-200"
+              className="bg-gradient-to-br from-pink-50 via-white to-orange-50 rounded-[2.5rem] p-6 sm:p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden border-4 border-pink-200 my-auto max-h-[92vh] flex flex-col"
             >
               {/* Decorative elements */}
               <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
@@ -115,13 +115,13 @@ export default function BirthdayPopup() {
               {/* Close button */}
               <button
                 onClick={handleClose}
-                className="absolute top-4 right-4 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-all shadow-lg z-10"
+                className="absolute top-4 right-4 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center transition-all shadow-lg z-20 cursor-pointer"
               >
                 <X className="w-5 h-5 text-slate-600" />
               </button>
 
               {/* Content */}
-              <div className="relative z-10">
+              <div className="relative z-10 overflow-y-auto flex-1 py-1">
                 {/* Cake icon */}
                 <motion.div
                   animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}

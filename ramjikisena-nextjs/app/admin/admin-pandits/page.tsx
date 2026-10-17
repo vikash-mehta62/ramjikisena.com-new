@@ -662,9 +662,9 @@ export default function AdminPanditsPage() {
 
       {/* Add / Edit Pandit Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-orange-100 my-8">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-orange-100 my-auto flex flex-col max-h-[92vh] overflow-hidden">
+            <div className="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white">
               <div>
                 <h3 className="text-xl font-black text-slate-900">
                   {editingPandit ? 'पंडित विवरण संपादित करें (Edit Pandit)' : 'नया पंडित जोड़ें (Add New Pandit)'}
@@ -673,13 +673,14 @@ export default function AdminPanditsPage() {
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600"
+                className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Name */}
                 <div>
@@ -858,20 +859,21 @@ export default function AdminPanditsPage() {
                   <span>सक्रिय प्रोफ़ाइल (Active Status)</span>
                 </label>
               </div>
+              </div>
 
-              {/* Modal Actions */}
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              {/* Pinned Modal Actions Footer */}
+              <div className="flex items-center justify-end gap-3 p-4 sm:p-5 border-t border-slate-100 bg-slate-50 shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-black text-slate-600 hover:bg-slate-50"
+                  className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-black text-slate-600 hover:bg-white cursor-pointer"
                 >
                   रद्द करें (Cancel)
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-black shadow-lg disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-black shadow-lg disabled:opacity-50 cursor-pointer"
                 >
                   {submitting ? 'सहेज रहे हैं...' : editingPandit ? 'अपडेट करें (Save)' : 'पंडित जोड़ें (Create)'}
                 </button>
@@ -883,8 +885,8 @@ export default function AdminPanditsPage() {
 
       {/* Pandit Detail Inspection Modal */}
       {selectedPanditDetails && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-8 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-auto animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-slate-900 p-6 text-white relative flex-shrink-0">
               <button

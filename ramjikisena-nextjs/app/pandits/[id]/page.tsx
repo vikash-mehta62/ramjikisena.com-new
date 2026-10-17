@@ -443,20 +443,20 @@ function BookingModal({ pandit, service, onClose }: any) {
   const inputClass = "w-full bg-white border border-orange-100 rounded-2xl px-4 py-3 text-sm font-bold focus:border-orange-500 outline-none shadow-sm focus:ring-2 focus:ring-orange-200";
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
-      <div className="bg-white rounded-[2rem] max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl relative">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-3 sm:p-5 overflow-y-auto">
+      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl relative my-auto overflow-hidden">
         {/* Fixed Header */}
-        <div className="bg-orange-600 text-white p-6 rounded-t-[2rem] flex items-center justify-between flex-shrink-0">
+        <div className="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-5 sm:p-6 flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-xl font-black">Book Pandit Ji</h2>
             <p className="text-orange-100 text-sm mt-0.5">{pandit.name}</p>
           </div>
-          <button onClick={onClose} className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center text-xl hover:bg-white/30 transition font-black">×</button>
+          <button onClick={onClose} className="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center text-xl hover:bg-white/30 transition font-black cursor-pointer">×</button>
         </div>
-        {/* Scrollable Body */}
-        <div className="overflow-y-auto flex-1 rounded-b-[2rem]">
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          {/* Scrollable Body */}
+          <div className="overflow-y-auto flex-1 p-5 sm:p-6 space-y-6">
           <div>
             <h3 className="font-black text-slate-900 mb-3 text-sm uppercase tracking-widest text-orange-600">Pooja Details</h3>
             <div className="grid md:grid-cols-2 gap-4">
@@ -515,12 +515,16 @@ function BookingModal({ pandit, service, onClose }: any) {
             </div>
           )}
 
-          <button type="submit" disabled={loading}
-            className="w-full bg-orange-600 text-white rounded-2xl font-black py-4 hover:bg-orange-700 transition-all active:scale-95 disabled:opacity-60">
-            {loading ? 'Sending Request...' : 'Confirm Booking'}
-          </button>
+          </div>
+
+          {/* Pinned Footer */}
+          <div className="p-4 sm:p-5 border-t border-slate-100 bg-slate-50 shrink-0">
+            <button type="submit" disabled={loading}
+              className="w-full bg-orange-600 text-white rounded-2xl font-black py-3.5 hover:bg-orange-700 transition-all active:scale-95 disabled:opacity-60 cursor-pointer shadow-lg shadow-orange-600/20">
+              {loading ? 'Sending Request...' : 'Confirm Booking'}
+            </button>
+          </div>
         </form>
-        </div>
       </div>
     </div>
   );

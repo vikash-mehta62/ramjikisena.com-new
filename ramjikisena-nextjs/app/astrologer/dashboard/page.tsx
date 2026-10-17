@@ -633,12 +633,12 @@ export default function AstrologerDashboardPage() {
       {/* Notes Modal */}
       <AnimatePresence>
         {selectedConsultation && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-amber-100"
+              className="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-amber-100 my-auto max-h-[92vh] flex flex-col overflow-hidden"
             >
               <h3 className="text-base font-black text-slate-900 mb-1">
                 परामर्श नोट्स जोड़ें

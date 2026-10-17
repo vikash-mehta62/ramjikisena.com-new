@@ -14,10 +14,13 @@ function isLoggedInAPI(req, res, next) {
   }
 
   // 2. Fall back to cookie
-  if (!token && req.cookies && req.cookies.token) {
-    const cookieCandidate = String(req.cookies.token).trim();
-    if (cookieCandidate && cookieCandidate !== 'null' && cookieCandidate !== 'undefined') {
-      token = cookieCandidate;
+  if (!token && req.cookies) {
+    const cookieCandidate = req.cookies.token || req.cookies.panditToken || req.cookies.astrologerToken;
+    if (cookieCandidate) {
+      const trimmed = String(cookieCandidate).trim();
+      if (trimmed && trimmed !== 'null' && trimmed !== 'undefined') {
+        token = trimmed;
+      }
     }
   }
 

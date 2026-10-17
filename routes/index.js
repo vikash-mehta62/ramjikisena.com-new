@@ -69,6 +69,87 @@ router.get('/api/public/home-stats', async function (req, res) {
   }
 });
 
+// Public Daily Inspirations Endpoint (2 daily active chaupais rotated daily, + all collection)
+router.get('/api/public/daily-inspirations', async function (req, res) {
+  try {
+    const Inspiration = require('../models/Inspiration');
+    const { SEED_CHAUPAIS } = require('../lib/seedInspirations');
+
+    let count = await Inspiration.countDocuments();
+    if (count === 0) {
+      await Inspiration.insertMany(SEED_CHAUPAIS.map((c, i) => ({ ...c, order: i, active: true })));
+    }
+
+    const all = await Inspiration.find({ active: true }).sort({ order: 1, createdAt: 1 }).lean();
+    if (!all || all.length === 0) {
+      return res.json({ success: true, daily: SEED_CHAUPAIS.slice(0, 2), all: SEED_CHAUPAIS });
+    }
+
+    // Determine today's day of the year (0 - 365)
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    const diff = now - startOfYear;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
+
+    const idx1 = (dayOfYear * 2) % all.length;
+    const idx2 = (dayOfYear * 2 + 1) % all.length;
+    const daily = [all[idx1], all[idx2]];
+
+    return res.json({
+      success: true,
+      dayOfYear,
+      daily,
+      all,
+      total: all.length,
+    });
+  } catch (error) {
+    console.error('Daily inspirations error:', error);
+    const { SEED_CHAUPAIS } = require('../lib/seedInspirations');
+    return res.json({ success: true, daily: SEED_CHAUPAIS.slice(0, 2), all: SEED_CHAUPAIS });
+  }
+});
+
+// Public Services Endpoint (Dynamic services sorted by sequence order)
+router.get('/api/public/services', async function (req, res) {
+  try {
+    const Service = require('../models/Service');
+    const { seedServicesIfEmpty, INITIAL_SERVICES } = require('../lib/seedServices');
+
+    await seedServicesIfEmpty();
+
+    const services = await Service.find({ active: true }).sort({ order: 1, _id: 1 }).lean();
+    return res.json({
+      success: true,
+      services: services && services.length > 0 ? services : INITIAL_SERVICES,
+    });
+  } catch (error) {
+    console.error('Public services fetch error:', error);
+    const { INITIAL_SERVICES } = require('../lib/seedServices');
+    return res.json({ success: true, services: INITIAL_SERVICES });
+  }
+});
+
+// Public Hero Slides Endpoint (Active slides sorted by order)
+router.get('/api/public/hero-slides', async function (req, res) {
+  try {
+    const HeroSlide = require('../models/HeroSlide');
+    const { seedHeroSlides, INITIAL_SLIDES } = require('../lib/seedHeroSlides');
+
+    await seedHeroSlides();
+
+    const slides = await HeroSlide.find({ isActive: true }).sort({ order: 1, _id: 1 }).lean();
+    return res.json({
+      success: true,
+      slides: slides && slides.length > 0 ? slides : INITIAL_SLIDES,
+    });
+  } catch (error) {
+    console.error('Public hero slides fetch error:', error);
+    const { INITIAL_SLIDES } = require('../lib/seedHeroSlides');
+    return res.json({ success: true, slides: INITIAL_SLIDES });
+  }
+});
+
 // API Login (JSON response)
 router.post('/api/login', async function (req, res) {
   try {
@@ -206,9 +287,39 @@ router.post('/api/register', async function (req, res) {
 router.get('/api/me', isLoggedInAPI, async function (req, res) {
   try {
     const user = req.user;
-    const loggedInUser = await userModel.findOne({ _id: user._id });
+    let loggedInUser = await userModel.findOne({ _id: user._id });
     
     if (!loggedInUser) {
+      const Pandit = require('../models/Pandit');
+      const panditDoc = await Pandit.findOne({
+        $or: [
+          { _id: user.panditId || user._id },
+          { user: user._id }
+        ]
+      });
+      if (panditDoc) {
+        return res.json({
+          success: true,
+          user: {
+            _id: panditDoc._id,
+            username: panditDoc.username || panditDoc.contact?.phone || '',
+            name: panditDoc.name,
+            city: panditDoc.location?.city || '',
+            contact: panditDoc.contact?.phone || '',
+            rank: 1,
+            currCount: panditDoc.currCount || 0,
+            totalCount: panditDoc.totalCount || 0,
+            mala: panditDoc.mala || 0,
+            role: 'pandit',
+            about: panditDoc.about || panditDoc.description || '',
+            dob: null,
+            profileImage: panditDoc.photo || null,
+            coverImage: null,
+            customJaapNames: panditDoc.customJaapNames || [],
+            dailyCounts: panditDoc.dailyCounts || []
+          }
+        });
+      }
       return res.status(404).json({ 
         success: false, 
         message: 'User not found' 
@@ -249,40 +360,111 @@ router.get('/api/me', isLoggedInAPI, async function (req, res) {
 router.post('/api/save', isLoggedInAPI, async function (req, res) {
   try {
     const user = req.user;
-    const loggedInUser = await userModel.findOne({ _id: user._id });
     const { currentCount, totalCount, malaCount } = req.body;
+    const countToAdd = parseInt(currentCount) || 0;
 
-    loggedInUser.totalCount += parseInt(currentCount);
-    loggedInUser.mala = loggedInUser.totalCount !== 0 ? (loggedInUser.totalCount / 108).toFixed(2) : 0.00;
-    loggedInUser.currCount = 0;
-
-    const today = new Date();
-    const hasEntryForToday = loggedInUser.dailyCounts &&
-      loggedInUser.dailyCounts.length > 0 &&
-      loggedInUser.dailyCounts[loggedInUser.dailyCounts.length - 1].date.toDateString() === today.toDateString();
-
-    if (hasEntryForToday) {
-      loggedInUser.dailyCounts[loggedInUser.dailyCounts.length - 1].count += parseInt(currentCount);
-    } else {
-      loggedInUser.dailyCounts.push({ date: today, count: parseInt(currentCount) });
+    if (countToAdd <= 0) {
+      return res.json({ 
+        success: true, 
+        message: 'No counts to save',
+        user: {
+          totalCount: 0,
+          mala: 0,
+          currCount: 0
+        }
+      });
     }
 
-    await loggedInUser.save();
+    let targetDoc = null;
+    let isPandit = false;
+
+    // 1. Check userModel first
+    if (user._id) {
+      targetDoc = await userModel.findOne({ _id: user._id });
+    }
+
+    // 2. If not found in userModel, check Pandit model
+    if (!targetDoc) {
+      const Pandit = require('../models/Pandit');
+      targetDoc = await Pandit.findOne({
+        $or: [
+          { _id: user.panditId || user._id },
+          { user: user._id }
+        ]
+      });
+      if (targetDoc) isPandit = true;
+    } else if (user.role === 'pandit' || user.panditId) {
+      // Also sync count to Pandit document if linked
+      const Pandit = require('../models/Pandit');
+      const panditDoc = await Pandit.findOne({
+        $or: [
+          { _id: user.panditId },
+          { user: targetDoc._id }
+        ]
+      });
+      if (panditDoc) {
+        panditDoc.totalCount = (panditDoc.totalCount || 0) + countToAdd;
+        panditDoc.mala = panditDoc.totalCount !== 0 ? (panditDoc.totalCount / 108).toFixed(2) : 0.00;
+        panditDoc.currCount = 0;
+        const today = new Date();
+        const hasEntryForToday = panditDoc.dailyCounts &&
+          panditDoc.dailyCounts.length > 0 &&
+          panditDoc.dailyCounts[panditDoc.dailyCounts.length - 1].date &&
+          new Date(panditDoc.dailyCounts[panditDoc.dailyCounts.length - 1].date).toDateString() === today.toDateString();
+
+        if (hasEntryForToday) {
+          panditDoc.dailyCounts[panditDoc.dailyCounts.length - 1].count += countToAdd;
+        } else {
+          if (!panditDoc.dailyCounts) panditDoc.dailyCounts = [];
+          panditDoc.dailyCounts.push({ date: today, count: countToAdd });
+        }
+        await panditDoc.save();
+      }
+    }
+
+    if (!targetDoc) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User account not found' 
+      });
+    }
+
+    targetDoc.totalCount = (targetDoc.totalCount || 0) + countToAdd;
+    targetDoc.mala = targetDoc.totalCount !== 0 ? (targetDoc.totalCount / 108).toFixed(2) : 0.00;
+    targetDoc.currCount = 0;
+
+    const today = new Date();
+    const hasEntryForToday = targetDoc.dailyCounts &&
+      targetDoc.dailyCounts.length > 0 &&
+      targetDoc.dailyCounts[targetDoc.dailyCounts.length - 1].date &&
+      new Date(targetDoc.dailyCounts[targetDoc.dailyCounts.length - 1].date).toDateString() === today.toDateString();
+
+    if (hasEntryForToday) {
+      targetDoc.dailyCounts[targetDoc.dailyCounts.length - 1].count += countToAdd;
+    } else {
+      if (!targetDoc.dailyCounts) targetDoc.dailyCounts = [];
+      targetDoc.dailyCounts.push({ date: today, count: countToAdd });
+    }
+
+    await targetDoc.save();
 
     return res.json({ 
       success: true, 
       message: 'Counts updated successfully',
       user: {
-        totalCount: loggedInUser.totalCount,
-        mala: loggedInUser.mala,
-        currCount: loggedInUser.currCount
+        _id: targetDoc._id,
+        name: targetDoc.name,
+        totalCount: targetDoc.totalCount,
+        mala: targetDoc.mala,
+        currCount: targetDoc.currCount,
+        role: isPandit ? 'pandit' : (targetDoc.role || 'devotee')
       }
     });
   } catch (error) {
     console.error('Save count error:', error);
     return res.status(500).json({ 
       success: false, 
-      message: 'An error occurred while saving' 
+      message: 'An error occurred while saving: ' + error.message 
     });
   }
 });
@@ -480,18 +662,31 @@ router.post('/api/profile/update', isLoggedInAPI, async function (req, res) {
 // API Save Custom Jaap Name
 router.post('/api/custom-jaap-names', isLoggedInAPI, async function (req, res) {
   try {
-    const user = await userModel.findById(req.user._id);
+    let target = await userModel.findById(req.user._id);
+    if (!target) {
+      const Pandit = require('../models/Pandit');
+      target = await Pandit.findOne({
+        $or: [
+          { _id: req.user.panditId || req.user._id },
+          { user: req.user._id }
+        ]
+      });
+    }
+    if (!target) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
     const { id, label, chars } = req.body;
     if (!label || !chars || !Array.isArray(chars) || chars.length === 0) {
       return res.status(400).json({ success: false, message: 'Invalid data' });
     }
-    if (user.customJaapNames.length >= 10) {
+    if (!target.customJaapNames) target.customJaapNames = [];
+    if (target.customJaapNames.length >= 10) {
       return res.status(400).json({ success: false, message: 'Maximum 10 custom names allowed' });
     }
     const newName = { id: id || Date.now().toString(), label: label.slice(0, 40), chars };
-    user.customJaapNames.push(newName);
-    await user.save();
-    return res.json({ success: true, customJaapNames: user.customJaapNames });
+    target.customJaapNames.push(newName);
+    await target.save();
+    return res.json({ success: true, customJaapNames: target.customJaapNames });
   } catch (e) {
     return res.status(500).json({ success: false, message: 'Error saving' });
   }
@@ -500,10 +695,23 @@ router.post('/api/custom-jaap-names', isLoggedInAPI, async function (req, res) {
 // API Delete Custom Jaap Name
 router.delete('/api/custom-jaap-names/:id', isLoggedInAPI, async function (req, res) {
   try {
-    const user = await userModel.findById(req.user._id);
-    user.customJaapNames = user.customJaapNames.filter(n => n.id !== req.params.id);
-    await user.save();
-    return res.json({ success: true, customJaapNames: user.customJaapNames });
+    let target = await userModel.findById(req.user._id);
+    if (!target) {
+      const Pandit = require('../models/Pandit');
+      target = await Pandit.findOne({
+        $or: [
+          { _id: req.user.panditId || req.user._id },
+          { user: req.user._id }
+        ]
+      });
+    }
+    if (!target) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    if (!target.customJaapNames) target.customJaapNames = [];
+    target.customJaapNames = target.customJaapNames.filter(n => n.id !== req.params.id);
+    await target.save();
+    return res.json({ success: true, customJaapNames: target.customJaapNames });
   } catch (e) {
     return res.status(500).json({ success: false, message: 'Error deleting' });
   }
@@ -1075,10 +1283,13 @@ function isLoggedInAPI(req, res, next) {
   }
 
   // 2. Fall back to cookie
-  if (!token && req.cookies && req.cookies.token) {
-    const cookieCandidate = String(req.cookies.token).trim();
-    if (cookieCandidate && cookieCandidate !== 'null' && cookieCandidate !== 'undefined') {
-      token = cookieCandidate;
+  if (!token && req.cookies) {
+    const cookieCandidate = req.cookies.token || req.cookies.panditToken || req.cookies.astrologerToken;
+    if (cookieCandidate) {
+      const trimmed = String(cookieCandidate).trim();
+      if (trimmed && trimmed !== 'null' && trimmed !== 'undefined') {
+        token = trimmed;
+      }
     }
   }
 

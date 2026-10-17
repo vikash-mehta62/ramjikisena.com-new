@@ -1290,4 +1290,444 @@ router.delete('/staff/:id', superAdminOnly, async (req, res) => {
   }
 });
 
+// ============================================
+// DAILY INSPIRATIONS (CHAUPAI) MANAGEMENT
+// ============================================
+
+// List all inspirations (with pagination & search)
+router.get('/inspirations', async (req, res) => {
+  try {
+    const Inspiration = require('../models/Inspiration');
+    const { page = 1, limit = 50, search = '', active } = req.query;
+    
+    const query = {};
+    if (search) {
+      query.$or = [
+        { chaupai: { $regex: search, $options: 'i' } },
+        { bhavarth: { $regex: search, $options: 'i' } },
+        { source: { $regex: search, $options: 'i' } }
+      ];
+    }
+    if (active !== undefined && active !== '') {
+      query.active = active === 'true';
+    }
+
+    const total = await Inspiration.countDocuments(query);
+    const inspirations = await Inspiration.find(query)
+      .sort({ order: 1, createdAt: -1 })
+      .skip((parseInt(page) - 1) * parseInt(limit))
+      .limit(parseInt(limit))
+      .lean();
+
+    res.json({
+      success: true,
+      inspirations,
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / parseInt(limit))
+    });
+  } catch (error) {
+    console.error('Admin get inspirations error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Create new inspiration
+router.post('/inspirations', async (req, res) => {
+  try {
+    const Inspiration = require('../models/Inspiration');
+    const { chaupai, bhavarth, source, active, order } = req.body;
+
+    if (!chaupai || !bhavarth) {
+      return res.status(400).json({ success: false, message: 'चौपाई और भावार्थ अनिवार्य हैं' });
+    }
+
+    const newInspiration = new Inspiration({
+      chaupai: chaupai.trim(),
+      bhavarth: bhavarth.trim(),
+      source: (source || 'श्री रामचरितमानस').trim(),
+      active: active !== false,
+      order: order || 0
+    });
+
+    await newInspiration.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'चौपाई सफलतापूर्वक जोड़ी गई',
+      inspiration: newInspiration
+    });
+  } catch (error) {
+    console.error('Admin create inspiration error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Update inspiration
+router.put('/inspirations/:id', async (req, res) => {
+  try {
+    const Inspiration = require('../models/Inspiration');
+    const { chaupai, bhavarth, source, active, order } = req.body;
+
+    const updated = await Inspiration.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...(chaupai && { chaupai: chaupai.trim() }),
+        ...(bhavarth && { bhavarth: bhavarth.trim() }),
+        ...(source && { source: source.trim() }),
+        ...(active !== undefined && { active }),
+        ...(order !== undefined && { order })
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'चौपाई नहीं मिली' });
+    }
+
+    res.json({
+      success: true,
+      message: 'चौपाई सफलतापूर्वक अपडेट की गई',
+      inspiration: updated
+    });
+  } catch (error) {
+    console.error('Admin update inspiration error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Delete inspiration
+router.delete('/inspirations/:id', async (req, res) => {
+  try {
+    const Inspiration = require('../models/Inspiration');
+    const deleted = await Inspiration.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: 'चौपाई नहीं मिली' });
+    }
+
+    res.json({
+      success: true,
+      message: 'चौपाई सफलतापूर्वक हटाई गई'
+    });
+  } catch (error) {
+    console.error('Admin delete inspiration error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Seed 50 authentic chaupais
+router.post('/inspirations/seed', async (req, res) => {
+  try {
+    const Inspiration = require('../models/Inspiration');
+    const { SEED_CHAUPAIS } = require('../lib/seedInspirations');
+
+    const count = await Inspiration.countDocuments();
+    if (count === 0 || req.body.force) {
+      if (req.body.force) {
+        await Inspiration.deleteMany({});
+      }
+      await Inspiration.insertMany(SEED_CHAUPAIS.map((c, i) => ({ ...c, order: i, active: true })));
+      return res.json({
+        success: true,
+        message: `50 पावन चौपाइयां सफलतापूर्वक सीड की गईं (${SEED_CHAUPAIS.length} Chaupais seeded)`
+      });
+    }
+
+    res.json({
+      success: true,
+      message: `डेटाबेस में पहले से ${count} चौपाइयां मौजूद हैं। आवश्यकता हो तो Force Seed करें।`
+    });
+  } catch (error) {
+    console.error('Admin seed inspirations error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ============================================
+// DYNAMIC SERVICES MANAGEMENT (EDIT ONLY - NO ADD/DELETE)
+// ============================================
+
+// Get all existing services (sorted by sequence order)
+router.get('/services', async (req, res) => {
+  try {
+    const Service = require('../models/Service');
+    const { seedServicesIfEmpty } = require('../lib/seedServices');
+
+    await seedServicesIfEmpty();
+
+    const services = await Service.find().sort({ order: 1, _id: 1 }).lean();
+    res.json({
+      success: true,
+      services: services || [],
+    });
+  } catch (error) {
+    console.error('Admin get services error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Update an existing service (Hindi name, English name, photo, sequence order, etc.)
+router.put('/services/:id', async (req, res) => {
+  try {
+    const Service = require('../models/Service');
+    const { id } = req.params;
+    const {
+      title, // Hindi name
+      subtitle, // English name
+      img, // Photo URL
+      order, // Sequence order
+      desc,
+      popular,
+      ctaText,
+      active,
+      imgPosition,
+      features,
+    } = req.body;
+
+    const updateData = {};
+    if (title !== undefined) updateData.title = String(title).trim();
+    if (subtitle !== undefined) updateData.subtitle = String(subtitle).trim();
+    if (img !== undefined) updateData.img = String(img).trim();
+    if (order !== undefined) updateData.order = Number(order) || 0;
+    if (desc !== undefined) updateData.desc = String(desc).trim();
+    if (popular !== undefined) updateData.popular = String(popular).trim();
+    if (ctaText !== undefined) updateData.ctaText = String(ctaText).trim();
+    if (active !== undefined) updateData.active = Boolean(active);
+    if (imgPosition !== undefined) updateData.imgPosition = String(imgPosition).trim();
+    if (Array.isArray(features)) updateData.features = features.map(f => String(f).trim()).filter(Boolean);
+
+    const updated = await Service.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'सेवा नहीं मिली' });
+    }
+
+    res.json({
+      success: true,
+      message: 'सेवा सफलतापूर्वक अपडेट की गई',
+      service: updated,
+    });
+  } catch (error) {
+    console.error('Admin update service error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Batch update sequence order for services
+router.post('/services/reorder', async (req, res) => {
+  try {
+    const Service = require('../models/Service');
+    const { orders } = req.body; // Array of { id, order }
+
+    if (!Array.isArray(orders)) {
+      return res.status(400).json({ success: false, message: 'Invalid orders array' });
+    }
+
+    const updates = orders.map(({ id, order }) =>
+      Service.findByIdAndUpdate(id, { $set: { order: Number(order) || 0 } })
+    );
+    await Promise.all(updates);
+
+    const updatedServices = await Service.find().sort({ order: 1, _id: 1 }).lean();
+    res.json({
+      success: true,
+      message: 'सेवाओं का क्रम (Sequence) सफलतापूर्वक अपडेट किया गया',
+      services: updatedServices,
+    });
+  } catch (error) {
+    console.error('Admin reorder services error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ============================================
+// HERO SLIDES MANAGEMENT ROUTES
+// ============================================
+
+// Get all hero slides for admin
+router.get('/hero-slides', async (req, res) => {
+  try {
+    const HeroSlide = require('../models/HeroSlide');
+    const { seedHeroSlides } = require('../lib/seedHeroSlides');
+    await seedHeroSlides();
+
+    const slides = await HeroSlide.find().sort({ order: 1, _id: 1 }).lean();
+    res.json({
+      success: true,
+      slides,
+    });
+  } catch (error) {
+    console.error('Admin get hero-slides error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Create new hero slide
+router.post('/hero-slides', async (req, res) => {
+  try {
+    const HeroSlide = require('../models/HeroSlide');
+    const {
+      title,
+      subtitle,
+      tagline,
+      description,
+      badge,
+      image,
+      mobileImage,
+      textAlignment,
+      textColor,
+      showText,
+      showButtons,
+      button1Text,
+      button1Link,
+      button2Text,
+      button2Link,
+      order,
+      isActive
+    } = req.body;
+
+    if (!title || !image) {
+      return res.status(400).json({ success: false, message: 'शीर्षक (Title) और फोटो (Image) अनिवार्य हैं' });
+    }
+
+    const slideCount = await HeroSlide.countDocuments();
+    const newSlide = await HeroSlide.create({
+      title: title.trim(),
+      subtitle: (subtitle || '').trim(),
+      tagline: (tagline || '').trim(),
+      description: (description || '').trim(),
+      badge: (badge || '🚩 Jai Shree Ram — Naam is the True Power').trim(),
+      image: image.trim(),
+      mobileImage: (mobileImage || '').trim(),
+      textAlignment: ['left', 'center', 'right'].includes(textAlignment) ? textAlignment : 'center',
+      textColor: (textColor || '#2a1306').trim(),
+      showText: showText !== undefined ? Boolean(showText) : true,
+      showButtons: showButtons !== undefined ? Boolean(showButtons) : true,
+      button1Text: (button1Text || 'Start Ram Naam Jaap').trim(),
+      button1Link: (button1Link || '/#jaap').trim(),
+      button2Text: (button2Text || 'Watch Video').trim(),
+      button2Link: (button2Link || '').trim(),
+      order: Number(order) !== undefined && !isNaN(Number(order)) ? Number(order) : slideCount + 1,
+      isActive: isActive !== undefined ? Boolean(isActive) : true
+    });
+
+    res.json({
+      success: true,
+      message: 'नया हीरो स्लाइड सफलतापूर्वक जोड़ा गया!',
+      slide: newSlide
+    });
+  } catch (error) {
+    console.error('Admin create hero-slide error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Update hero slide
+router.put('/hero-slides/:id', async (req, res) => {
+  try {
+    const HeroSlide = require('../models/HeroSlide');
+    const { id } = req.params;
+    const updateData = { ...req.body };
+
+    delete updateData._id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    delete updateData.__v;
+
+    if (updateData.order !== undefined) {
+      updateData.order = Number(updateData.order);
+    }
+    if (updateData.isActive !== undefined) {
+      updateData.isActive = Boolean(updateData.isActive);
+    }
+    if (updateData.showText !== undefined) {
+      updateData.showText = Boolean(updateData.showText);
+    }
+    if (updateData.showButtons !== undefined) {
+      updateData.showButtons = Boolean(updateData.showButtons);
+    }
+    if (updateData.textColor !== undefined) {
+      updateData.textColor = (updateData.textColor || '#2a1306').trim();
+    }
+    if (updateData.textAlignment !== undefined) {
+      updateData.textAlignment = ['left', 'center', 'right'].includes(updateData.textAlignment)
+        ? updateData.textAlignment
+        : 'center';
+    }
+
+    const updated = await HeroSlide.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'स्लाइड नहीं मिला' });
+    }
+
+    res.json({
+      success: true,
+      message: 'हीरो स्लाइड सफलतापूर्वक अपडेट किया गया!',
+      slide: updated
+    });
+  } catch (error) {
+    console.error('Admin update hero-slide error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Delete hero slide
+router.delete('/hero-slides/:id', async (req, res) => {
+  try {
+    const HeroSlide = require('../models/HeroSlide');
+    const { id } = req.params;
+
+    const deleted = await HeroSlide.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: 'स्लाइड नहीं मिला' });
+    }
+
+    res.json({
+      success: true,
+      message: 'हीरो स्लाइड सफलतापूर्वक हटा दिया गया!'
+    });
+  } catch (error) {
+    console.error('Admin delete hero-slide error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Reorder hero slides
+router.post('/hero-slides/reorder', async (req, res) => {
+  try {
+    const HeroSlide = require('../models/HeroSlide');
+    const { orders } = req.body; // Array of { id, order }
+
+    if (!Array.isArray(orders)) {
+      return res.status(400).json({ success: false, message: 'Invalid orders array' });
+    }
+
+    const updates = orders.map(({ id, order }) =>
+      HeroSlide.findByIdAndUpdate(id, { $set: { order: Number(order) || 0 } })
+    );
+    await Promise.all(updates);
+
+    const updatedSlides = await HeroSlide.find().sort({ order: 1, _id: 1 }).lean();
+    res.json({
+      success: true,
+      message: 'स्लाइड्स का क्रम (Sequence) सफलतापूर्वक अपडेट किया गया',
+      slides: updatedSlides,
+    });
+  } catch (error) {
+    console.error('Admin reorder hero-slides error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 module.exports = router;
+

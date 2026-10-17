@@ -572,15 +572,15 @@ export default function AstrologerDetailPage() {
       {/* Booking Modal */}
       <AnimatePresence>
         {isBookingOpen && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-amber-100 relative"
+              className="bg-white rounded-3xl max-w-xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-amber-100 relative my-auto overflow-hidden"
             >
               {/* Header */}
-              <div className="p-5 sm:p-6 bg-gradient-to-r from-amber-700 via-amber-800 to-amber-900 text-white rounded-t-3xl relative">
+              <div className="p-5 sm:p-6 bg-gradient-to-r from-amber-700 via-amber-800 to-amber-900 text-white shrink-0 relative">
                 <button
                   onClick={() => setIsBookingOpen(false)}
                   className="absolute right-4 top-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition"
@@ -598,7 +598,7 @@ export default function AstrologerDetailPage() {
 
               {/* Success Screen */}
               {bookingSuccess ? (
-                <div className="p-6 sm:p-8 text-center space-y-4">
+                <div className="p-6 sm:p-8 text-center space-y-4 overflow-y-auto flex-1">
                   <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-3xl">
                     ✓
                   </div>
@@ -624,7 +624,7 @@ export default function AstrologerDetailPage() {
                     )}
                     <button
                       onClick={() => setIsBookingOpen(false)}
-                      className="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition"
+                      className="px-5 py-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition cursor-pointer"
                     >
                       पूर्ण करें (Close)
                     </button>
@@ -632,7 +632,8 @@ export default function AstrologerDetailPage() {
                 </div>
               ) : (
                 /* Booking Form */
-                <form onSubmit={handleBookingSubmit} className="p-5 sm:p-6 space-y-4 text-xs">
+                <form onSubmit={handleBookingSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                  <div className="p-5 sm:p-6 space-y-4 text-xs overflow-y-auto flex-1">
                   {/* Client Info */}
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div>
@@ -772,8 +773,10 @@ export default function AstrologerDetailPage() {
                     />
                   </div>
 
-                  {/* Bottom Action */}
-                  <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+                  </div>
+
+                  {/* Pinned Bottom Action Footer */}
+                  <div className="p-4 sm:p-5 flex items-center justify-between border-t border-slate-100 bg-amber-50/40 shrink-0">
                     <div>
                       <span className="text-[10px] text-slate-400 block font-bold">शुल्क राशि</span>
                       <span className="text-base font-black text-amber-800">
@@ -784,7 +787,7 @@ export default function AstrologerDetailPage() {
                     <button
                       type="submit"
                       disabled={bookingSubmitting}
-                      className="px-6 py-3 rounded-xl font-black text-xs text-slate-950 transition-all shadow-md active:scale-95 disabled:opacity-50"
+                      className="px-6 py-3 rounded-xl font-black text-xs text-slate-950 transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
                       style={{
                         background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
                       }}
@@ -802,23 +805,27 @@ export default function AstrologerDetailPage() {
       {/* Review Modal */}
       <AnimatePresence>
         {isReviewOpen && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-amber-100 relative"
+              className="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-amber-100 relative my-auto max-h-[92vh] flex flex-col overflow-hidden"
             >
-              <button
-                onClick={() => setIsReviewOpen(false)}
-                className="absolute right-4 top-4 text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-              <h3 className="text-lg font-black text-slate-900 mb-1">समीक्षा लिखें</h3>
-              <p className="text-xs text-slate-500 mb-4">{astro.name} के साथ आपका अनुभव कैसा रहा?</p>
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0 mb-3">
+                <div>
+                  <h3 className="text-lg font-black text-slate-900">समीक्षा लिखें</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">{astro.name} के साथ आपका अनुभव कैसा रहा?</p>
+                </div>
+                <button
+                  onClick={() => setIsReviewOpen(false)}
+                  className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
 
-              <form onSubmit={handleReviewSubmit} className="space-y-3 text-xs">
+              <form onSubmit={handleReviewSubmit} className="space-y-3.5 text-xs overflow-y-auto flex-1 pr-1">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">आपका नाम *</label>
                   <input

@@ -39,9 +39,14 @@ export interface RegisterResponse {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
 
 // Helper to get token from localStorage
-const getToken = (): string | null => {
+export const getToken = (): string | null => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('token');
+    return (
+      localStorage.getItem('token') ||
+      localStorage.getItem('panditToken') ||
+      localStorage.getItem('astrologerToken') ||
+      null
+    );
   }
   return null;
 };
@@ -61,7 +66,7 @@ const removeToken = (): void => {
 };
 
 // Helper to get headers with token
-const getAuthHeaders = (): HeadersInit => {
+export const getAuthHeaders = (): HeadersInit => {
   const token = getToken();
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
@@ -151,11 +156,21 @@ export const authApi = {
         credentials: 'include',
       });
 
-      // Only clear devotee token on explicit 401 Unauthorized
+      // Only clear token on explicit 401 Unauthorized
       if (res.status === 401) {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          if (localStorage.getItem('token')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          }
+          if (localStorage.getItem('panditToken')) {
+            localStorage.removeItem('panditToken');
+            localStorage.removeItem('pandit');
+          }
+          if (localStorage.getItem('astrologerToken')) {
+            localStorage.removeItem('astrologerToken');
+            localStorage.removeItem('astrologer');
+          }
         }
         return null;
       }

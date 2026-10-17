@@ -717,18 +717,19 @@ export default function AdminAstrologyPage() {
 
       {/* Edit Modal */}
       {editingAstro && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 border border-amber-100">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl my-auto border border-amber-100">
+            <div className="flex items-center justify-between p-5 sm:p-6 border-b border-slate-100 shrink-0 bg-white">
               <h3 className="font-black text-slate-900 text-base">
                 ज्योतिषी विवरण संपादित करें (Edit Astrologer)
               </h3>
-              <button onClick={() => setEditingAstro(null)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setEditingAstro(null)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleEditSubmit} className="space-y-3.5 text-xs">
+            <form onSubmit={handleEditSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              <div className="p-5 sm:p-6 space-y-3.5 text-xs overflow-y-auto flex-1">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">नाम</label>
@@ -824,18 +825,21 @@ export default function AdminAstrologyPage() {
                 </label>
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2 border-t border-slate-100">
+              </div>
+
+              {/* Pinned Footer */}
+              <div className="p-4 sm:p-5 flex items-center justify-end gap-2.5 border-t border-slate-100 bg-slate-50 shrink-0">
                 <button
                   type="button"
                   onClick={() => setEditingAstro(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 font-bold"
+                  className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 cursor-pointer"
                 >
                   रद्द करें
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black shadow-md transition"
+                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black shadow-md transition cursor-pointer"
                 >
                   {submitting ? 'सहेज रहे हैं...' : 'सुरक्षित करें'}
                 </button>
@@ -847,8 +851,8 @@ export default function AdminAstrologyPage() {
 
       {/* Astrologer Detail Inspection Modal */}
       {selectedAstroDetails && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-8 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-auto animate-in zoom-in-95 duration-200">
             {/* Header */}
             <div className="bg-slate-900 p-6 text-white relative flex-shrink-0">
               <button
@@ -1025,8 +1029,8 @@ export default function AdminAstrologyPage() {
 
       {/* Consultation Detail Inspection Modal */}
       {selectedConsultationDetails && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-8 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-xl w-full max-h-[92vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-auto animate-in zoom-in-95 duration-200">
             {/* Header */}
             <div className="bg-slate-900 p-6 text-white relative flex-shrink-0">
               <button

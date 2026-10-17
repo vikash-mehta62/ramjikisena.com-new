@@ -3,7 +3,12 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3101';
 // Helper to get token from localStorage
 const getToken = (): string | null => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('token');
+    return (
+      localStorage.getItem('token') ||
+      localStorage.getItem('panditToken') ||
+      localStorage.getItem('astrologerToken') ||
+      null
+    );
   }
   return null;
 };

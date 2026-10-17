@@ -35,7 +35,9 @@ export default function DashboardSidebar({ role, userName, userPhoto, permission
     { href: '/admin/admin-astrology', label: 'Astrology (ज्योतिष)', icon: <span className="text-base leading-none">🔮</span>, key: 'astrology' },
     { href: '/admin/admin-bookings', label: 'Bookings', icon: <Calendar className="w-5 h-5" />, key: 'bookings' },
     { href: '/admin/admin-blogs', label: 'Blogs (ब्लॉग)', icon: <FileText className="w-5 h-5" />, key: 'blogs' },
-    { href: '/admin/admin-samagri', label: 'Samagri', icon: <span className="text-base leading-none">🪔</span>, key: 'samagri' },
+    { href: '/admin/admin-hero-slides', label: 'हीरो बैनर (Hero Slides)', icon: <span className="text-base leading-none">🖼️</span>, key: 'heroSlides' },
+    { href: '/admin/admin-services', label: 'सेवाएं (Services)', icon: <span className="text-base leading-none">🧭</span>, key: 'services' },
+    { href: '/admin/admin-inspirations', label: 'दैनिक प्रेरणा (Chaupais)', icon: <span className="text-base leading-none">📖</span>, key: 'inspirations' },
   ];
 
   const panditLinks: SidebarLink[] = [

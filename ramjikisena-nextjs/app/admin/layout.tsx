@@ -18,6 +18,9 @@ const ROUTE_PERMISSIONS: { prefix: string; key: string; label: string }[] = [
   { prefix: '/admin/admin-bookings', key: 'bookings', label: 'Bookings' },
   { prefix: '/admin/admin-blogs', key: 'blogs', label: 'Blogs' },
   { prefix: '/admin/admin-samagri', key: 'samagri', label: 'Samagri' },
+  { prefix: '/admin/admin-hero-slides', key: 'heroSlides', label: 'Hero Slides / बैनर' },
+  { prefix: '/admin/admin-services', key: 'services', label: 'Manage Services' },
+  { prefix: '/admin/admin-inspirations', key: 'inspirations', label: 'Daily Inspirations' },
 ];
 
 export default function AdminLayout({

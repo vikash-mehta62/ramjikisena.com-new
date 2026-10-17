@@ -293,16 +293,16 @@ export default function PanditDashboard() {
 
       {/* Quick View Modal */}
       {selectedBooking && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col my-6">
-            <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-red-600 text-white p-5 sm:p-6 rounded-t-3xl z-10 flex-shrink-0">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-5 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-hidden shadow-2xl flex flex-col my-auto">
+            <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white p-5 sm:p-6 shrink-0">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl sm:text-2xl font-black">Booking Details</h2>
-                <button onClick={() => setSelectedBooking(null)} className="text-3xl hover:scale-110 transition-transform">×</button>
+                <button onClick={() => setSelectedBooking(null)} className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-xl hover:bg-white/30 transition-transform font-bold cursor-pointer">×</button>
               </div>
             </div>
 
-            <div className="p-4 sm:p-6 space-y-5 flex-1">
+            <div className="p-4 sm:p-6 space-y-5 overflow-y-auto flex-1">
               {/* Status */}
               <div className="text-center">
                 <span className={`inline-block px-6 py-3 text-lg font-bold rounded-full border-2 ${getStatusColor(selectedBooking.status)}`}>
@@ -374,13 +374,17 @@ export default function PanditDashboard() {
                 >
                   View All Bookings
                 </Link>
-                <button
-                  onClick={() => setSelectedBooking(null)}
-                  className="w-full py-4 bg-gray-200 text-gray-800 font-bold rounded-xl hover:bg-gray-300 transition-colors"
-                >
-                  Close
-                </button>
               </div>
+            </div>
+
+            {/* Pinned Footer */}
+            <div className="p-4 bg-slate-50 border-t border-slate-100 shrink-0">
+              <button
+                onClick={() => setSelectedBooking(null)}
+                className="w-full py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-100 transition-colors text-sm cursor-pointer shadow-sm"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

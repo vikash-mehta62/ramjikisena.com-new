@@ -76,11 +76,11 @@ function UserListModal({ title, users, currentUserId, onClose }: {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl w-full max-w-sm max-h-[70vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+      <div className="bg-white rounded-3xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl my-auto overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
           <h3 className="font-black text-gray-900 text-lg">{title}</h3>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 transition-colors">
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
@@ -170,9 +170,9 @@ function PostModal({ post, currentUserId, onClose, onUpdate, onDelete }: {
   const isOwn = localPost.author._id === currentUserId;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col md:flex-row shadow-2xl overflow-hidden"
+        className="bg-white rounded-3xl w-full max-w-3xl max-h-[92vh] flex flex-col md:flex-row shadow-2xl overflow-hidden my-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Image panel */}

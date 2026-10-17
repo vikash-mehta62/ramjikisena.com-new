@@ -164,6 +164,38 @@ const panditSchema = mongoose.Schema({
     default: true
   },
   
+  // Jaap & Naam Lekhan Stats
+  currCount: {
+    type: Number,
+    default: 0
+  },
+  totalCount: {
+    type: Number,
+    default: 0
+  },
+  mala: {
+    type: Number,
+    default: 0
+  },
+  customJaapNames: {
+    type: [{
+      id: String,
+      label: String,
+      chars: [String]
+    }],
+    default: []
+  },
+  dailyCounts: [{
+    date: {
+      type: Date,
+      default: Date.now
+    },
+    count: {
+      type: Number,
+      default: 0
+    }
+  }],
+
   // User Reference (if pandit has user account)
   user: {
     type: mongoose.Schema.Types.ObjectId,

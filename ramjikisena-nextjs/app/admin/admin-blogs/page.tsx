@@ -543,8 +543,8 @@ function AdminBlogsContent() {
 
       {/* Comprehensive Blog Preview / Details Modal */}
       {previewBlog && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-8 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col my-auto animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-slate-900 p-6 text-white relative flex-shrink-0">
               <button

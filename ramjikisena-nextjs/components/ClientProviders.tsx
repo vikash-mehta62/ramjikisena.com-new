@@ -4,6 +4,7 @@ import UnsavedJaapWarning from './UnsavedJaapWarning';
 import BirthdayPopup from './BirthdayPopup';
 import AnalyticsTracker from './AnalyticsTracker';
 import { ToastProvider } from './Toast';
+import MobileBottomNav from './MobileBottomNav';
 
 export default function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export default function ClientProviders({ children }: { children: React.ReactNod
       <UnsavedJaapWarning />
       <BirthdayPopup />
       {children}
+      <MobileBottomNav />
     </ToastProvider>
   );
 }
