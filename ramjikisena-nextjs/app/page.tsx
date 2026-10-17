@@ -534,7 +534,7 @@ export default function HomePage() {
         onMouseLeave={() => setIsSlidePaused(false)}
       >
         {/* Full-bleed Panoramic Banner Carousel Container */}
-        <div className="relative w-full min-h-[460px] sm:min-h-[520px] lg:min-h-[580px] xl:min-h-[620px] flex items-center">
+        <div className="relative w-full min-h-[500px] sm:min-h-[520px] lg:min-h-[580px] xl:min-h-[620px] flex items-center">
           
           {/* Background Image / Panoramic Artwork with AnimatePresence */}
           {(() => {
@@ -562,7 +562,7 @@ export default function HomePage() {
                         alt={currentSlide.title || 'Bhagwan Shri Ram'}
                         fill
                         priority
-                        className="object-cover object-top"
+                        className="object-cover object-[78%_top] md:object-top"
                         sizes="100vw"
                       />
                     </div>
@@ -575,7 +575,7 @@ export default function HomePage() {
                           alt={currentSlide.title || 'Bhagwan Shri Ram'}
                           fill
                           priority
-                          className="object-cover object-center"
+                          className="object-cover object-top sm:object-center"
                           sizes="100vw"
                         />
                       </div>
