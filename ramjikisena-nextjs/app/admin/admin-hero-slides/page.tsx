@@ -561,6 +561,7 @@ export default function AdminHeroSlidesPage() {
                         src={formData.image}
                         alt="Desktop Preview"
                         fill
+                        unoptimized
                         className="object-cover object-top"
                       />
                     ) : (
@@ -604,6 +605,7 @@ export default function AdminHeroSlidesPage() {
                         src={formData.mobileImage}
                         alt="Mobile Preview"
                         fill
+                        unoptimized
                         className="object-cover object-top"
                       />
                     ) : (

@@ -543,7 +543,7 @@ export default function HomePage() {
             const isTextVisible = currentSlide.showText !== false;
             const isButtonsVisible = currentSlide.showButtons !== false;
             const textColor = currentSlide.textColor || '#2a1306';
-            const isAnyContentVisible = isTextVisible || isButtonsVisible || Boolean(pandit) || Boolean(user);
+            const isAnyContentVisible = isTextVisible || isButtonsVisible;
             return (
               <>
                 <AnimatePresence mode="wait">
@@ -562,6 +562,7 @@ export default function HomePage() {
                         alt={currentSlide.title || 'Bhagwan Shri Ram'}
                         fill
                         priority
+                        unoptimized
                         className="object-cover object-[78%_top] md:object-top"
                         sizes="100vw"
                       />
@@ -575,6 +576,7 @@ export default function HomePage() {
                           alt={currentSlide.title || 'Bhagwan Shri Ram'}
                           fill
                           priority
+                          unoptimized
                           className="object-cover object-top sm:object-center"
                           sizes="100vw"
                         />
@@ -584,6 +586,31 @@ export default function HomePage() {
                     {/* Clean natural presentation with NO white milky haze */}
                   </motion.div>
                 </AnimatePresence>
+
+                {/* Mobile Floating Greeting Pill at TOP (leaves artwork center clear) */}
+                {(pandit || user) && (
+                  <div className="md:hidden absolute top-3.5 inset-x-0 flex justify-center z-30 pointer-events-none px-4">
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-orange-200/90 text-orange-950 text-xs font-bold shadow-md">
+                      <span className="text-sm">{pandit ? '🔱' : '🙏'}</span>
+                      <span className="truncate max-w-[260px]">
+                         सादर प्रणाम, <strong>{pandit ? (pandit.name || 'पंडित जी') : user?.name}</strong>!
+                        {pandit && <span className="text-[10px] text-orange-700 ml-1 font-semibold">(पुरोहित)</span>}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Desktop Greeting Pill when text is hidden */}
+                {(pandit || user) && !isTextVisible && !isButtonsVisible && (
+                  <div className="hidden md:flex absolute top-4 left-6 z-20 pointer-events-none">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-orange-200/90 text-orange-950 text-xs font-bold shadow-sm">
+                      <span className="text-base">{pandit ? '🔱' : '🙏'}</span>
+                      <span>
+                        सादर प्रणाम, <strong>{pandit ? (pandit.name || 'पंडित जी') : user?.name}</strong>!
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Previous & Next Arrow Controls */}
                 {heroSlides.length > 1 && (
@@ -688,16 +715,16 @@ export default function HomePage() {
                             </div>
                           )}
 
-                          {/* Role-Aware User / Pandit Status Badge */}
+                          {/* Role-Aware User / Pandit Status Badge (shown inside text block on desktop only) */}
                           {pandit ? (
-                            <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
+                            <div className={`hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
                               align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
                             }`}>
                               <span className="text-base">🔱</span>
                               <span> सादर प्रणाम, <strong>{pandit.name || 'पंडित जी'}</strong>! आप पुरोहित पोर्टल में लॉगिन हैं।</span>
                             </div>
                           ) : user ? (
-                            <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
+                            <div className={`hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
                               align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
                             }`}>
                               <span className="text-base">🙏</span>
@@ -733,9 +760,89 @@ export default function HomePage() {
         </div>
 
         {/* --- 5-ITEM UNIFIED STATS DOCK (MATCHING USER'S PHOTO EXACTLY) --- */}
-        <div className="relative z-20 max-w-6xl mx-auto px-4 -mt-6 sm:-mt-8 lg:-mt-10 mb-8 sm:mb-12">
-          <div className="bg-white rounded-2xl sm:rounded-full shadow-xl shadow-orange-950/5 border border-orange-100/90 py-3.5 px-4 sm:px-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 lg:gap-0 lg:divide-x lg:divide-slate-100">
+        <div className="relative z-20 max-w-6xl mx-auto px-3 sm:px-4 mt-3 sm:-mt-8 lg:-mt-10 mb-8 sm:mb-12">
+          <div className="bg-white rounded-2xl sm:rounded-full shadow-xl shadow-orange-950/5 border border-orange-100/90 p-2 sm:py-3.5 sm:px-8">
+            
+            {/* Mobile View: Sleek Horizontal Swipeable Stats Strip */}
+            <div className="flex sm:hidden items-center gap-2 overflow-x-auto no-scrollbar py-1 px-1 snap-x">
+              {/* 1. Devotees */}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-50/80 to-amber-50/40 border border-amber-100/90 shrink-0 snap-start shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-white border border-amber-200 text-amber-600 flex items-center justify-center text-base shrink-0 shadow-xs">
+                  🪷
+                </div>
+                <div className="min-w-0 pr-1">
+                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
+                    {stats.totalRamNaam >= 10000000 ? `${(stats.totalRamNaam / 10000000).toFixed(1)} Cr+` : '1M+'}
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                    Devotees
+                  </p>
+                </div>
+              </div>
+
+              {/* 2. 108+ Chanting Daily */}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-orange-50/80 to-orange-50/40 border border-orange-100/90 shrink-0 snap-start shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-white border border-orange-200 text-orange-600 flex items-center justify-center text-base shrink-0 shadow-xs">
+                  🕉️
+                </div>
+                <div className="min-w-0 pr-1">
+                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
+                    108+
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                    Chanting Daily
+                  </p>
+                </div>
+              </div>
+
+              {/* 3. Daily Spiritual Content */}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-yellow-50/80 to-yellow-50/40 border border-yellow-100/90 shrink-0 snap-start shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-white border border-yellow-200 text-yellow-600 flex items-center justify-center text-base shrink-0 shadow-xs">
+                  📖
+                </div>
+                <div className="min-w-0 pr-1">
+                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
+                    Daily
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                    Spiritual Content
+                  </p>
+                </div>
+              </div>
+
+              {/* 4. Festivals Live Darshan */}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-rose-50/80 to-rose-50/40 border border-rose-100/90 shrink-0 snap-start shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-white border border-rose-200 text-rose-600 flex items-center justify-center text-base shrink-0 shadow-xs">
+                  🛕
+                </div>
+                <div className="min-w-0 pr-1">
+                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
+                    Festivals
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                    Live Darshan
+                  </p>
+                </div>
+              </div>
+
+              {/* 5. Community Worldwide */}
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-50/80 to-emerald-50/40 border border-emerald-100/90 shrink-0 snap-start shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-white border border-emerald-200 text-emerald-600 flex items-center justify-center text-base shrink-0 shadow-xs">
+                  👥
+                </div>
+                <div className="min-w-0 pr-1">
+                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
+                    Community
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                    Worldwide
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Tablet & Desktop: Grand 5-Column Unified Pill Dock */}
+            <div className="hidden sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3 lg:gap-0 lg:divide-x lg:divide-slate-100">
               
               {/* 1. Devotees */}
               <div className="flex items-center gap-3 px-2 sm:px-4 py-1.5 justify-center lg:justify-start">
