@@ -3,3 +3,5 @@ node_modules/
 uploads/
 .kiro/
 swagger-output.json
+config/firebase-service-account.json
+*firebase-adminsdk*.json

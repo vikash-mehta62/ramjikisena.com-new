@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   BarChart3, Users, Church, Scroll, Sparkles, Calendar,
   FileText, Clock, Home, LogOut, ChevronLeft, ChevronRight,
-  Crown, DollarSign, Menu, X, TrendingUp, Shield
+  Crown, DollarSign, Menu, X, TrendingUp, Shield, Bell
 } from 'lucide-react';
 
 interface SidebarLink { href: string; label: string; icon: React.ReactNode; badge?: number; key?: string; }
@@ -36,6 +36,7 @@ export default function DashboardSidebar({ role, userName, userPhoto, permission
     { href: '/admin/admin-bookings', label: 'Bookings', icon: <Calendar className="w-5 h-5" />, key: 'bookings' },
     { href: '/admin/admin-blogs', label: 'Blogs (ब्लॉग)', icon: <FileText className="w-5 h-5" />, key: 'blogs' },
     { href: '/admin/admin-hero-slides', label: 'हीरो बैनर (Hero Slides)', icon: <span className="text-base leading-none">🖼️</span>, key: 'heroSlides' },
+    { href: '/admin/admin-push-notifications', label: 'पुश नोटिफिकेशन', icon: <Bell className="w-5 h-5 text-amber-300" />, key: 'notifications' },
     { href: '/admin/admin-services', label: 'सेवाएं (Services)', icon: <span className="text-base leading-none">🧭</span>, key: 'services' },
     { href: '/admin/admin-inspirations', label: 'दैनिक प्रेरणा (Chaupais)', icon: <span className="text-base leading-none">📖</span>, key: 'inspirations' },
   ];

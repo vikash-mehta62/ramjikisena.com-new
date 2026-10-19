@@ -28,6 +28,7 @@ var blogsRouter = require('./routes/blogs');
 var astrologyRouter = require('./routes/astrology');
 var astrologyAuthRouter = require('./routes/astrologyAuth');
 var astrologyDashboardRouter = require('./routes/astrologyDashboard');
+var notificationsRouter = require('./routes/notifications');
 
 var app = express();
 
@@ -125,6 +126,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/astrology', astrologyRouter);
 app.use('/api/astrology-auth', astrologyAuthRouter);
 app.use('/api/astrology-dashboard', astrologyDashboardRouter);
+app.use('/api/notifications', notificationsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -31,6 +31,7 @@ const ALL_PERMISSION_MODULES = [
   { key: 'bookings', label: 'Bookings', desc: 'पूजा बुकिंग्स एवं स्थिति नियंत्रण', icon: '📅', group: 'Services' },
   { key: 'blogs', label: 'Blogs & Approvals', desc: 'आध्यात्मिक ब्लॉग स्वीकृति', icon: '✍️', group: 'Content' },
   { key: 'samagri', label: 'Samagri Store', desc: 'पूजन सामग्री एवं ऑर्डर्स', icon: '🪔', group: 'Content' },
+  { key: 'notifications', label: 'Push Notifications', desc: 'पुश नोटिफिकेशन एवं संदेश प्रसारण', icon: '🔔', group: 'Engagement' },
 ];
 
 export default function AdminStaffPage() {
