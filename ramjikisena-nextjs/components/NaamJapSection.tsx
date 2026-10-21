@@ -486,41 +486,41 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
     </AnimatePresence>
 
     {/* Main Jaap Section */}
-    <section id="jaap" className="relative py-4 sm:py-8 bg-gradient-to-b from-[#FFFDF9] via-[#FFF9F0] to-[#FFFDF9] border-t border-orange-100/80 scroll-mt-20 overflow-hidden">
+    <section id="jaap" className="relative py-3 sm:py-6 bg-gradient-to-b from-[#FFFDF9] via-[#FFF9F0] to-[#FFFDF9] border-t border-orange-100/80 scroll-mt-20 overflow-hidden">
       <div className="container mx-auto px-3 sm:px-6 max-w-6xl">
 
         {/* Outer Section Card */}
-        <div className="relative overflow-hidden rounded-3xl shadow-lg shadow-orange-950/5 p-4 sm:p-7 border border-orange-200/80 bg-white">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-lg shadow-orange-950/5 p-3 sm:p-6 border border-orange-200/80 bg-white">
 
           <div className="relative z-10 max-w-5xl mx-auto">
 
             {/* Header with Devotional Greeting */}
-            <div className="text-center mb-3 sm:mb-5">
-              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider mb-1 bg-orange-100 border border-orange-200 text-orange-700 shadow-xs">
+            <div className="text-center mb-2.5 sm:mb-4">
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider mb-1 bg-orange-100 border border-orange-200 text-orange-700 shadow-xs">
                 <span>📿</span>
                 <span>श्री राम नाम जप माला — 108 Sacred Beads</span>
               </span>
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 leading-tight">
+              <h2 className="text-lg sm:text-2xl lg:text-3xl font-black text-slate-900 leading-tight">
                 {user ? (
                   <>जय श्री राम, <span className="text-orange-600">{user.name}</span>!</>
                 ) : (
                   <>श्री <span className="text-orange-600">राम नाम</span> जाप माला</>
                 )}
               </h2>
-              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 font-medium">
+              <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 font-medium">
                 108 मणियों की पवित्र माला फेरें, मन में शांति और अनंत पुण्य का संचार करें
               </p>
             </div>
 
             {/* Responsive Grid: 2 Columns on Desktop (lg:grid-cols-12), 1 Column on Mobile */}
-            <div className="grid lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+            <div className="grid lg:grid-cols-12 gap-3 sm:gap-5 items-stretch">
 
               {/* LEFT COLUMN (lg:col-span-5) — 3D Sacred Mala, Counter, Play/Pause, Goal Bar, Quote */}
-              <div className="lg:col-span-5 bg-[#FFFDF9] rounded-2xl sm:rounded-3xl border border-orange-200/80 p-4 sm:p-6 shadow-sm flex flex-col items-center justify-between overflow-hidden">
+              <div className="lg:col-span-5 bg-[#FFFDF9] rounded-2xl sm:rounded-3xl border border-orange-200/80 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-between overflow-hidden">
                 <div className="w-full flex flex-col items-center">
 
                   {/* 1. Mode Tabs at Top (Mala | Timer | Auto Count) */}
-                  <div className="flex items-center p-1 rounded-xl bg-orange-50/90 border border-orange-200/80 w-full mb-3">
+                  <div className="flex items-center p-1 rounded-xl bg-orange-50/90 border border-orange-200/80 w-full mb-2.5">
                     <button
                       onClick={() => { setJaapMode('mala'); setAutoCounting(false); setTimerRunning(false); }}
                       className={`flex-1 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
@@ -575,7 +575,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                       title="माला की मणियों को स्पर्श करके जप करें (+1)"
                       className="relative flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
                     >
-                      <svg viewBox="0 0 240 240" className="w-[190px] h-[190px] sm:w-[230px] sm:h-[230px] drop-shadow-md">
+                      <svg viewBox="0 0 240 240" className="w-[175px] h-[175px] sm:w-[225px] sm:h-[225px] drop-shadow-md">
                         <defs>
                           {/* Realistic 3D Rudraksha Bead Gradients */}
                           <radialGradient id="rudrakshaBeadGradient" cx="35%" cy="35%" r="65%">
@@ -674,10 +674,10 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
 
                       {/* Clean HTML typography inside center circle (eliminates SVG scaling/overlap bugs) */}
                       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
-                        <span className="text-3xl sm:text-4xl font-black text-amber-950 font-serif leading-none tracking-tight">
+                        <span className="text-2xl sm:text-4xl font-black text-amber-950 font-serif leading-none tracking-tight">
                           {currentCount % 108 === 0 && currentCount > 0 ? 108 : currentCount % 108}
                         </span>
-                        <span className="text-[11px] sm:text-xs font-bold text-amber-800/80 mt-1 uppercase tracking-wider">
+                        <span className="text-[10px] sm:text-xs font-bold text-amber-800/80 mt-1 uppercase tracking-wider">
                           {currentCount > 0 && currentCount % 108 === 0 ? 'जप पूर्ण' : 'जप जारी'}
                         </span>
                         {completedMalas > 0 ? (
@@ -685,7 +685,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                             {completedMalas} माला पूर्ण
                           </span>
                         ) : (
-                          <span className="text-[9px] font-bold text-slate-400 mt-0.5">/ 108 मनके</span>
+                          <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">/ 108 मनके</span>
                         )}
                       </div>
                     </div>
@@ -694,17 +694,17 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                     <button
                       onClick={incrementCount}
                       title="एक जाप जोड़ें (+1)"
-                      className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:scale-90 text-white shadow-md shadow-orange-500/25 flex items-center justify-center transition-all cursor-pointer z-20 shrink-0"
+                      className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 active:scale-90 text-white shadow-md shadow-orange-500/25 flex items-center justify-center transition-all cursor-pointer z-20 shrink-0"
                     >
                       <Plus className="w-4 h-4 sm:w-5 sm:h-5 stroke-[3]" />
                     </button>
                   </div>
 
                   {/* 3. PROMINENT GLOWING PLAY/PAUSE/TAP BUTTON (Matching Screen 3) */}
-                  <div className="my-2.5 flex items-center justify-center">
+                  <div className="my-2 flex items-center justify-center">
                     <button
                       onClick={jaapMode === 'auto' ? () => setAutoCounting(prev => !prev) : incrementCount}
-                      className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-orange-600 via-amber-500 to-orange-500 hover:from-orange-700 hover:to-amber-600 active:scale-90 text-white shadow-lg shadow-orange-500/35 flex items-center justify-center transition-all cursor-pointer border-2 border-white/80"
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-orange-600 via-amber-500 to-orange-500 hover:from-orange-700 hover:to-amber-600 active:scale-90 text-white shadow-lg shadow-orange-500/35 flex items-center justify-center transition-all cursor-pointer border-2 border-white/80"
                       title={jaapMode === 'auto' ? (autoCounting ? 'Pause Auto Jaap' : 'Start Auto Jaap') : 'क्लिक करके जाप करें (+1)'}
                     >
                       {jaapMode === 'auto' ? (
@@ -716,17 +716,17 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                   </div>
 
                   {/* 4. GOAL PROGRESS BAR (Matching Screen 3: "आज का लक्ष्य" 108 / 108) */}
-                  <div className="w-full p-2.5 sm:p-3 rounded-2xl bg-amber-50/70 border border-amber-200/70">
-                    <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
-                      <span className="text-amber-900 font-black flex items-center gap-1">
+                  <div className="w-full p-2 sm:p-2.5 rounded-2xl bg-amber-50/70 border border-amber-200/70">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
+                      <span className="text-amber-900 font-black flex items-center gap-1 text-[11px] sm:text-xs">
                         <span>🎯</span>
                         <span>आज का लक्ष्य</span>
                       </span>
-                      <span className="text-orange-600 font-black font-mono">
+                      <span className="text-orange-600 font-black font-mono text-xs">
                         {currentCount % 108 === 0 && currentCount > 0 ? 108 : currentCount % 108} / 108
                       </span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-amber-200/60 overflow-hidden">
+                    <div className="w-full h-1.5 sm:h-2 rounded-full bg-amber-200/60 overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-300"
                         style={{ width: `${Math.min(100, Math.max(3, malaProgress))}%` }}
@@ -735,8 +735,8 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                   </div>
 
                   {/* 5. DEVOTIONAL QUOTE CARD (Matching Screen 3) */}
-                  <div className="w-full mt-2.5 p-3 rounded-2xl bg-gradient-to-r from-amber-50/80 via-orange-50/50 to-amber-50/80 border border-amber-200/60 text-center">
-                    <p className="text-xs font-bold text-slate-800 font-serif leading-relaxed italic">
+                  <div className="w-full mt-2 p-2.5 sm:p-3 rounded-2xl bg-gradient-to-r from-amber-50/80 via-orange-50/50 to-amber-50/80 border border-amber-200/60 text-center">
+                    <p className="text-[11px] sm:text-xs font-bold text-slate-800 font-serif leading-relaxed italic">
                       “राम नाम में ऐसी शक्ति है जो मन को शांति और जीवन को सुखमय बना देती है।”
                     </p>
                   </div>
@@ -814,24 +814,24 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
               </div>
 
               {/* RIGHT COLUMN (lg:col-span-7) — Devotional Stats, Name Selector, Tactile Lekhan Keys, Display Box, Actions, Mantra */}
-              <div className="lg:col-span-7 bg-[#FFFDF9] rounded-2xl sm:rounded-[2.5rem] border border-orange-200/90 p-3 sm:p-7 shadow-lg shadow-orange-900/5 flex flex-col justify-between overflow-hidden">
+              <div className="lg:col-span-7 bg-[#FFFDF9] rounded-2xl sm:rounded-3xl border border-orange-200/90 p-3 sm:p-5 shadow-lg shadow-orange-900/5 flex flex-col justify-between overflow-hidden">
                 <div>
 
                   {/* 1. Three Top Stats (Total Jaap | Today | Streak) */}
-                  <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full mb-3 sm:mb-5 text-center">
-                    <div className="bg-orange-50/70 rounded-xl sm:rounded-2xl p-2 sm:p-3 border border-orange-100 shadow-sm">
+                  <div className="grid grid-cols-3 gap-1.5 sm:gap-3 w-full mb-2.5 sm:mb-3.5 text-center">
+                    <div className="bg-orange-50/70 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 border border-orange-100 shadow-sm">
                       <p className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-wider">Total Jaap</p>
                       <p className="text-sm sm:text-xl font-black text-slate-900 mt-0.5 truncate">
                         {((user?.totalCount || 0) + currentCount).toLocaleString('en-IN')}
                       </p>
                     </div>
-                    <div className="bg-amber-50/70 rounded-xl sm:rounded-2xl p-2 sm:p-3 border border-amber-100 shadow-sm">
+                    <div className="bg-amber-50/70 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 border border-amber-100 shadow-sm">
                       <p className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-wider">Today (आज)</p>
                       <p className="text-sm sm:text-xl font-black text-orange-600 mt-0.5">
                         {currentCount}
                       </p>
                     </div>
-                    <div className="bg-rose-50/70 rounded-xl sm:rounded-2xl p-2 sm:p-3 border border-rose-100 shadow-sm">
+                    <div className="bg-rose-50/70 rounded-xl sm:rounded-2xl p-1.5 sm:p-2.5 border border-rose-100 shadow-sm">
                       <p className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-wider">पूर्ण माला</p>
                       <p className="text-sm sm:text-xl font-black text-slate-900 mt-0.5">
                         {completedMalas > 0 ? `${completedMalas} माला` : 'साधना जारी'}
@@ -840,8 +840,8 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                   </div>
 
                   {/* 2. Divine Name Selection Tabs [राम] [राधे] [हरे कृष्णा] */}
-                  <div className="w-full mb-3 sm:mb-4">
-                    <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1.5 sm:mb-2">
+                  <div className="w-full mb-2.5 sm:mb-3">
+                    <p className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1 sm:mb-1.5">
                       इष्ट देव नाम चयन:
                     </p>
                     <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
@@ -850,7 +850,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                   </div>
 
                   {/* 3. Tactile 3D Naam Lekhan Keyboard [ र ] [ ा ] [ म ] */}
-                  <div className="w-full pt-2.5 sm:pt-3 border-t border-orange-100">
+                  <div className="w-full pt-2 sm:pt-2.5 border-t border-orange-100">
                     <div className="flex items-center justify-between mb-2 sm:mb-2.5">
                       <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <span>✍️</span>

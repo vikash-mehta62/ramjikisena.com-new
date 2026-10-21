@@ -484,7 +484,7 @@ export default function HomePage() {
         onMouseLeave={() => setIsSlidePaused(false)}
       >
         {/* Full-bleed Panoramic Banner Carousel Container */}
-        <div className="relative w-full min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] xl:min-h-[540px] flex items-center">
+        <div className="relative w-full min-h-[340px] sm:min-h-[420px] lg:min-h-[480px] flex items-center">
           
           {/* Background Image / Panoramic Artwork with AnimatePresence */}
           {(() => {
@@ -584,7 +584,7 @@ export default function HomePage() {
 
                 {/* Foreground Text & Action Buttons */}
                 {isAnyContentVisible && (
-                  <div className="container mx-auto px-4 sm:px-8 lg:px-14 relative z-20 pt-8 sm:pt-14 pb-14 sm:pb-18">
+                  <div className="container mx-auto px-4 sm:px-8 lg:px-14 relative z-20 pt-6 sm:pt-10 pb-10 sm:pb-14">
                     <div className={`max-w-xl lg:max-w-2xl transition-all duration-300 ${
                       align === 'left'
                         ? 'text-center md:text-left mx-auto md:ml-4 lg:ml-8 md:mr-auto'
@@ -711,15 +711,15 @@ export default function HomePage() {
       </section>
 
       {/* --- 4-GATEWAY FLOATING ACTION DOCK (EXACTLY MATCHING USER MOCKUP "WEBSITE - HOMEPAGE") --- */}
-      <div className="relative z-30 max-w-5xl mx-auto px-3 sm:px-4 -mt-7 sm:-mt-9 lg:-mt-11">
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl shadow-orange-950/10 border border-orange-200/80 p-2 sm:p-3">
+      <div className="relative z-30 max-w-5xl mx-auto px-3 sm:px-4 -mt-5 sm:-mt-8 lg:-mt-10">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl shadow-orange-950/10 border border-orange-200/80 p-2 sm:p-2.5">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
             {/* 1. Pandit Booking */}
             <button
               onClick={() => safeNavigate('/pandits')}
-              className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-orange-50/70 border border-orange-100 hover:border-orange-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+              className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-orange-50/70 border border-orange-100 hover:border-orange-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
                 🔱
               </div>
               <div className="min-w-0">
@@ -735,9 +735,9 @@ export default function HomePage() {
             {/* 2. Astrologer Booking */}
             <button
               onClick={() => safeNavigate('/astrology')}
-              className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-amber-50/70 border border-orange-100 hover:border-amber-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+              className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-amber-50/70 border border-orange-100 hover:border-amber-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-500 text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
                 🔮
               </div>
               <div className="min-w-0">
@@ -753,9 +753,9 @@ export default function HomePage() {
             {/* 3. Bhajan & Aarti */}
             <button
               onClick={() => safeNavigate('/#jaap')}
-              className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-rose-50/70 border border-orange-100 hover:border-rose-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+              className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-rose-50/70 border border-orange-100 hover:border-rose-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-rose-500 to-orange-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-rose-500 to-orange-500 text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
                 🪔
               </div>
               <div className="min-w-0">
@@ -771,9 +771,9 @@ export default function HomePage() {
             {/* 4. Ram Naam Jaap */}
             <button
               onClick={() => safeNavigate('/#jaap')}
-              className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-emerald-50/70 border border-orange-100 hover:border-emerald-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+              className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-emerald-50/70 border border-orange-100 hover:border-emerald-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
                 📿
               </div>
               <div className="min-w-0">
@@ -790,8 +790,8 @@ export default function HomePage() {
       </div>
 
       {/* --- SLEEK LIVE STATS STRIP (TIGHT COMPACT SPACING) --- */}
-      <div className="relative z-20 max-w-5xl mx-auto px-3 sm:px-4 my-2.5 sm:my-3.5">
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-orange-100/90 py-2 px-3 sm:px-6 shadow-xs">
+      <div className="relative z-20 max-w-5xl mx-auto px-3 sm:px-4 my-2 sm:my-3">
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl border border-orange-100/90 py-1.5 px-3 sm:px-6 shadow-xs">
           
           {/* Mobile View: Horizontal Swipeable Stats Strip */}
           <div className="flex sm:hidden items-center gap-2 overflow-x-auto no-scrollbar py-0.5 snap-x">
@@ -871,37 +871,37 @@ export default function HomePage() {
       </div>
             
       {/* --- 3-CARD SHOWCASE SECTION (MATCHING MIDDLE ROW IN PHOTO) --- */}
-      <section className="py-3.5 sm:py-5 bg-[#FFFDF9]">
+      <section className="py-2.5 sm:py-4 bg-[#FFFDF9]">
         <div className="container mx-auto px-3 sm:px-6 max-w-6xl">
-          <div className="grid lg:grid-cols-12 gap-3.5 sm:gap-4 items-stretch">
+          <div className="grid lg:grid-cols-12 gap-3 sm:gap-4 items-stretch">
 
             {/* Card 1: Today's Ram Naam Banner (Wide) */}
-            <div className="lg:col-span-6 bg-gradient-to-br from-amber-100/80 via-orange-50 to-amber-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-orange-200/80 shadow-xs flex flex-col justify-between relative overflow-hidden">
+            <div className="lg:col-span-6 bg-gradient-to-br from-amber-100/80 via-orange-50 to-amber-50 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-orange-200/80 shadow-xs flex flex-col justify-between relative overflow-hidden">
               <div className="relative z-10">
                 <span className="text-[10px] font-black uppercase tracking-wider text-orange-700 bg-white/80 px-2.5 py-0.5 rounded-full border border-orange-200">
                   Today's Ram Naam
                 </span>
 
-                <div className="mt-3 mb-2">
+                <div className="mt-2.5 mb-2">
                   <p className="text-xl sm:text-2xl lg:text-3xl font-black text-orange-900 leading-snug font-serif">
                     “ श्री राम जय राम जय जय राम ”
                   </p>
-                  <p className="text-xs sm:text-sm text-slate-700 mt-1.5 font-medium">
+                  <p className="text-xs sm:text-sm text-slate-700 mt-1 font-medium">
                     Chant today and bring positivity and peace into your life.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-3 relative z-10 flex items-center justify-between">
+              <div className="pt-2.5 relative z-10 flex items-center justify-between">
                 <button
                   onClick={() => safeNavigate('/#jaap')}
-                  className="px-5 py-2.5 rounded-full font-black text-xs text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 shadow-sm transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2 rounded-full font-black text-xs text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 shadow-sm transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Start Jaap Now</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
 
-                <div className="w-11 h-11 rounded-xl bg-white/80 border border-orange-200 flex items-center justify-center text-2xl shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-white/80 border border-orange-200 flex items-center justify-center text-xl shadow-xs">
                   🙏
                 </div>
               </div>
@@ -918,7 +918,7 @@ export default function HomePage() {
               const totalChaupais = dailyChaupais.length || 2;
               const currentNum = (activeChaupaiIdx % Math.max(1, dailyChaupais.length)) + 1;
               return (
-                <div className="lg:col-span-3 bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-orange-100 shadow-xs flex flex-col justify-between">
+                <div className="lg:col-span-3 bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-orange-100 shadow-xs flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-1.5">
@@ -952,7 +952,7 @@ export default function HomePage() {
                     <p className="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed italic mt-0.5 font-serif">
                       "{currentChaupai.chaupai}"
                     </p>
-                    <p className="text-[11px] sm:text-xs text-slate-600 mt-1.5 leading-relaxed line-clamp-3">
+                    <p className="text-[11px] sm:text-xs text-slate-600 mt-1 leading-relaxed line-clamp-3">
                       {currentChaupai.bhavarth}
                     </p>
                     <p className="text-[10px] font-semibold text-orange-600 mt-1">
@@ -960,7 +960,7 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  <div className="pt-3 flex items-center gap-2">
+                  <div className="pt-2.5 flex items-center gap-2">
                     <button
                       onClick={() => setActiveChaupaiIdx((prev) => (prev + 1) % Math.max(1, dailyChaupais.length))}
                       className="flex-1 py-1.5 px-2.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95"
@@ -981,7 +981,7 @@ export default function HomePage() {
             })()}
 
             {/* Card 3: Join Our Community Card */}
-            <div className="lg:col-span-3 bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-orange-100 shadow-xs flex flex-col justify-between">
+            <div className="lg:col-span-3 bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 border border-orange-100 shadow-xs flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
@@ -998,9 +998,9 @@ export default function HomePage() {
                 </p>
 
                 {/* Devotees Avatars row */}
-                <div className="flex items-center -space-x-1.5 mt-3">
+                <div className="flex items-center -space-x-1.5 mt-2.5">
                   {['🙏', '🚩', '🕉️', '🌸', '✨'].map((emoji, idx) => (
-                    <div key={idx} className="w-7 h-7 rounded-full bg-orange-100 border border-white flex items-center justify-center text-[10px] shadow-xs">
+                    <div key={idx} className="w-6 h-6 rounded-full bg-orange-100 border border-white flex items-center justify-center text-[9px] shadow-xs">
                       {emoji}
                     </div>
                   ))}
@@ -1010,7 +1010,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="pt-3">
+              <div className="pt-2.5">
                 <button
                   onClick={() => safeNavigate('/community')}
                   className="w-full py-2 rounded-xl font-bold text-xs text-white bg-orange-600 hover:bg-orange-700 shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
@@ -1025,15 +1025,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* --- INTERACTIVE RAM NAAM JAAP TOOL --- */}
-      {!loading && <NaamJapSection user={user} onSaveSuccess={checkAuth} />}
+      {/* --- INTERACTIVE RAM NAAM JAAP TOOL (ALWAYS RENDERED ON INITIAL LOAD) --- */}
+      <NaamJapSection user={user} onSaveSuccess={checkAuth} />
 
       {/* --- ALL DIVINE SERVICES SECTION (WHITE-AND-ORANGE THEMED) --- */}
-      <section id="services" className="py-8 sm:py-12 bg-white border-t border-orange-100/70">
+      <section id="services" className="py-6 sm:py-8 bg-white border-t border-orange-100/70">
         <div className="container mx-auto px-4 sm:px-6">
 
-          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
-            <span className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-black mb-1.5">
+          <div className="text-center max-w-2xl mx-auto mb-5 sm:mb-6">
+            <span className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-black mb-1">
               🚩 वैदिक सनातन सेवाएं
             </span>
             <h2 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
@@ -1044,7 +1044,7 @@ export default function HomePage() {
             </p>
 
             {/* Filter Tabs */}
-            <div className="flex items-center justify-center flex-wrap gap-2 mt-4 sm:mt-5">
+            <div className="flex items-center justify-center flex-wrap gap-2 mt-3 sm:mt-4">
               {SERVICE_CATEGORIES.map(cat => {
                 const active = serviceCategory === cat.id;
                 return (
@@ -1139,11 +1139,11 @@ export default function HomePage() {
       </section>
 
       {/* --- TOP DEVOTEES HONOR ROLL (सर्वोच्च राम भक्त मंडल) --- */}
-      <section className="py-8 sm:py-10 bg-[#FFFDF9] border-t border-orange-100/70">
+      <section className="py-6 sm:py-8 bg-[#FFFDF9] border-t border-orange-100/70">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4 sm:mb-5">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-black mb-1.5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-black mb-1">
                 <Trophy className="w-3.5 h-3.5 text-amber-600" />
                 <span>संकीर्तन शिरोमणि मंडल</span>
               </div>
@@ -1164,32 +1164,32 @@ export default function HomePage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {topDevotees.slice(0, 5).map((devotee, index) => {
               const medals = ['🥇', '🥈', '🥉', '🎖️', '🎖️'];
               return (
                 <div
                   key={index}
-                  className="bg-white border border-orange-100 rounded-3xl p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  className="bg-white border border-orange-100 rounded-2xl sm:rounded-3xl p-3.5 sm:p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xl">{medals[index] || '🚩'}</span>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-lg sm:text-xl">{medals[index] || '🚩'}</span>
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200">
                       #{index + 1}
                     </span>
                   </div>
 
                   <div>
-                    <p className="text-sm font-black text-slate-900 truncate">{devotee.name || devotee.username}</p>
-                    <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                    <p className="text-xs sm:text-sm font-black text-slate-900 truncate">{devotee.name || devotee.username}</p>
+                    <p className="text-[10px] sm:text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
                       <MapPin className="w-3 h-3 text-orange-500" />
                       <span>{devotee.city || 'भारत'}</span>
                     </p>
                   </div>
 
-                  <div className="mt-3 pt-2.5 border-t border-slate-100">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">कुल राम नाम</p>
-                    <p className="text-sm font-black text-orange-600">{formatIndianNumber(devotee.totalCount)}</p>
+                  <div className="mt-2.5 pt-2 border-t border-slate-100">
+                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">कुल राम नाम</p>
+                    <p className="text-xs sm:text-sm font-black text-orange-600">{formatIndianNumber(devotee.totalCount)}</p>
                   </div>
                 </div>
               );
@@ -1199,7 +1199,7 @@ export default function HomePage() {
       </section>
 
       {/* --- BOTTOM BANNER: DOWNLOAD APP & GLOBAL BHAKTI MOVEMENT (MATCHING PHOTO FOOTER BAR) --- */}
-      <section className="bg-gradient-to-r from-[#2B1104] via-[#3D1805] to-[#2B1104] text-white py-8 border-t border-orange-950">
+      <section className="bg-gradient-to-r from-[#2B1104] via-[#3D1805] to-[#2B1104] text-white py-5 sm:py-6 border-t border-orange-950">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
 
