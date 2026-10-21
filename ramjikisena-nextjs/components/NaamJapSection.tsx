@@ -486,46 +486,46 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
     </AnimatePresence>
 
     {/* Main Jaap Section */}
-    <section id="jaap" className="relative py-4 sm:py-16 bg-gradient-to-b from-[#FFFDF9] via-[#FFF8EE] to-[#FFFDF9] border-t border-orange-100/80 scroll-mt-20 sm:scroll-mt-24 pb-20 md:pb-16 overflow-hidden">
-      <div className="container mx-auto px-2 sm:px-6 max-w-full">
+    <section id="jaap" className="relative py-4 sm:py-8 bg-gradient-to-b from-[#FFFDF9] via-[#FFF9F0] to-[#FFFDF9] border-t border-orange-100/80 scroll-mt-20 overflow-hidden">
+      <div className="container mx-auto px-3 sm:px-6 max-w-6xl">
 
         {/* Outer Section Card */}
-        <div className="relative overflow-hidden rounded-2xl sm:rounded-[2.5rem] shadow-xl shadow-orange-950/5 p-3 sm:p-8 border border-orange-200/90 bg-white">
+        <div className="relative overflow-hidden rounded-3xl shadow-lg shadow-orange-950/5 p-4 sm:p-7 border border-orange-200/80 bg-white">
 
-          <div className="relative z-10 max-w-6xl mx-auto">
+          <div className="relative z-10 max-w-5xl mx-auto">
 
             {/* Header with Devotional Greeting */}
-            <div className="text-center mb-3 sm:mb-6">
-              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:px-4 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider mb-1.5 bg-orange-100 border border-orange-200 text-orange-700 shadow-sm">
+            <div className="text-center mb-3 sm:mb-5">
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 sm:px-3.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider mb-1 bg-orange-100 border border-orange-200 text-orange-700 shadow-xs">
                 <span>📿</span>
                 <span>श्री राम नाम जप माला — 108 Sacred Beads</span>
               </span>
-              <h2 className="text-xl sm:text-3xl font-black text-slate-900 leading-tight">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 leading-tight">
                 {user ? (
                   <>जय श्री राम, <span className="text-orange-600">{user.name}</span>!</>
                 ) : (
                   <>श्री <span className="text-orange-600">राम नाम</span> जाप माला</>
                 )}
               </h2>
-              <p className="text-[11px] sm:text-sm text-slate-500 mt-0.5 sm:mt-1 font-medium">
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 font-medium">
                 108 मणियों की पवित्र माला फेरें, मन में शांति और अनंत पुण्य का संचार करें
               </p>
             </div>
 
             {/* Responsive Grid: 2 Columns on Desktop (lg:grid-cols-12), 1 Column on Mobile */}
-            <div className="grid lg:grid-cols-12 gap-3 sm:gap-6 lg:gap-8 items-stretch">
+            <div className="grid lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
 
-              {/* LEFT COLUMN (lg:col-span-5) — 3D Sacred Mala, Modes, Bead Styling, Mini Bhajan Player */}
-              <div className="lg:col-span-5 bg-[#FFFDF9] rounded-2xl sm:rounded-[2.5rem] border border-orange-200/90 p-3 sm:p-7 shadow-lg shadow-orange-900/5 flex flex-col items-center justify-between overflow-hidden">
+              {/* LEFT COLUMN (lg:col-span-5) — 3D Sacred Mala, Counter, Play/Pause, Goal Bar, Quote */}
+              <div className="lg:col-span-5 bg-[#FFFDF9] rounded-2xl sm:rounded-3xl border border-orange-200/80 p-4 sm:p-6 shadow-sm flex flex-col items-center justify-between overflow-hidden">
                 <div className="w-full flex flex-col items-center">
 
                   {/* 1. Mode Tabs at Top (Mala | Timer | Auto Count) */}
-                  <div className="flex items-center p-1 rounded-xl sm:rounded-2xl bg-orange-50 border border-orange-200/80 w-full mb-3 sm:mb-5">
+                  <div className="flex items-center p-1 rounded-xl bg-orange-50/90 border border-orange-200/80 w-full mb-3">
                     <button
                       onClick={() => { setJaapMode('mala'); setAutoCounting(false); setTimerRunning(false); }}
-                      className={`flex-1 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                         jaapMode === 'mala'
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md'
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm'
                           : 'text-slate-600 hover:text-orange-600'
                       }`}
                     >
@@ -533,9 +533,9 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                     </button>
                     <button
                       onClick={() => { setJaapMode('timer'); setAutoCounting(false); }}
-                      className={`flex-1 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                         jaapMode === 'timer'
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md'
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm'
                           : 'text-slate-600 hover:text-orange-600'
                       }`}
                     >
@@ -546,9 +546,9 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                         setJaapMode('auto');
                         setTimerRunning(false);
                       }}
-                      className={`flex-1 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-black transition-all cursor-pointer ${
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                         jaapMode === 'auto'
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md'
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-sm'
                           : 'text-slate-600 hover:text-orange-600'
                       }`}
                     >
@@ -556,8 +556,8 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                     </button>
                   </div>
 
-                  {/* 2. REALISTIC 3D RUDRAKSHA MALA (Interactive beads & +/- buttons) */}
-                  <div className="relative w-full flex items-center justify-between sm:justify-center gap-1 sm:gap-4 my-1 sm:my-2 select-none px-0 sm:px-2 max-w-full">
+                  {/* 2. REALISTIC 3D RUDRAKSHA MALA (Center Clean Counter Overlay) */}
+                  <div className="relative w-full flex items-center justify-center gap-2 sm:gap-4 my-1 select-none">
 
                     {/* Left Round Minus Button [-] */}
                     <button
@@ -573,9 +573,9 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                     <div
                       onClick={incrementCount}
                       title="माला की मणियों को स्पर्श करके जप करें (+1)"
-                      className="relative mx-auto flex items-center justify-center cursor-pointer active:scale-95 transition-transform shrink-1 min-w-0"
+                      className="relative flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
                     >
-                      <svg viewBox="0 0 240 240" className="w-[180px] h-[180px] xs:w-[210px] xs:h-[210px] sm:w-[260px] sm:h-[260px] max-w-full drop-shadow-md">
+                      <svg viewBox="0 0 240 240" className="w-[190px] h-[190px] sm:w-[230px] sm:h-[230px] drop-shadow-md">
                         <defs>
                           {/* Realistic 3D Rudraksha Bead Gradients */}
                           <radialGradient id="rudrakshaBeadGradient" cx="35%" cy="35%" r="65%">
@@ -670,44 +670,24 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                             </g>
                           );
                         })}
-
-                        {/* Large Counter in Center (Matching Photo: 108 / /108) */}
-                        <text
-                          x="120"
-                          y="124"
-                          textAnchor="middle"
-                          fill="#431407"
-                          fontSize="36"
-                          fontWeight="900"
-                          fontFamily="system-ui, sans-serif"
-                        >
-                          {currentCount % 108 === 0 && currentCount > 0 ? 108 : currentCount % 108}
-                        </text>
-                        <text
-                          x="120"
-                          y="142"
-                          textAnchor="middle"
-                          fill="#78716C"
-                          fontSize="12"
-                          fontWeight="bold"
-                        >
-                          /108
-                        </text>
-
-                        {/* Completed Mala badge in center */}
-                        {completedMalas > 0 && (
-                          <text
-                            x="120"
-                            y="158"
-                            textAnchor="middle"
-                            fill="#EA580C"
-                            fontSize="9"
-                            fontWeight="900"
-                          >
-                            {completedMalas} माला पूर्ण
-                          </text>
-                        )}
                       </svg>
+
+                      {/* Clean HTML typography inside center circle (eliminates SVG scaling/overlap bugs) */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
+                        <span className="text-3xl sm:text-4xl font-black text-amber-950 font-serif leading-none tracking-tight">
+                          {currentCount % 108 === 0 && currentCount > 0 ? 108 : currentCount % 108}
+                        </span>
+                        <span className="text-[11px] sm:text-xs font-bold text-amber-800/80 mt-1 uppercase tracking-wider">
+                          {currentCount > 0 && currentCount % 108 === 0 ? 'जप पूर्ण' : 'जप जारी'}
+                        </span>
+                        {completedMalas > 0 ? (
+                          <span className="text-[9px] sm:text-[10px] font-black text-orange-700 bg-orange-100/90 px-2 py-0.5 rounded-full mt-1 border border-orange-200">
+                            {completedMalas} माला पूर्ण
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-bold text-slate-400 mt-0.5">/ 108 मनके</span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Right Round Plus Button [+] */}
@@ -720,46 +700,57 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                     </button>
                   </div>
 
-                  {/* 3. CONDITIONAL MODE CONTROLS */}
-                  {/* (A) When AUTO mode: Show prominent Start/Pause Auto Jaap button */}
-                  {jaapMode === 'auto' && (
-                    <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="w-full mt-2.5 sm:mt-3">
-                      <button
-                        onClick={() => setAutoCounting(prev => !prev)}
-                        className={`w-full py-2.5 sm:py-3 px-4 sm:px-6 rounded-full font-black text-xs sm:text-sm text-white transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer ${
-                          autoCounting
-                            ? 'bg-gradient-to-r from-amber-600 to-rose-600 shadow-rose-500/30 active:scale-95'
-                            : 'bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 shadow-orange-500/30 active:scale-95'
-                        }`}
-                      >
-                        {autoCounting ? (
-                          <>
-                            <Pause className="w-4 h-4 text-white" />
-                            <span>Pause Auto Jaap (रोकें)</span>
-                          </>
-                        ) : (
-                          <>
-                            <Play className="w-4 h-4 text-white fill-white" />
-                            <span>Start Auto Jaap (शुरू करें)</span>
-                          </>
-                        )}
-                      </button>
-                      <p className="text-[10px] sm:text-[11px] text-center text-slate-500 mt-1 sm:mt-1.5 font-medium">
-                        {autoCounting ? '⚡ अखंड जाप प्रवाह चालू है (प्रत्येक 1.2s)' : 'क्लिक करके अखंड स्वतः जाप शुरू करें'}
-                      </p>
-                    </motion.div>
-                  )}
+                  {/* 3. PROMINENT GLOWING PLAY/PAUSE/TAP BUTTON (Matching Screen 3) */}
+                  <div className="my-2.5 flex items-center justify-center">
+                    <button
+                      onClick={jaapMode === 'auto' ? () => setAutoCounting(prev => !prev) : incrementCount}
+                      className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-orange-600 via-amber-500 to-orange-500 hover:from-orange-700 hover:to-amber-600 active:scale-90 text-white shadow-lg shadow-orange-500/35 flex items-center justify-center transition-all cursor-pointer border-2 border-white/80"
+                      title={jaapMode === 'auto' ? (autoCounting ? 'Pause Auto Jaap' : 'Start Auto Jaap') : 'क्लिक करके जाप करें (+1)'}
+                    >
+                      {jaapMode === 'auto' ? (
+                        autoCounting ? <Pause className="w-5 h-5 text-white" /> : <Play className="w-5 h-5 text-white ml-0.5 fill-white" />
+                      ) : (
+                        <Play className="w-5 h-5 text-white ml-0.5 fill-white" />
+                      )}
+                    </button>
+                  </div>
 
-                  {/* (B) When TIMER mode: Show timer selector and controls */}
+                  {/* 4. GOAL PROGRESS BAR (Matching Screen 3: "आज का लक्ष्य" 108 / 108) */}
+                  <div className="w-full p-2.5 sm:p-3 rounded-2xl bg-amber-50/70 border border-amber-200/70">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
+                      <span className="text-amber-900 font-black flex items-center gap-1">
+                        <span>🎯</span>
+                        <span>आज का लक्ष्य</span>
+                      </span>
+                      <span className="text-orange-600 font-black font-mono">
+                        {currentCount % 108 === 0 && currentCount > 0 ? 108 : currentCount % 108} / 108
+                      </span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-amber-200/60 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(100, Math.max(3, malaProgress))}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* 5. DEVOTIONAL QUOTE CARD (Matching Screen 3) */}
+                  <div className="w-full mt-2.5 p-3 rounded-2xl bg-gradient-to-r from-amber-50/80 via-orange-50/50 to-amber-50/80 border border-amber-200/60 text-center">
+                    <p className="text-xs font-bold text-slate-800 font-serif leading-relaxed italic">
+                      “राम नाम में ऐसी शक्ति है जो मन को शांति और जीवन को सुखमय बना देती है।”
+                    </p>
+                  </div>
+
+                  {/* (B) Timer Mode Controls if active */}
                   {jaapMode === 'timer' && (
-                    <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="w-full mt-2.5 sm:mt-3 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-amber-50/70 border border-amber-200">
-                      <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                        <span className="text-[11px] sm:text-xs font-bold text-slate-700">⏱️ साधना समय:</span>
-                        <span className="text-sm sm:text-base font-black text-orange-600 font-mono">
+                    <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="w-full mt-2 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-[11px] font-bold text-slate-700">⏱️ साधना समय:</span>
+                        <span className="text-sm font-black text-orange-600 font-mono">
                           {Math.floor(timerLeft / 60).toString().padStart(2, '0')}:{(timerLeft % 60).toString().padStart(2, '0')}
                         </span>
                       </div>
-                      <div className="grid grid-cols-4 gap-1 sm:gap-1.5 mb-2 sm:mb-2.5">
+                      <div className="grid grid-cols-4 gap-1 mb-2">
                         {[
                           { label: '5m', sec: 300 },
                           { label: '10m', sec: 600 },
@@ -773,9 +764,9 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                               setTimerLeft(t.sec);
                               setTimerRunning(false);
                             }}
-                            className={`py-1 rounded-lg text-[10px] sm:text-xs font-bold transition-all cursor-pointer ${
+                            className={`py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
                               timerDuration === t.sec
-                                ? 'bg-orange-600 text-white shadow-sm'
+                                ? 'bg-orange-600 text-white shadow-xs'
                                 : 'bg-white text-slate-700 border border-amber-200 hover:bg-orange-50'
                             }`}
                           >
@@ -785,51 +776,39 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                       </div>
                       <button
                         onClick={() => setTimerRunning(prev => !prev)}
-                        className="w-full py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-black text-xs text-white bg-gradient-to-r from-orange-500 to-amber-500 shadow-sm cursor-pointer"
+                        className="w-full py-1.5 rounded-lg font-black text-xs text-white bg-gradient-to-r from-orange-500 to-amber-500 shadow-xs cursor-pointer"
                       >
                         {timerRunning ? 'Pause Timer' : 'Start Timer'}
                       </button>
                     </motion.div>
                   )}
 
-                  {/* (C) When MALA mode: Subtle instruction hint instead of big Start button */}
-                  {jaapMode === 'mala' && (
-                    <div className="w-full mt-2 sm:mt-3 py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl sm:rounded-2xl bg-orange-50/60 border border-orange-200/60 text-center">
-                      <p className="text-[10px] sm:text-[11px] font-bold text-orange-800">
-                        📿 मणियों को स्पर्श करें, <span className="text-orange-600">[+]</span> दबाएं या नीचे बटन से लिखें
-                      </p>
-                    </div>
-                  )}
+                  {/* 6. Settings Row (Sound & Mala Beads) */}
+                  <div className="w-full mt-2.5 p-2 rounded-xl bg-white border border-orange-100 shadow-xs flex items-center justify-between gap-2">
+                    <button
+                      onClick={() => setSoundEnabled(prev => !prev)}
+                      className="flex-1 py-1 px-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 bg-orange-50/80 hover:bg-orange-100 text-orange-800 border border-orange-200 cursor-pointer"
+                    >
+                      {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-orange-600" /> : <VolumeX className="w-3.5 h-3.5 text-slate-400" />}
+                      <span>ध्वनि: {soundEnabled ? 'ON' : 'OFF'}</span>
+                    </button>
 
-                  {/* 4. Jaap Settings Row (Sound & Mala Beads) */}
-                  <div className="w-full mt-2 sm:mt-4 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white border border-orange-100 shadow-sm flex flex-col gap-1.5 sm:gap-2">
-                    <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400">Jaap Settings</p>
-                    <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-                      <button
-                        onClick={() => setSoundEnabled(prev => !prev)}
-                        className="flex-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 bg-orange-50/80 hover:bg-orange-100 text-orange-800 border border-orange-200 cursor-pointer"
-                      >
-                        {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-orange-600" /> : <VolumeX className="w-3.5 h-3.5 text-slate-400" />}
-                        <span>ध्वनि: {soundEnabled ? 'ON' : 'OFF'}</span>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          const next: BeadStyle = beadStyle === 'rudraksha' ? 'tulsi' : beadStyle === 'tulsi' ? 'sphatik' : 'rudraksha';
-                          setBeadStyle(next);
-                        }}
-                        className="flex-1 py-1 sm:py-1.5 px-2 sm:px-3 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 bg-amber-50/80 hover:bg-amber-100 text-amber-800 border border-amber-200 cursor-pointer"
-                      >
-                        <span>📿</span>
-                        <span className="capitalize">{beadStyle} Beads</span>
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => {
+                        const next: BeadStyle = beadStyle === 'rudraksha' ? 'tulsi' : beadStyle === 'tulsi' ? 'sphatik' : 'rudraksha';
+                        setBeadStyle(next);
+                      }}
+                      className="flex-1 py-1 px-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 bg-amber-50/80 hover:bg-amber-100 text-amber-800 border border-amber-200 cursor-pointer"
+                    >
+                      <span>📿</span>
+                      <span className="capitalize">{beadStyle} मनके</span>
+                    </button>
                   </div>
 
                 </div>
 
-                {/* 5. Mini Bhajan Player at bottom of Left Column */}
-                <div className="w-full mt-2 sm:mt-4 pt-2 sm:pt-3 border-t border-orange-100">
+                {/* 7. Mini Bhajan Player at bottom of Left Column */}
+                <div className="w-full mt-2.5 pt-2 border-t border-orange-100">
                   <MiniPlayer />
                 </div>
               </div>

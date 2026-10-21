@@ -169,56 +169,6 @@ const ALL_SERVICES: ServiceItem[] = [
   },
 ];
 
-const QUICK_CATEGORIES = [
-  {
-    title: 'Ram Naam Jaap',
-    subtitle: '108 मणियों की माला व अखंड बैंक',
-    hindi: 'दैनिक राम नाम संकीर्तन',
-    icon: '📿',
-    href: '/#jaap',
-    iconBg: 'bg-amber-100 text-amber-700 border-amber-200',
-  },
-  {
-    title: 'Vedic Pandits',
-    subtitle: 'विवाह, गृह प्रवेश व 16 संस्कार',
-    hindi: 'सत्यापित विद्वान पुरोहित',
-    icon: '🔱',
-    href: '/pandits',
-    iconBg: 'bg-orange-100 text-orange-700 border-orange-200',
-  },
-  {
-    title: 'Katha Vachaks',
-    subtitle: 'श्री रामकथा व श्रीमद्भागवत',
-    hindi: 'पूज्य व्यास पीठ व प्रवचन',
-    icon: '📖',
-    href: '/katha-vachaks',
-    iconBg: 'bg-purple-100 text-purple-700 border-purple-200',
-  },
-  {
-    title: 'Mandir Darshan',
-    subtitle: 'तीर्थों का इतिहास व दर्शन समय',
-    hindi: 'पावन मंदिर मार्गदर्शिका',
-    icon: '🛕',
-    href: '/mandirs',
-    iconBg: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  },
-  {
-    title: 'Puja Samagri',
-    subtitle: 'हवन, पूजन व रुद्राक्ष सामग्री',
-    hindi: 'शुद्ध वैदिक पूजन सामग्री',
-    icon: '🪔',
-    href: '/samagri',
-    iconBg: 'bg-rose-100 text-rose-700 border-rose-200',
-  },
-  {
-    title: 'Community',
-    subtitle: 'भक्त सत्संग, विचार व प्रश्नोत्तरी',
-    hindi: 'वैश्विक राम भक्त परिवार',
-    icon: '👥',
-    href: '/community',
-    iconBg: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  },
-];
 
 function getTodaySeedChaupais(): ChaupaiItem[] {
   const now = new Date();
@@ -534,7 +484,7 @@ export default function HomePage() {
         onMouseLeave={() => setIsSlidePaused(false)}
       >
         {/* Full-bleed Panoramic Banner Carousel Container */}
-        <div className="relative w-full min-h-[500px] sm:min-h-[520px] lg:min-h-[580px] xl:min-h-[620px] flex items-center">
+        <div className="relative w-full min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] xl:min-h-[540px] flex items-center">
           
           {/* Background Image / Panoramic Artwork with AnimatePresence */}
           {(() => {
@@ -589,8 +539,8 @@ export default function HomePage() {
 
                 {/* Mobile Floating Greeting Pill at TOP (leaves artwork center clear) */}
                 {(pandit || user) && (
-                  <div className="md:hidden absolute top-3.5 inset-x-0 flex justify-center z-30 pointer-events-none px-4">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-orange-200/90 text-orange-950 text-xs font-bold shadow-md">
+                  <div className="md:hidden absolute top-3 inset-x-0 flex justify-center z-30 pointer-events-none px-4">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-orange-200/90 text-orange-950 text-xs font-bold shadow-md">
                       <span className="text-sm">{pandit ? '🔱' : '🙏'}</span>
                       <span className="truncate max-w-[260px]">
                          सादर प्रणाम, <strong>{pandit ? (pandit.name || 'पंडित जी') : user?.name}</strong>!
@@ -618,23 +568,23 @@ export default function HomePage() {
                     <button
                       onClick={() => setCurrentSlideIdx((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
                       aria-label="Previous Slide"
-                      className="absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/85 hover:bg-white text-slate-800 hover:text-orange-600 shadow-xl border border-orange-200/60 flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer hidden sm:flex"
+                      className="absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/85 hover:bg-white text-slate-800 hover:text-orange-600 shadow-lg border border-orange-200/60 flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer hidden sm:flex"
                     >
-                      <ChevronLeft className="w-6 h-6" />
+                      <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => setCurrentSlideIdx((prev) => (prev + 1) % heroSlides.length)}
                       aria-label="Next Slide"
-                      className="absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-white/85 hover:bg-white text-slate-800 hover:text-orange-600 shadow-xl border border-orange-200/60 flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer hidden sm:flex"
+                      className="absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/85 hover:bg-white text-slate-800 hover:text-orange-600 shadow-lg border border-orange-200/60 flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer hidden sm:flex"
                     >
-                      <ChevronRightIcon className="w-6 h-6" />
+                      <ChevronRightIcon className="w-5 h-5" />
                     </button>
                   </>
                 )}
 
                 {/* Foreground Text & Action Buttons */}
                 {isAnyContentVisible && (
-                  <div className="container mx-auto px-4 sm:px-8 lg:px-14 relative z-20 pt-24 sm:pt-28 pb-20 sm:pb-24">
+                  <div className="container mx-auto px-4 sm:px-8 lg:px-14 relative z-20 pt-8 sm:pt-14 pb-14 sm:pb-18">
                     <div className={`max-w-xl lg:max-w-2xl transition-all duration-300 ${
                       align === 'left'
                         ? 'text-center md:text-left mx-auto md:ml-4 lg:ml-8 md:mr-auto'
@@ -654,19 +604,19 @@ export default function HomePage() {
                           {isTextVisible && (
                             <>
                               {/* Top Divine Badge */}
-                              <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-orange-200/90 text-xs font-black tracking-wider uppercase mb-4 shadow-sm ${
+                              <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-orange-200/90 text-[11px] sm:text-xs font-black tracking-wider uppercase mb-2.5 sm:mb-3 shadow-xs ${
                                 align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
                               }`} style={{ color: textColor }}>
                                 <span>{currentSlide.badge || '🚩 Jai Shree Ram — Naam is the True Power'}</span>
                               </div>
 
                               {/* Main Headline */}
-                              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-[1.12] mb-3 drop-shadow-sm" style={{ color: textColor }}>
+                              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-[1.15] mb-2 sm:mb-2.5 drop-shadow-xs" style={{ color: textColor }}>
                                 <span className="block font-serif" style={{ color: textColor }}>
                                   {currentSlide.title || 'Jai Shree Ram'}
                                 </span>
                                 {currentSlide.subtitle && (
-                                  <span className="block mt-1 font-serif text-2xl sm:text-4xl lg:text-5xl font-black" style={{ color: textColor }}>
+                                  <span className="block mt-1 font-serif text-xl sm:text-3xl lg:text-4xl font-black" style={{ color: textColor }}>
                                     {currentSlide.subtitle}
                                   </span>
                                 )}
@@ -674,13 +624,13 @@ export default function HomePage() {
 
                               {/* Subheading / Tagline */}
                               {currentSlide.tagline && (
-                                <p className="text-base sm:text-lg font-bold mb-2 drop-shadow-xs" style={{ color: textColor }}>
+                                <p className="text-sm sm:text-base font-bold mb-1.5 drop-shadow-xs" style={{ color: textColor }}>
                                   {currentSlide.tagline}
                                 </p>
                               )}
 
                               {/* Description */}
-                              <p className={`text-xs sm:text-sm lg:text-base max-w-lg leading-relaxed mb-6 font-medium ${
+                              <p className={`text-xs sm:text-sm lg:text-base max-w-lg leading-relaxed mb-4 sm:mb-5 font-medium ${
                                 align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
                               }`} style={{ color: textColor, opacity: 0.95 }}>
                                 {currentSlide.description || 'Join millions of devotees and experience peace, positivity and happiness through Ram Naam in your daily life.'}
@@ -690,25 +640,25 @@ export default function HomePage() {
 
                           {/* Two Action Buttons */}
                           {isButtonsVisible && (
-                            <div className={`flex flex-wrap items-center gap-3.5 mb-6 ${
+                            <div className={`flex flex-wrap items-center gap-3 mb-4 sm:mb-5 ${
                               align === 'left' ? 'justify-center md:justify-start' : align === 'right' ? 'justify-center md:justify-end' : 'justify-center'
                             }`}>
                               <button
                                 onClick={() => handleHeroButtonClick(currentSlide.button1Link, currentSlide.button1Text)}
-                                className="px-7 py-3.5 rounded-full font-bold text-sm sm:text-base text-white shadow-xl shadow-orange-500/35 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 active:scale-95 transition-all flex items-center gap-2.5 cursor-pointer"
+                                className="px-6 sm:px-7 py-3 rounded-full font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/30 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
                               >
-                                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                                  <Play className="w-3 h-3 fill-white text-white ml-0.5" />
+                                <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
+                                  <Play className="w-2.5 h-2.5 fill-white text-white ml-0.5" />
                                 </div>
                                 <span>{currentSlide.button1Text || 'Start Ram Naam Jaap'}</span>
                               </button>
 
                               <button
                                 onClick={() => handleHeroButtonClick(currentSlide.button2Link || 'video', currentSlide.button2Text)}
-                                className="px-6 py-3.5 rounded-full font-bold text-sm sm:text-base text-slate-800 bg-white/95 hover:bg-white border-2 border-orange-200 hover:border-orange-400 active:scale-95 transition-all shadow-md backdrop-blur-md flex items-center gap-2.5 cursor-pointer"
+                                className="px-5 sm:px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-slate-800 bg-white/95 hover:bg-white border border-orange-200 hover:border-orange-400 active:scale-95 transition-all shadow-xs backdrop-blur-md flex items-center gap-2 cursor-pointer"
                               >
-                                <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
-                                  <Play className="w-3 h-3 text-orange-600 ml-0.5" />
+                                <div className="w-4 h-4 rounded-full bg-orange-100 flex items-center justify-center">
+                                  <Play className="w-2.5 h-2.5 text-orange-600 ml-0.5" />
                                 </div>
                                 <span>{currentSlide.button2Text || 'Watch Video'}</span>
                               </button>
@@ -717,14 +667,14 @@ export default function HomePage() {
 
                           {/* Role-Aware User / Pandit Status Badge (shown inside text block on desktop only) */}
                           {pandit ? (
-                            <div className={`hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
+                            <div className={`hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
                               align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
                             }`}>
                               <span className="text-base">🔱</span>
                               <span> सादर प्रणाम, <strong>{pandit.name || 'पंडित जी'}</strong>! आप पुरोहित पोर्टल में लॉगिन हैं।</span>
                             </div>
                           ) : user ? (
-                            <div className={`hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
+                            <div className={`hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
                               align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
                             }`}>
                               <span className="text-base">🙏</span>
@@ -739,7 +689,7 @@ export default function HomePage() {
 
                 {/* Slider Dots Indicator */}
                 {heroSlides.length > 1 && (
-                  <div className="absolute bottom-6 sm:bottom-8 inset-x-0 z-20 flex items-center justify-center gap-2">
+                  <div className="absolute bottom-5 sm:bottom-6 inset-x-0 z-20 flex items-center justify-center gap-2">
                     {heroSlides.map((_, idx) => (
                       <button
                         key={idx}
@@ -747,8 +697,8 @@ export default function HomePage() {
                         aria-label={`Slide ${idx + 1}`}
                         className={`transition-all duration-300 cursor-pointer rounded-full ${
                           idx === currentSlideIdx
-                            ? 'w-8 h-2.5 bg-gradient-to-r from-orange-500 to-amber-500 shadow-md'
-                            : 'w-2.5 h-2.5 bg-white/75 hover:bg-white shadow-sm border border-orange-300/40'
+                            ? 'w-7 h-2 bg-gradient-to-r from-orange-500 to-amber-500 shadow-sm'
+                            : 'w-2 h-2 bg-white/75 hover:bg-white shadow-xs border border-orange-300/40'
                         }`}
                       />
                     ))}
@@ -758,235 +708,206 @@ export default function HomePage() {
             );
           })()}
         </div>
-
-        {/* --- 5-ITEM UNIFIED STATS DOCK (MATCHING USER'S PHOTO EXACTLY) --- */}
-        <div className="relative z-20 max-w-6xl mx-auto px-3 sm:px-4 mt-3 sm:-mt-8 lg:-mt-10 mb-8 sm:mb-12">
-          <div className="bg-white rounded-2xl sm:rounded-full shadow-xl shadow-orange-950/5 border border-orange-100/90 p-2 sm:py-3.5 sm:px-8">
-            
-            {/* Mobile View: Sleek Horizontal Swipeable Stats Strip */}
-            <div className="flex sm:hidden items-center gap-2 overflow-x-auto no-scrollbar py-1 px-1 snap-x">
-              {/* 1. Devotees */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-50/80 to-amber-50/40 border border-amber-100/90 shrink-0 snap-start shadow-2xs">
-                <div className="w-8 h-8 rounded-full bg-white border border-amber-200 text-amber-600 flex items-center justify-center text-base shrink-0 shadow-xs">
-                  🪷
-                </div>
-                <div className="min-w-0 pr-1">
-                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
-                    {stats.totalRamNaam >= 10000000 ? `${(stats.totalRamNaam / 10000000).toFixed(1)} Cr+` : '1M+'}
-                  </p>
-                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
-                    Devotees
-                  </p>
-                </div>
-              </div>
-
-              {/* 2. 108+ Chanting Daily */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-orange-50/80 to-orange-50/40 border border-orange-100/90 shrink-0 snap-start shadow-2xs">
-                <div className="w-8 h-8 rounded-full bg-white border border-orange-200 text-orange-600 flex items-center justify-center text-base shrink-0 shadow-xs">
-                  🕉️
-                </div>
-                <div className="min-w-0 pr-1">
-                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
-                    108+
-                  </p>
-                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
-                    Chanting Daily
-                  </p>
-                </div>
-              </div>
-
-              {/* 3. Daily Spiritual Content */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-yellow-50/80 to-yellow-50/40 border border-yellow-100/90 shrink-0 snap-start shadow-2xs">
-                <div className="w-8 h-8 rounded-full bg-white border border-yellow-200 text-yellow-600 flex items-center justify-center text-base shrink-0 shadow-xs">
-                  📖
-                </div>
-                <div className="min-w-0 pr-1">
-                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
-                    Daily
-                  </p>
-                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
-                    Spiritual Content
-                  </p>
-                </div>
-              </div>
-
-              {/* 4. Festivals Live Darshan */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-rose-50/80 to-rose-50/40 border border-rose-100/90 shrink-0 snap-start shadow-2xs">
-                <div className="w-8 h-8 rounded-full bg-white border border-rose-200 text-rose-600 flex items-center justify-center text-base shrink-0 shadow-xs">
-                  🛕
-                </div>
-                <div className="min-w-0 pr-1">
-                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
-                    Festivals
-                  </p>
-                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
-                    Live Darshan
-                  </p>
-                </div>
-              </div>
-
-              {/* 5. Community Worldwide */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-50/80 to-emerald-50/40 border border-emerald-100/90 shrink-0 snap-start shadow-2xs">
-                <div className="w-8 h-8 rounded-full bg-white border border-emerald-200 text-emerald-600 flex items-center justify-center text-base shrink-0 shadow-xs">
-                  👥
-                </div>
-                <div className="min-w-0 pr-1">
-                  <p className="text-xs font-black text-slate-900 leading-tight whitespace-nowrap">
-                    Community
-                  </p>
-                  <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
-                    Worldwide
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tablet & Desktop: Grand 5-Column Unified Pill Dock */}
-            <div className="hidden sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3 lg:gap-0 lg:divide-x lg:divide-slate-100">
-              
-              {/* 1. Devotees */}
-              <div className="flex items-center gap-3 px-2 sm:px-4 py-1.5 justify-center lg:justify-start">
-                <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-100/80 text-amber-600 flex items-center justify-center text-xl shrink-0 shadow-xs">
-                  🪷
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-black text-slate-900 leading-tight">
-                    {stats.totalRamNaam >= 10000000 ? `${(stats.totalRamNaam / 10000000).toFixed(1)} Cr+` : '1M+'}
-                  </p>
-                  <p className="text-[11px] sm:text-xs font-bold text-slate-500 truncate">
-                    Devotees
-                  </p>
-                </div>
-              </div>
-
-              {/* 2. 108+ Chanting Daily */}
-              <div className="flex items-center gap-3 px-2 sm:px-4 py-1.5 justify-center lg:justify-start">
-                <div className="w-10 h-10 rounded-full bg-orange-50 border border-orange-100/80 text-orange-600 flex items-center justify-center text-xl shrink-0 shadow-xs">
-                  🕉️
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-black text-slate-900 leading-tight">
-                    108+
-                  </p>
-                  <p className="text-[11px] sm:text-xs font-bold text-slate-500 truncate">
-                    Chanting Daily
-                  </p>
-                </div>
-              </div>
-
-              {/* 3. Daily Spiritual Content */}
-              <div className="flex items-center gap-3 px-2 sm:px-4 py-1.5 justify-center lg:justify-start">
-                <div className="w-10 h-10 rounded-full bg-yellow-50 border border-yellow-100/80 text-yellow-600 flex items-center justify-center text-xl shrink-0 shadow-xs">
-                  📖
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-black text-slate-900 leading-tight">
-                    Daily
-                  </p>
-                  <p className="text-[11px] sm:text-xs font-bold text-slate-500 truncate">
-                    Spiritual Content
-                  </p>
-                </div>
-              </div>
-
-              {/* 4. Festivals Live Darshan */}
-              <div className="flex items-center gap-3 px-2 sm:px-4 py-1.5 justify-center lg:justify-start">
-                <div className="w-10 h-10 rounded-full bg-rose-50 border border-rose-100/80 text-rose-600 flex items-center justify-center text-xl shrink-0 shadow-xs">
-                  🛕
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-black text-slate-900 leading-tight">
-                    Festivals
-                  </p>
-                  <p className="text-[11px] sm:text-xs font-bold text-slate-500 truncate">
-                    Live Darshan
-                  </p>
-                </div>
-              </div>
-
-              {/* 5. Community Worldwide */}
-              <div className="flex items-center gap-3 px-2 sm:px-4 py-1.5 justify-center lg:justify-start col-span-2 sm:col-span-1">
-                <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-100/80 text-emerald-600 flex items-center justify-center text-xl shrink-0 shadow-xs">
-                  👥
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm sm:text-base font-black text-slate-900 leading-tight">
-                    Community
-                  </p>
-                  <p className="text-[11px] sm:text-xs font-bold text-slate-500 truncate">
-                    Worldwide
-                  </p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
       </section>
 
-      {/* --- QUICK CATEGORY NAVIGATION (6 WHITE CARDS FROM PHOTO) --- */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
-            {QUICK_CATEGORIES.map((cat, i) => (
-              <button
-                key={i}
-                onClick={() => safeNavigate(cat.href)}
-                className="bg-white hover:bg-orange-50/50 border border-slate-100 hover:border-orange-200 rounded-3xl p-4 sm:p-5 flex flex-col items-center text-center transition-all shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer group"
-              >
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-sm group-hover:scale-110 transition-transform ${cat.iconBg}`}>
-                  {cat.icon}
-                </div>
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors">
-                  {cat.title}
+      {/* --- 4-GATEWAY FLOATING ACTION DOCK (EXACTLY MATCHING USER MOCKUP "WEBSITE - HOMEPAGE") --- */}
+      <div className="relative z-30 max-w-5xl mx-auto px-3 sm:px-4 -mt-7 sm:-mt-9 lg:-mt-11">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl shadow-orange-950/10 border border-orange-200/80 p-2 sm:p-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
+            {/* 1. Pandit Booking */}
+            <button
+              onClick={() => safeNavigate('/pandits')}
+              className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-orange-50/70 border border-orange-100 hover:border-orange-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                🔱
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight truncate">
+                  पंडित बुक करें
                 </h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-1 line-clamp-2 leading-tight">
-                  {cat.subtitle}
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate font-medium">
+                  पूजा / हवन / संस्कार
                 </p>
-              </button>
-            ))}
+              </div>
+            </button>
+
+            {/* 2. Astrologer Booking */}
+            <button
+              onClick={() => safeNavigate('/astrology')}
+              className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-amber-50/70 border border-orange-100 hover:border-amber-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                🔮
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-amber-700 transition-colors leading-tight truncate">
+                  ज्योतिषी बुक करें
+                </h3>
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate font-medium">
+                  कुंडली / विवाह / करियर
+                </p>
+              </div>
+            </button>
+
+            {/* 3. Bhajan & Aarti */}
+            <button
+              onClick={() => safeNavigate('/#jaap')}
+              className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-rose-50/70 border border-orange-100 hover:border-rose-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-rose-500 to-orange-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                🪔
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-rose-600 transition-colors leading-tight truncate">
+                  भजन / आरती
+                </h3>
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate font-medium">
+                  सुनें और शांति पाएं
+                </p>
+              </div>
+            </button>
+
+            {/* 4. Ram Naam Jaap */}
+            <button
+              onClick={() => safeNavigate('/#jaap')}
+              className="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-emerald-50/70 border border-orange-100 hover:border-emerald-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                📿
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-emerald-700 transition-colors leading-tight truncate">
+                  राम नाम जप
+                </h3>
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate font-medium">
+                  108 मणियों का दैनिक जप
+                </p>
+              </div>
+            </button>
           </div>
         </div>
-      </section>
+      </div>
 
+      {/* --- SLEEK LIVE STATS STRIP (TIGHT COMPACT SPACING) --- */}
+      <div className="relative z-20 max-w-5xl mx-auto px-3 sm:px-4 my-2.5 sm:my-3.5">
+        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-orange-100/90 py-2 px-3 sm:px-6 shadow-xs">
+          
+          {/* Mobile View: Horizontal Swipeable Stats Strip */}
+          <div className="flex sm:hidden items-center gap-2 overflow-x-auto no-scrollbar py-0.5 snap-x">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50/70 shrink-0 snap-start border border-amber-100/70">
+              <span className="text-sm">🪷</span>
+              <p className="text-xs font-black text-slate-900 whitespace-nowrap">
+                {stats.totalRamNaam >= 10000000 ? `${(stats.totalRamNaam / 10000000).toFixed(1)} Cr+` : '1M+'} <span className="font-semibold text-[10px] text-slate-500">Devotees</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-50/70 shrink-0 snap-start border border-orange-100/70">
+              <span className="text-sm">🕉️</span>
+              <p className="text-xs font-black text-slate-900 whitespace-nowrap">
+                108+ <span className="font-semibold text-[10px] text-slate-500">Daily Jaap</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-yellow-50/70 shrink-0 snap-start border border-yellow-100/70">
+              <span className="text-sm">📖</span>
+              <p className="text-xs font-black text-slate-900 whitespace-nowrap">
+                Daily <span className="font-semibold text-[10px] text-slate-500">Wisdom</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50/70 shrink-0 snap-start border border-rose-100/70">
+              <span className="text-sm">🛕</span>
+              <p className="text-xs font-black text-slate-900 whitespace-nowrap">
+                Festivals <span className="font-semibold text-[10px] text-slate-500">Darshan</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50/70 shrink-0 snap-start border border-emerald-100/70">
+              <span className="text-sm">👥</span>
+              <p className="text-xs font-black text-slate-900 whitespace-nowrap">
+                Global <span className="font-semibold text-[10px] text-slate-500">Bhakti</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Desktop & Tablet: Clean 5-Item Row */}
+          <div className="hidden sm:grid sm:grid-cols-5 gap-2 divide-x divide-slate-100">
+            <div className="flex items-center justify-center gap-2 py-0.5">
+              <span className="text-base">🪷</span>
+              <div className="min-w-0">
+                <p className="text-xs font-black text-slate-900 leading-tight">
+                  {stats.totalRamNaam >= 10000000 ? `${(stats.totalRamNaam / 10000000).toFixed(1)} Cr+` : '1M+'}
+                </p>
+                <p className="text-[10px] text-slate-500 font-medium truncate">Devotees</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-2 py-0.5">
+              <span className="text-base">🕉️</span>
+              <div className="min-w-0">
+                <p className="text-xs font-black text-slate-900 leading-tight">108+</p>
+                <p className="text-[10px] text-slate-500 font-medium truncate">Chanting Daily</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-2 py-0.5">
+              <span className="text-base">📖</span>
+              <div className="min-w-0">
+                <p className="text-xs font-black text-slate-900 leading-tight">Daily</p>
+                <p className="text-[10px] text-slate-500 font-medium truncate">Spiritual Content</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-2 py-0.5">
+              <span className="text-base">🛕</span>
+              <div className="min-w-0">
+                <p className="text-xs font-black text-slate-900 leading-tight">Festivals</p>
+                <p className="text-[10px] text-slate-500 font-medium truncate">Live Darshan</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-2 py-0.5">
+              <span className="text-base">👥</span>
+              <div className="min-w-0">
+                <p className="text-xs font-black text-slate-900 leading-tight">Community</p>
+                <p className="text-[10px] text-slate-500 font-medium truncate">Worldwide</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+            
       {/* --- 3-CARD SHOWCASE SECTION (MATCHING MIDDLE ROW IN PHOTO) --- */}
-      <section className="py-10 bg-[#FFFDF9]">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+      <section className="py-3.5 sm:py-5 bg-[#FFFDF9]">
+        <div className="container mx-auto px-3 sm:px-6 max-w-6xl">
+          <div className="grid lg:grid-cols-12 gap-3.5 sm:gap-4 items-stretch">
 
             {/* Card 1: Today's Ram Naam Banner (Wide) */}
-            <div className="lg:col-span-6 bg-gradient-to-br from-amber-100/80 via-orange-50 to-amber-50 rounded-3xl p-6 sm:p-7 border border-orange-200/80 shadow-md flex flex-col justify-between relative overflow-hidden">
+            <div className="lg:col-span-6 bg-gradient-to-br from-amber-100/80 via-orange-50 to-amber-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-orange-200/80 shadow-xs flex flex-col justify-between relative overflow-hidden">
               <div className="relative z-10">
-                <span className="text-[10px] font-black uppercase tracking-wider text-orange-700 bg-white/80 px-3 py-1 rounded-full border border-orange-200">
+                <span className="text-[10px] font-black uppercase tracking-wider text-orange-700 bg-white/80 px-2.5 py-0.5 rounded-full border border-orange-200">
                   Today's Ram Naam
                 </span>
 
-                <div className="mt-4 mb-3">
-                  <p className="text-2xl sm:text-3xl font-black text-orange-900 leading-snug font-serif">
+                <div className="mt-3 mb-2">
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-black text-orange-900 leading-snug font-serif">
                     “ श्री राम जय राम जय जय राम ”
                   </p>
-                  <p className="text-xs sm:text-sm text-slate-700 mt-2 font-medium">
+                  <p className="text-xs sm:text-sm text-slate-700 mt-1.5 font-medium">
                     Chant today and bring positivity and peace into your life.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-4 relative z-10 flex items-center justify-between">
+              <div className="pt-3 relative z-10 flex items-center justify-between">
                 <button
                   onClick={() => safeNavigate('/#jaap')}
-                  className="px-6 py-3 rounded-full font-black text-xs text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 shadow-md transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 rounded-full font-black text-xs text-white bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 shadow-sm transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>Start Jaap Now</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
 
-                <div className="w-14 h-14 rounded-2xl bg-white/80 border border-orange-200 flex items-center justify-center text-3xl shadow-sm">
+                <div className="w-11 h-11 rounded-xl bg-white/80 border border-orange-200 flex items-center justify-center text-2xl shadow-xs">
                   🙏
                 </div>
               </div>
 
               {/* Decorative watermark */}
-              <div className="absolute right-0 bottom-0 text-[10rem] font-serif font-black text-orange-200/20 select-none pointer-events-none leading-none -mb-6">
+              <div className="absolute right-0 bottom-0 text-[8rem] font-serif font-black text-orange-200/20 select-none pointer-events-none leading-none -mb-4">
                 राम
               </div>
             </div>
@@ -997,30 +918,30 @@ export default function HomePage() {
               const totalChaupais = dailyChaupais.length || 2;
               const currentNum = (activeChaupaiIdx % Math.max(1, dailyChaupais.length)) + 1;
               return (
-                <div className="lg:col-span-3 bg-white rounded-3xl p-6 border border-orange-100 shadow-sm flex flex-col justify-between">
+                <div className="lg:col-span-3 bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-orange-100 shadow-xs flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                           दैनिक प्रेरणा
                         </span>
-                        <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
+                        <span className="text-[10px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-full border border-orange-100">
                           {currentNum}/{totalChaupais}
                         </span>
                       </div>
-                      <span className="text-xl">🪔</span>
+                      <span className="text-lg">🪔</span>
                     </div>
 
                     {/* Dot indicators for today's 2 chaupais */}
-                    <div className="flex items-center gap-1.5 mb-2.5">
+                    <div className="flex items-center gap-1.5 mb-2">
                       {dailyChaupais.map((_, idx) => (
                         <button
                           key={idx}
                           onClick={() => setActiveChaupaiIdx(idx)}
                           className={`h-1.5 rounded-full transition-all cursor-pointer ${
                             (activeChaupaiIdx % dailyChaupais.length) === idx
-                              ? 'w-6 bg-orange-600'
-                              : 'w-2 bg-orange-200 hover:bg-orange-300'
+                              ? 'w-5 bg-orange-600'
+                              : 'w-1.5 bg-orange-200 hover:bg-orange-300'
                           }`}
                           aria-label={`चौपाई ${idx + 1}`}
                         />
@@ -1028,28 +949,28 @@ export default function HomePage() {
                       <span className="text-[10px] font-medium text-slate-400 ml-1">आज की 2 चौपाइयां</span>
                     </div>
 
-                    <p className="text-sm font-bold text-slate-800 leading-relaxed italic mt-1 font-serif">
+                    <p className="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed italic mt-0.5 font-serif">
                       "{currentChaupai.chaupai}"
                     </p>
-                    <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                    <p className="text-[11px] sm:text-xs text-slate-600 mt-1.5 leading-relaxed line-clamp-3">
                       {currentChaupai.bhavarth}
                     </p>
-                    <p className="text-[10px] font-semibold text-orange-600 mt-1.5">
+                    <p className="text-[10px] font-semibold text-orange-600 mt-1">
                       — {currentChaupai.source}
                     </p>
                   </div>
 
-                  <div className="pt-4 flex items-center gap-2">
+                  <div className="pt-3 flex items-center gap-2">
                     <button
                       onClick={() => setActiveChaupaiIdx((prev) => (prev + 1) % Math.max(1, dailyChaupais.length))}
-                      className="flex-1 py-2 px-3 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95"
+                      className="flex-1 py-1.5 px-2.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95"
                     >
                       <RefreshCw className="w-3 h-3" />
-                      <span>अगली चौपाई ({((activeChaupaiIdx + 1) % Math.max(1, dailyChaupais.length)) + 1}/{totalChaupais})</span>
+                      <span>अगली ({((activeChaupaiIdx + 1) % Math.max(1, dailyChaupais.length)) + 1}/{totalChaupais})</span>
                     </button>
                     <button
                       onClick={() => handleShareChaupai(currentChaupai.chaupai, currentChaupai.bhavarth, currentChaupai.source)}
-                      className="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-all cursor-pointer active:scale-95"
+                      className="p-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-all cursor-pointer active:scale-95"
                       title="WhatsApp पर शेयर करें"
                     >
                       <Share2 className="w-3.5 h-3.5" />
@@ -1060,39 +981,39 @@ export default function HomePage() {
             })()}
 
             {/* Card 3: Join Our Community Card */}
-            <div className="lg:col-span-3 bg-white rounded-3xl p-6 border border-orange-100 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-3 bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-orange-100 shadow-xs flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                     Join Our Community
                   </span>
-                  <span className="text-xl">👥</span>
+                  <span className="text-lg">👥</span>
                 </div>
 
-                <p className="text-sm font-bold text-slate-800 mt-2 leading-snug">
+                <p className="text-xs sm:text-sm font-bold text-slate-800 mt-1 leading-snug">
                   राम भक्त सत्संग परिवार
                 </p>
-                <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                <p className="text-[11px] sm:text-xs text-slate-600 mt-1 leading-relaxed">
                   Share thoughts, ask questions and connect with fellow devotees worldwide.
                 </p>
 
                 {/* Devotees Avatars row */}
-                <div className="flex items-center -space-x-2 mt-4">
+                <div className="flex items-center -space-x-1.5 mt-3">
                   {['🙏', '🚩', '🕉️', '🌸', '✨'].map((emoji, idx) => (
-                    <div key={idx} className="w-8 h-8 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-xs shadow-sm">
+                    <div key={idx} className="w-7 h-7 rounded-full bg-orange-100 border border-white flex items-center justify-center text-[10px] shadow-xs">
                       {emoji}
                     </div>
                   ))}
-                  <span className="text-[11px] font-bold text-orange-600 pl-3">
+                  <span className="text-[10px] font-bold text-orange-600 pl-2">
                     {stats.totalDevotees}+ Devotees
                   </span>
                 </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-3">
                 <button
                   onClick={() => safeNavigate('/community')}
-                  className="w-full py-2.5 rounded-xl font-bold text-xs text-white bg-orange-600 hover:bg-orange-700 shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2 rounded-xl font-bold text-xs text-white bg-orange-600 hover:bg-orange-700 shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <span>Join Now</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1108,31 +1029,31 @@ export default function HomePage() {
       {!loading && <NaamJapSection user={user} onSaveSuccess={checkAuth} />}
 
       {/* --- ALL DIVINE SERVICES SECTION (WHITE-AND-ORANGE THEMED) --- */}
-      <section id="services" className="py-16 bg-white border-t border-orange-100/70">
+      <section id="services" className="py-8 sm:py-12 bg-white border-t border-orange-100/70">
         <div className="container mx-auto px-4 sm:px-6">
 
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="inline-block px-3.5 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-black mb-2">
+          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
+            <span className="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-black mb-1.5">
               🚩 वैदिक सनातन सेवाएं
             </span>
-            <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
               राम जी की सेना — <span className="text-orange-600">सभी पावन सेवाएं</span>
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-2">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               वेद-शास्त्रों की मर्यादा और सनातन परंपरा के अनुरूप समस्त धार्मिक आवश्यकताएं
             </p>
 
             {/* Filter Tabs */}
-            <div className="flex items-center justify-center flex-wrap gap-2 mt-6">
+            <div className="flex items-center justify-center flex-wrap gap-2 mt-4 sm:mt-5">
               {SERVICE_CATEGORIES.map(cat => {
                 const active = serviceCategory === cat.id;
                 return (
                   <button
                     key={cat.id}
                     onClick={() => setServiceCategory(cat.id)}
-                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                       active
-                        ? 'bg-orange-500 text-white shadow-md'
+                        ? 'bg-orange-500 text-white shadow-sm'
                         : 'bg-slate-100 hover:bg-orange-50 text-slate-700'
                     }`}
                   >
@@ -1144,15 +1065,15 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredServices.map(service => (
               <div
                 key={service.serviceId || service.id || service._id}
                 onClick={() => safeNavigate(service.href)}
-                className="bg-white rounded-3xl border border-slate-100 hover:border-orange-300 shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col justify-between cursor-pointer group"
+                className="bg-white rounded-3xl border border-slate-100 hover:border-orange-300 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between cursor-pointer group"
               >
                 <div>
-                  <div className="relative h-60 sm:h-64 overflow-hidden bg-slate-100">
+                  <div className="relative h-48 sm:h-56 overflow-hidden bg-slate-100">
                     <Image
                       src={service.img}
                       alt={service.title}
@@ -1163,12 +1084,12 @@ export default function HomePage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     {service.popular && (
                       <div className="absolute top-3 left-3">
-                        <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-white/90 text-orange-700 shadow-sm">
+                        <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-white/90 text-orange-700 shadow-xs">
                           {service.popular}
                         </span>
                       </div>
                     )}
-                    <div className="absolute top-3 right-3 w-9 h-9 rounded-xl bg-white/90 flex items-center justify-center text-lg shadow-sm">
+                    <div className="absolute top-3 right-3 w-8 h-8 rounded-xl bg-white/90 flex items-center justify-center text-base shadow-xs">
                       {service.emoji || '✨'}
                     </div>
                     {service.stats && (
@@ -1180,19 +1101,19 @@ export default function HomePage() {
                     )}
                   </div>
 
-                  <div className="p-5">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-orange-600 mb-1">
+                  <div className="p-4 sm:p-5">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-orange-600 mb-0.5">
                       {service.subtitle}
                     </p>
-                    <h3 className="text-lg font-black text-slate-900 group-hover:text-orange-600 transition-colors">
+                    <h3 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-orange-600 transition-colors">
                       {service.title}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
                       {service.desc}
                     </p>
 
                     {Array.isArray(service.features) && service.features.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-3.5">
+                      <div className="flex flex-wrap gap-1.5 mt-3">
                         {service.features.map((feat, fi) => (
                           <span key={fi} className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-orange-50 text-orange-800 border border-orange-100">
                             {feat}
@@ -1203,9 +1124,9 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="px-5 py-3 border-t border-orange-100/70 bg-gradient-to-r from-orange-50/60 to-amber-50/30 flex items-center justify-between">
+                <div className="px-4 sm:px-5 py-2.5 border-t border-orange-100/70 bg-gradient-to-r from-orange-50/60 to-amber-50/30 flex items-center justify-between">
                   <span className="text-xs font-black text-orange-700">{service.ctaText || 'प्रवेश करें'}</span>
-                  <span className="text-xs font-black px-3 py-1 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white flex items-center gap-1 shadow-sm group-hover:from-orange-600 group-hover:to-amber-600 transition-all">
+                  <span className="text-xs font-black px-3 py-1 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white flex items-center gap-1 shadow-xs group-hover:from-orange-600 group-hover:to-amber-600 transition-all">
                     <span>प्रवेश करें</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
@@ -1218,18 +1139,18 @@ export default function HomePage() {
       </section>
 
       {/* --- TOP DEVOTEES HONOR ROLL (सर्वोच्च राम भक्त मंडल) --- */}
-      <section className="py-14 bg-[#FFFDF9] border-t border-orange-100/70">
+      <section className="py-8 sm:py-10 bg-[#FFFDF9] border-t border-orange-100/70">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-black mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-black mb-1.5">
                 <Trophy className="w-3.5 h-3.5 text-amber-600" />
                 <span>संकीर्तन शिरोमणि मंडल</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900">
                 सर्वोच्च राम भक्त संकीर्तक
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-0.5">
                 लाखों मालाओं का पावन संचय करने वाले अग्रिम भक्त
               </p>
             </div>
