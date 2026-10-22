@@ -489,134 +489,240 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#FFFDF9] text-slate-800 overflow-x-hidden selection:bg-orange-200 selection:text-orange-900 pb-16 md:pb-0">
       <Navbar showAuthButtons={true} />
 
-            {/* --- HERO SECTION: FULL-WIDTH PANORAMIC DEVOTIONAL BANNER (EXACTLY MATCHING USER REFERENCE PHOTOS) --- */}
+            {/* --- HERO SECTION: FULL-WIDTH PANORAMIC SUNRISE HERO (MATCHING USER PHOTO EXACTLY) --- */}
       <section 
-        className="relative w-full overflow-hidden bg-[#FFFDF9] min-h-[440px] sm:min-h-[500px] lg:min-h-[560px] flex items-center border-b border-orange-100/60"
+        className="relative w-full overflow-hidden bg-gradient-to-b from-[#FFF5E5] via-[#FFF9F0] to-[#FFFFFF]"
         onMouseEnter={() => setIsSlidePaused(true)}
         onMouseLeave={() => setIsSlidePaused(false)}
       >
-        {/* Full-Width Panoramic Devotional Background: Ayodhya Ram Mandir & Bhagwan Shri Ram */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none select-none overflow-hidden">
-          <Image
-            src="/images/hero-ayodhya-ramji-hd.webp"
-            alt="Ayodhya Ram Mandir & Bhagwan Shri Ram"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[72%_center] sm:object-[78%_center] lg:object-right"
-          />
+        {/* Full-bleed Panoramic Banner Carousel Container */}
+        <div className="relative w-full min-h-[340px] sm:min-h-[420px] lg:min-h-[480px] flex items-center">
+          
+          {/* Background Image / Panoramic Artwork with AnimatePresence */}
+          {(() => {
+            const currentSlide = heroSlides[currentSlideIdx] || DEFAULT_HERO_SLIDES[0];
+            const align = currentSlide.textAlignment || 'center';
+            const isTextVisible = currentSlide.showText !== false;
+            const isButtonsVisible = currentSlide.showButtons !== false;
+            const textColor = currentSlide.textColor || '#2a1306';
+            const isAnyContentVisible = isTextVisible || isButtonsVisible;
+            return (
+              <>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentSlideIdx}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeInOut' }}
+                    className="absolute inset-0 z-0"
+                  >
+                    {/* Desktop Image (hidden on mobile if mobileImage exists) */}
+                    <div className={currentSlide.mobileImage ? 'hidden md:block absolute inset-0' : 'absolute inset-0'}>
+                      <Image
+                        src={currentSlide.image || '/images/hero-clean-bg.webp'}
+                        alt={currentSlide.title || 'Bhagwan Shri Ram'}
+                        fill
+                        priority
+                        unoptimized
+                        className="object-cover object-[78%_top] md:object-top"
+                        sizes="100vw"
+                      />
+                    </div>
 
-          {/* Devotional Warm Gradient Overlays for Crystal-Clear Typography Contrast */}
-          {/* Desktop Left-to-Right Fade */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDF9] via-[#FFFDF9]/95 sm:via-[#FFFDF9]/85 lg:via-[#FFFDF9]/70 to-transparent/10" />
+                    {/* Mobile Image (shown only on mobile if mobileImage exists) */}
+                    {currentSlide.mobileImage && (
+                      <div className="md:hidden absolute inset-0">
+                        <Image
+                          src={currentSlide.mobileImage}
+                          alt={currentSlide.title || 'Bhagwan Shri Ram'}
+                          fill
+                          priority
+                          unoptimized
+                          className="object-cover object-top sm:object-center"
+                          sizes="100vw"
+                        />
+                      </div>
+                    )}
 
-          {/* Mobile Overlay so text is readable over the golden sky */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#FFFDF9]/90 via-[#FFFDF9]/80 to-[#FFFDF9]/40 sm:hidden" />
+                    {/* Clean natural presentation with NO white milky haze */}
+                  </motion.div>
+                </AnimatePresence>
 
-          {/* Top subtle fade from navbar */}
-          <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#FFFDF9] to-transparent opacity-80" />
-
-          {/* Bottom blend into the floating dock */}
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#FFFDF9] to-transparent" />
-        </div>
-
-        {/* Content Container (Constrained width for readable typography, while background is 100% full-width) */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12 pt-6 sm:pt-8 pb-14 sm:pb-20 relative z-10 w-full">
-          <div className="grid lg:grid-cols-12 gap-6 items-center">
-
-            {/* LEFT / MAIN COLUMN: Grand Devotional Headline, Tagline, Action Buttons & Trust Line */}
-            <div className="lg:col-span-8 text-center lg:text-left flex flex-col items-center lg:items-start max-w-2xl">
-              
-              {/* Top Divine Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-orange-200/90 text-orange-950 text-xs font-black tracking-wider uppercase mb-3 sm:mb-4 shadow-xs">
-                <span>🚩</span>
-                <span>Chant • Connect • Grow • Serve</span>
-              </div>
-
-              {/* Main Grand Headline (Matching Reference Calligraphy Style) */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-[1.12] mb-3 text-slate-900 drop-shadow-xs">
-                <span className="block text-slate-900 font-serif">जय श्री राम नाम</span>
-                <span className="block text-2xl sm:text-4xl lg:text-5xl text-orange-600 font-serif font-black mt-1">
-                  Jai Shri Ram Naam
-                </span>
-              </h1>
-
-              {/* Devotional Subtitle & Tulsi Chaupai */}
-              <p className="text-xs sm:text-sm lg:text-base font-bold text-amber-900/95 mb-2 font-serif italic">
-                “कलियुग केवल नाम अधारा। सुमिरि सुमिरि नर उतरहिं पारा॥”
-              </p>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-5 font-medium max-w-xl">
-                Experience the divine power of Shri Ram Naam. Let the sacred vibrations fill your life with peace, positivity and eternal happiness. Join millions of devotees worldwide in daily sacred Ram Naam Sadhna.
-              </p>
-
-              {/* Action CTA Buttons (Matching Reference Mockups) */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 mb-5 w-full">
-                <button
-                  onClick={() => safeNavigate('/#jaap')}
-                  className="px-6 sm:px-8 py-3.5 rounded-full font-black text-xs sm:text-sm text-white shadow-xl shadow-orange-500/30 bg-gradient-to-r from-orange-600 via-amber-500 to-orange-500 hover:from-orange-700 hover:to-amber-600 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                    <Play className="w-2.5 h-2.5 fill-white text-white ml-0.5" />
+                {/* Mobile Floating Greeting Pill at TOP (leaves artwork center clear) */}
+                {(pandit || user) && (
+                  <div className="md:hidden absolute top-3 inset-x-0 flex justify-center z-30 pointer-events-none px-4">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-orange-200/90 text-orange-950 text-xs font-bold shadow-md">
+                      <span className="text-sm">{pandit ? '🔱' : '🙏'}</span>
+                      <span className="truncate max-w-[260px]">
+                         सादर प्रणाम, <strong>{pandit ? (pandit.name || 'पंडित जी') : user?.name}</strong>!
+                        {pandit && <span className="text-[10px] text-orange-700 ml-1 font-semibold">(पुरोहित)</span>}
+                      </span>
+                    </div>
                   </div>
-                  <span>Start Chanting Now →</span>
-                </button>
+                )}
 
-                <button
-                  onClick={() => handleHeroButtonClick('video', 'Watch Video')}
-                  className="px-5 sm:px-7 py-3.5 rounded-full font-bold text-xs sm:text-sm text-slate-800 bg-white/95 hover:bg-white border-2 border-orange-200/90 hover:border-orange-400 active:scale-95 transition-all shadow-sm backdrop-blur-md flex items-center gap-2 cursor-pointer"
-                >
-                  <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
-                    <Play className="w-2.5 h-2.5 text-orange-600 ml-0.5" />
+                {/* Desktop Greeting Pill when text is hidden */}
+                {(pandit || user) && !isTextVisible && !isButtonsVisible && (
+                  <div className="hidden md:flex absolute top-4 left-6 z-20 pointer-events-none">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-orange-200/90 text-orange-950 text-xs font-bold shadow-sm">
+                      <span className="text-base">{pandit ? '🔱' : '🙏'}</span>
+                      <span>
+                        सादर प्रणाम, <strong>{pandit ? (pandit.name || 'पंडित जी') : user?.name}</strong>!
+                      </span>
+                    </div>
                   </div>
-                  <span>Watch Video</span>
-                </button>
-              </div>
+                )}
 
-              {/* Devotional Micro-Trust Line */}
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-600 flex-wrap justify-center lg:justify-start">
-                <span className="text-rose-500 text-sm">❤️</span>
-                <span>Together for a Better & More Devotional World</span>
-                <span className="text-slate-300 hidden sm:inline">•</span>
-                <span className="text-orange-600 font-black">1.42 Cr+ Chanted</span>
-              </div>
+                {/* Previous & Next Arrow Controls */}
+                {heroSlides.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setCurrentSlideIdx((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
+                      aria-label="Previous Slide"
+                      className="absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/85 hover:bg-white text-slate-800 hover:text-orange-600 shadow-lg border border-orange-200/60 flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer hidden sm:flex"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => setCurrentSlideIdx((prev) => (prev + 1) % heroSlides.length)}
+                      aria-label="Next Slide"
+                      className="absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/85 hover:bg-white text-slate-800 hover:text-orange-600 shadow-lg border border-orange-200/60 flex items-center justify-center backdrop-blur-md transition-all active:scale-90 cursor-pointer hidden sm:flex"
+                    >
+                      <ChevronRightIcon className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
 
-              {/* Logged in Devotee / Pandit Greeting Pill */}
-              {(pandit || user) && (
-                <div className="mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/90 border border-orange-200 text-orange-950 text-xs font-bold shadow-2xs backdrop-blur-md">
-                  <span>{pandit ? '🔱' : '🙏'}</span>
-                  <span>
-                    सादर प्रणाम, <strong>{pandit ? (pandit.name || 'पंडित जी') : user?.name}</strong>!
-                    {pandit && <span className="text-[10px] text-orange-700 ml-1 font-semibold">(पुरोहित)</span>}
-                  </span>
-                </div>
-              )}
+                {/* Foreground Text & Action Buttons */}
+                {isAnyContentVisible && (
+                  <div className="container mx-auto px-4 sm:px-8 lg:px-14 relative z-20 pt-10 pb-10 sm:pb-14">
+                    <div className={`max-w-xl lg:max-w-2xl transition-all duration-300 ${
+                      align === 'left'
+                        ? 'text-center md:text-left mx-auto md:ml-4 lg:ml-8 md:mr-auto'
+                        : align === 'right'
+                        ? 'text-center md:text-right mx-auto md:mr-4 lg:mr-8 md:ml-auto'
+                        : 'text-center mx-auto'
+                    }`}>
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={currentSlideIdx}
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -15 }}
+                          transition={{ duration: 0.45, ease: 'easeOut' }}
+                        >
+                          {/* Text Content (Title, Subtitle, Tagline, Description) */}
+                          {isTextVisible && (
+                            <>
+                              {/* Top Divine Badge */}
+                              <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-orange-200/90 text-[11px] sm:text-xs font-black tracking-wider uppercase mb-2.5 sm:mb-3 shadow-xs ${
+                                align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
+                              }`} style={{ color: textColor }}>
+                                <span>{currentSlide.badge || '🚩 Jai Shree Ram — Naam is the True Power'}</span>
+                              </div>
 
-            </div>
+                              {/* Main Headline */}
+                              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight leading-[1.15] mb-2 sm:mb-2.5 drop-shadow-xs" style={{ color: textColor }}>
+                                <span className="block font-serif" style={{ color: textColor }}>
+                                  {currentSlide.title || 'Jai Shree Ram'}
+                                </span>
+                                {currentSlide.subtitle && (
+                                  <span className="block mt-1 font-serif text-xl sm:text-3xl lg:text-4xl font-black" style={{ color: textColor }}>
+                                    {currentSlide.subtitle}
+                                  </span>
+                                )}
+                              </h1>
 
-            {/* RIGHT COLUMN (DESKTOP): Divine Calligraphy Badge & Floating Saint Quote (Over panoramic background) */}
-            <div className="lg:col-span-4 hidden lg:flex flex-col items-end justify-between h-full min-h-[380px] pointer-events-none select-none">
-              
-              {/* Top-Right: Grand Golden Calligraphy */}
-              <div className="px-5 py-2 rounded-2xl bg-white/85 backdrop-blur-md border border-orange-200/90 text-orange-950 font-serif font-black text-sm lg:text-base shadow-lg shadow-orange-950/5">
-                ॥ जय श्री राम ॥
-              </div>
+                              {/* Subheading / Tagline */}
+                              {currentSlide.tagline && (
+                                <p className="text-sm sm:text-base font-bold mb-1.5 drop-shadow-xs" style={{ color: textColor }}>
+                                  {currentSlide.tagline}
+                                </p>
+                              )}
 
-              {/* Bottom-Right: Elegant Floating Saint Tulsi Quote Card */}
-              <div className="max-w-xs p-3.5 rounded-2xl bg-white/85 backdrop-blur-md border border-orange-200/90 shadow-xl shadow-orange-950/10 text-center pointer-events-auto">
-                <p className="text-xs font-bold text-slate-800 font-serif leading-relaxed italic">
-                  “रामनाम मनुष्य को शांति, शक्ति और सही मार्ग दिखाता है।”
-                </p>
-                <p className="text-[10px] font-semibold text-orange-700 mt-1">
-                  — संत गोस्वामी तुलसीदास जी
-                </p>
-              </div>
+                              {/* Description */}
+                              <p className={`text-xs sm:text-sm lg:text-base max-w-lg leading-relaxed mb-4 sm:mb-5 font-medium ${
+                                align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
+                              }`} style={{ color: textColor, opacity: 0.95 }}>
+                                {currentSlide.description || 'Join millions of devotees and experience peace, positivity and happiness through Ram Naam in your daily life.'}
+                              </p>
+                            </>
+                          )}
 
-            </div>
+                          {/* Two Action Buttons */}
+                          {isButtonsVisible && (
+                            <div className={`flex flex-wrap items-center gap-3 mb-4 sm:mb-5 ${
+                              align === 'left' ? 'justify-center md:justify-start' : align === 'right' ? 'justify-center md:justify-end' : 'justify-center'
+                            }`}>
+                              <button
+                                onClick={() => handleHeroButtonClick(currentSlide.button1Link, currentSlide.button1Text)}
+                                className="px-6 sm:px-7 py-3 rounded-full font-bold text-xs sm:text-sm text-white shadow-lg shadow-orange-500/30 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+                              >
+                                <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center">
+                                  <Play className="w-2.5 h-2.5 fill-white text-white ml-0.5" />
+                                </div>
+                                <span>{currentSlide.button1Text || 'Start Ram Naam Jaap'}</span>
+                              </button>
 
-          </div>
+                              <button
+                                onClick={() => handleHeroButtonClick(currentSlide.button2Link || 'video', currentSlide.button2Text)}
+                                className="px-5 sm:px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-slate-800 bg-white/95 hover:bg-white border border-orange-200 hover:border-orange-400 active:scale-95 transition-all shadow-xs backdrop-blur-md flex items-center gap-2 cursor-pointer"
+                              >
+                                <div className="w-4 h-4 rounded-full bg-orange-100 flex items-center justify-center">
+                                  <Play className="w-2.5 h-2.5 text-orange-600 ml-0.5" />
+                                </div>
+                                <span>{currentSlide.button2Text || 'Watch Video'}</span>
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Role-Aware User / Pandit Status Badge (shown inside text block on desktop only) */}
+                          {pandit ? (
+                            <div className={`hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
+                              align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
+                            }`}>
+                              <span className="text-base">🔱</span>
+                              <span> सादर प्रणाम, <strong>{pandit.name || 'पंडित जी'}</strong>! आप पुरोहित पोर्टल में लॉगिन हैं।</span>
+                            </div>
+                          ) : user ? (
+                            <div className={`hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/85 backdrop-blur-md border border-orange-200 text-orange-900 text-xs font-bold shadow-xs ${
+                              align === 'left' ? 'mx-auto md:ml-0' : align === 'right' ? 'mx-auto md:mr-0' : 'mx-auto'
+                            }`}>
+                              <span className="text-base">🙏</span>
+                              <span> सादर प्रणाम, <strong>{user.name}</strong>!</span>
+                            </div>
+                          ) : null}
+                        </motion.div>
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                )}
+
+                {/* Slider Dots Indicator */}
+                {heroSlides.length > 1 && (
+                  <div className="absolute bottom-5 sm:bottom-6 inset-x-0 z-20 flex items-center justify-center gap-2">
+                    {heroSlides.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCurrentSlideIdx(idx)}
+                        aria-label={`Slide ${idx + 1}`}
+                        className={`transition-all duration-300 cursor-pointer rounded-full ${
+                          idx === currentSlideIdx
+                            ? 'w-7 h-2 bg-gradient-to-r from-orange-500 to-amber-500 shadow-sm'
+                            : 'w-2 h-2 bg-white/75 hover:bg-white shadow-xs border border-orange-300/40'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       </section>
 
+      
       {/* --- 6-GATEWAY FLOATING ACTION DOCK (EXACTLY MATCHING USER MOCKUPS) --- */}
       <div className="relative z-30 max-w-6xl mx-auto px-2 sm:px-4 -mt-5 sm:-mt-8 lg:-mt-10">
         <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl shadow-orange-950/10 border border-orange-200/80 p-2 sm:p-2.5">
