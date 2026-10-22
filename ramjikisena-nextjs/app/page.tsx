@@ -489,21 +489,43 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#FFFDF9] text-slate-800 overflow-x-hidden selection:bg-orange-200 selection:text-orange-900 pb-16 md:pb-0">
       <Navbar showAuthButtons={true} />
 
-            {/* --- HERO SECTION: 2-COLUMN DIVINE LAYOUT (EXACTLY MATCHING MOCKUP 2 & MOCKUP 3) --- */}
+            {/* --- HERO SECTION: FULL-WIDTH PANORAMIC DEVOTIONAL BANNER (EXACTLY MATCHING USER REFERENCE PHOTOS) --- */}
       <section 
-        className="relative w-full overflow-hidden bg-gradient-to-b from-[#FFF5E5] via-[#FFF9F0] to-[#FFFFFF] border-b border-orange-100/60"
+        className="relative w-full overflow-hidden bg-[#FFFDF9] min-h-[440px] sm:min-h-[500px] lg:min-h-[560px] flex items-center border-b border-orange-100/60"
         onMouseEnter={() => setIsSlidePaused(true)}
         onMouseLeave={() => setIsSlidePaused(false)}
       >
-        {/* Subtle decorative background watermark */}
-        <div className="absolute right-0 top-0 w-96 h-96 bg-gradient-to-bl from-orange-200/20 to-transparent rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-0 bottom-0 w-80 h-80 bg-gradient-to-tr from-amber-200/20 to-transparent rounded-full blur-3xl pointer-events-none" />
+        {/* Full-Width Panoramic Devotional Background: Ayodhya Ram Mandir & Bhagwan Shri Ram */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none select-none overflow-hidden">
+          <Image
+            src="/images/hero-ayodhya-ramji-hd.webp"
+            alt="Ayodhya Ram Mandir & Bhagwan Shri Ram"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[72%_center] sm:object-[78%_center] lg:object-right"
+          />
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12 pt-6 sm:pt-10 pb-12 sm:pb-16 relative z-10">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Devotional Warm Gradient Overlays for Crystal-Clear Typography Contrast */}
+          {/* Desktop Left-to-Right Fade */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDF9] via-[#FFFDF9]/95 sm:via-[#FFFDF9]/85 lg:via-[#FFFDF9]/70 to-transparent/10" />
 
-            {/* LEFT COLUMN: Grand Devotional Headline, Tagline, Action Buttons & Trust Line */}
-            <div className="lg:col-span-7 text-center lg:text-left flex flex-col items-center lg:items-start">
+          {/* Mobile Overlay so text is readable over the golden sky */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FFFDF9]/90 via-[#FFFDF9]/80 to-[#FFFDF9]/40 sm:hidden" />
+
+          {/* Top subtle fade from navbar */}
+          <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#FFFDF9] to-transparent opacity-80" />
+
+          {/* Bottom blend into the floating dock */}
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#FFFDF9] to-transparent" />
+        </div>
+
+        {/* Content Container (Constrained width for readable typography, while background is 100% full-width) */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12 pt-6 sm:pt-8 pb-14 sm:pb-20 relative z-10 w-full">
+          <div className="grid lg:grid-cols-12 gap-6 items-center">
+
+            {/* LEFT / MAIN COLUMN: Grand Devotional Headline, Tagline, Action Buttons & Trust Line */}
+            <div className="lg:col-span-8 text-center lg:text-left flex flex-col items-center lg:items-start max-w-2xl">
               
               {/* Top Divine Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-orange-200/90 text-orange-950 text-xs font-black tracking-wider uppercase mb-3 sm:mb-4 shadow-xs">
@@ -511,8 +533,8 @@ export default function HomePage() {
                 <span>Chant • Connect • Grow • Serve</span>
               </div>
 
-              {/* Main Grand Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-[1.12] mb-3 text-slate-900">
+              {/* Main Grand Headline (Matching Reference Calligraphy Style) */}
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight leading-[1.12] mb-3 text-slate-900 drop-shadow-xs">
                 <span className="block text-slate-900 font-serif">जय श्री राम नाम</span>
                 <span className="block text-2xl sm:text-4xl lg:text-5xl text-orange-600 font-serif font-black mt-1">
                   Jai Shri Ram Naam
@@ -520,14 +542,14 @@ export default function HomePage() {
               </h1>
 
               {/* Devotional Subtitle & Tulsi Chaupai */}
-              <p className="text-xs sm:text-sm lg:text-base font-bold text-amber-900/90 mb-2 font-serif italic">
+              <p className="text-xs sm:text-sm lg:text-base font-bold text-amber-900/95 mb-2 font-serif italic">
                 “कलियुग केवल नाम अधारा। सुमिरि सुमिरि नर उतरहिं पारा॥”
               </p>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-xl leading-relaxed mb-5 font-medium">
-                Let the divine name of Lord Ram fill your life with peace, positivity and eternal happiness. Join millions of devotees worldwide in daily sacred Ram Naam Sadhna.
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-5 font-medium max-w-xl">
+                Experience the divine power of Shri Ram Naam. Let the sacred vibrations fill your life with peace, positivity and eternal happiness. Join millions of devotees worldwide in daily sacred Ram Naam Sadhna.
               </p>
 
-              {/* Two Prominent Action CTA Buttons (Matching Mockup 2 & 3) */}
+              {/* Action CTA Buttons (Matching Reference Mockups) */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 mb-5 w-full">
                 <button
                   onClick={() => safeNavigate('/#jaap')}
@@ -551,7 +573,7 @@ export default function HomePage() {
               </div>
 
               {/* Devotional Micro-Trust Line */}
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 flex-wrap justify-center lg:justify-start">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-600 flex-wrap justify-center lg:justify-start">
                 <span className="text-rose-500 text-sm">❤️</span>
                 <span>Together for a Better & More Devotional World</span>
                 <span className="text-slate-300 hidden sm:inline">•</span>
@@ -560,7 +582,7 @@ export default function HomePage() {
 
               {/* Logged in Devotee / Pandit Greeting Pill */}
               {(pandit || user) && (
-                <div className="mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-orange-100/70 border border-orange-200 text-orange-950 text-xs font-bold shadow-2xs">
+                <div className="mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/90 border border-orange-200 text-orange-950 text-xs font-bold shadow-2xs backdrop-blur-md">
                   <span>{pandit ? '🔱' : '🙏'}</span>
                   <span>
                     सादर प्रणाम, <strong>{pandit ? (pandit.name || 'पंडित जी') : user?.name}</strong>!
@@ -571,41 +593,31 @@ export default function HomePage() {
 
             </div>
 
-            {/* RIGHT COLUMN: Radiant Framed Artwork of Bhagwan Shri Ram & Sita Mata */}
-            <div className="lg:col-span-5 flex justify-center relative">
-              <div className="relative w-full max-w-md sm:max-w-lg aspect-[4/3] sm:aspect-[5/4] rounded-3xl overflow-hidden shadow-2xl shadow-orange-950/15 border-4 border-white/90 bg-amber-50">
-                <Image
-                  src="https://inext-media-storage.s3.ap-south-1.amazonaws.com/ramjikisena/hero/shri_ram_banner_full_size_1792225818848_b5be07e3.png"
-                  alt="Bhagwan Shri Ram & Sita Mata"
-                  fill
-                  priority
-                  unoptimized
-                  className="object-cover object-top hover:scale-105 transition-transform duration-700"
-                  sizes="(max-width: 640px) 100vw, 50vw"
-                />
-
-                {/* Golden corner calligraphy */}
-                <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-orange-200 text-orange-950 font-serif font-black text-xs shadow-sm">
-                  ॥ जय श्री राम ॥
-                </div>
-
-                {/* Floating Saint Tulsi Quote Card at Bottom */}
-                <div className="absolute bottom-3 inset-x-3 p-2.5 rounded-2xl bg-white/90 backdrop-blur-md border border-orange-200/90 shadow-md text-center">
-                  <p className="text-[11px] font-bold text-slate-800 font-serif leading-tight italic">
-                    “रामनाम नर केसरी, कनक कसीपु कलिकाल।”
-                  </p>
-                  <p className="text-[9px] font-semibold text-orange-700 mt-0.5">
-                    — संत गोस्वामी तुलसीदास जी
-                  </p>
-                </div>
+            {/* RIGHT COLUMN (DESKTOP): Divine Calligraphy Badge & Floating Saint Quote (Over panoramic background) */}
+            <div className="lg:col-span-4 hidden lg:flex flex-col items-end justify-between h-full min-h-[380px] pointer-events-none select-none">
+              
+              {/* Top-Right: Grand Golden Calligraphy */}
+              <div className="px-5 py-2 rounded-2xl bg-white/85 backdrop-blur-md border border-orange-200/90 text-orange-950 font-serif font-black text-sm lg:text-base shadow-lg shadow-orange-950/5">
+                ॥ जय श्री राम ॥
               </div>
+
+              {/* Bottom-Right: Elegant Floating Saint Tulsi Quote Card */}
+              <div className="max-w-xs p-3.5 rounded-2xl bg-white/85 backdrop-blur-md border border-orange-200/90 shadow-xl shadow-orange-950/10 text-center pointer-events-auto">
+                <p className="text-xs font-bold text-slate-800 font-serif leading-relaxed italic">
+                  “रामनाम मनुष्य को शांति, शक्ति और सही मार्ग दिखाता है।”
+                </p>
+                <p className="text-[10px] font-semibold text-orange-700 mt-1">
+                  — संत गोस्वामी तुलसीदास जी
+                </p>
+              </div>
+
             </div>
 
           </div>
         </div>
       </section>
 
-{/* --- 6-GATEWAY FLOATING ACTION DOCK (EXACTLY MATCHING USER MOCKUPS) --- */}
+      {/* --- 6-GATEWAY FLOATING ACTION DOCK (EXACTLY MATCHING USER MOCKUPS) --- */}
       <div className="relative z-30 max-w-6xl mx-auto px-2 sm:px-4 -mt-5 sm:-mt-8 lg:-mt-10">
         <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl shadow-orange-950/10 border border-orange-200/80 p-2 sm:p-2.5">
           <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-2">
