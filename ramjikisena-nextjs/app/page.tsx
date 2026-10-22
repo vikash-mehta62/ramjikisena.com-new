@@ -968,168 +968,7 @@ export default function HomePage() {
         </div>
       </section>
 
-            {/* --- EXPLORE OUR SPIRITUAL WORLD (4 CINEMATIC VISUAL CARDS MATCHING MOCKUP 2 & 3) --- */}
-      <section className="py-6 sm:py-8 bg-gradient-to-b from-[#FFFDF9] via-[#FFF8EE] to-[#FFFDF9] border-t border-orange-100/70">
-        <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
-          <div className="text-center max-w-2xl mx-auto mb-6">
-            <span className="inline-block px-3 py-0.5 rounded-full bg-orange-100 text-orange-700 text-xs font-black mb-1">
-              🚩 दिव्य आध्यात्मिक संसार
-            </span>
-            <h2 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Explore Our <span className="text-orange-600">Spiritual World</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              प्रभु श्री राम की पावन कथा, स्तुति, संकीर्तन और नित्य साधना से अपने जीवन को पावन बनाएं
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            {/* Card 1: Ram Katha & Spiritual Content */}
-            <div 
-              onClick={() => safeNavigate('/katha-vachaks')}
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-xl border border-orange-100 hover:border-orange-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-            >
-              <div>
-                <div className="relative h-44 overflow-hidden">
-                  <Image
-                    src="/home/kathavachak.webp"
-                    alt="Ram Katha"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <span className="absolute top-3 left-3 text-[10px] font-black px-2.5 py-0.5 rounded-full bg-white/90 text-orange-700 shadow-xs">
-                    🚩 अमृत वर्षा
-                  </span>
-                </div>
-                <div className="p-3.5">
-                  <h3 className="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors">
-                    श्री रामकथा व अमृत प्रवचन
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed font-medium">
-                    पूज्य व्यास पीठ द्वारा मानस के गूढ़ रहस्यों और भक्ति की पावन अमृत धारा।
-                  </p>
-                </div>
-              </div>
-              <div className="px-3.5 pb-3.5 flex items-center justify-between text-xs font-bold text-orange-600">
-                <span>कथा सुनें</span>
-                <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center group-hover:bg-orange-600 transition-all shadow-xs">
-                  <Play className="w-3 h-3 ml-0.5 fill-white" />
-                </div>
-              </div>
-            </div>
-
-            {/* Card 2: Hanuman Chalisa & Stuti */}
-            <div 
-              onClick={() => safeNavigate('/glory')}
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-xl border border-orange-100 hover:border-orange-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-            >
-              <div>
-                <div className="relative h-44 overflow-hidden">
-                  <Image
-                    src="/hanumanji.jpg"
-                    alt="Hanuman Chalisa"
-                    fill
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <span className="absolute top-3 left-3 text-[10px] font-black px-2.5 py-0.5 rounded-full bg-white/90 text-orange-700 shadow-xs">
-                    ⚡ संकट मोचन
-                  </span>
-                </div>
-                <div className="p-3.5">
-                  <h3 className="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors">
-                    संकट मोचन हनुमान चालीसा
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed font-medium">
-                    नित्य हनुमान चालीसा व सुंदरकांड पाठ से हर भय, क्लेश व संकट से मुक्ति पाएं।
-                  </p>
-                </div>
-              </div>
-              <div className="px-3.5 pb-3.5 flex items-center justify-between text-xs font-bold text-orange-600">
-                <span>पाठ करें</span>
-                <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center group-hover:bg-orange-600 transition-all shadow-xs">
-                  <Play className="w-3 h-3 ml-0.5 fill-white" />
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: Bhajans & Divine Aarti */}
-            <div 
-              onClick={() => safeNavigate('/#jaap')}
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-xl border border-orange-100 hover:border-orange-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-            >
-              <div>
-                <div className="relative h-44 overflow-hidden">
-                  <Image
-                    src="/images/Ayodhya Ramji Photo.webp"
-                    alt="Aarti & Bhajans"
-                    fill
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <span className="absolute top-3 left-3 text-[10px] font-black px-2.5 py-0.5 rounded-full bg-white/90 text-orange-700 shadow-xs">
-                    🪔 अमृत संकीर्तन
-                  </span>
-                </div>
-                <div className="p-3.5">
-                  <h3 className="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors">
-                    मधुर भजन व दिव्य आरती
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed font-medium">
-                    प्रभु श्री राम की पावन आरती, स्तुति व मधुर संकीर्तन से मन में असीम शांति पाएं।
-                  </p>
-                </div>
-              </div>
-              <div className="px-3.5 pb-3.5 flex items-center justify-between text-xs font-bold text-orange-600">
-                <span>संकीर्तन सुनें</span>
-                <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center group-hover:bg-orange-600 transition-all shadow-xs">
-                  <Play className="w-3 h-3 ml-0.5 fill-white" />
-                </div>
-              </div>
-            </div>
-
-            {/* Card 4: Daily Ram Naam Sadhna */}
-            <div 
-              onClick={() => safeNavigate('/#jaap')}
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-xs hover:shadow-xl border border-orange-100 hover:border-orange-300 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-            >
-              <div>
-                <div className="relative h-44 overflow-hidden">
-                  <Image
-                    src="/ramji.jpg"
-                    alt="Ram Naam Jaap"
-                    fill
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <span className="absolute top-3 left-3 text-[10px] font-black px-2.5 py-0.5 rounded-full bg-white/90 text-orange-700 shadow-xs">
-                    📿 अखंड महा-जप
-                  </span>
-                </div>
-                <div className="p-3.5">
-                  <h3 className="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors">
-                    डिजिटल राम नाम महा-बैंक
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed font-medium">
-                    108 मणियों की पवित्र माला फेरें, नाम लेखन करें और अक्षय पुण्य संचित करें।
-                  </p>
-                </div>
-              </div>
-              <div className="px-3.5 pb-3.5 flex items-center justify-between text-xs font-bold text-orange-600">
-                <span>जाप शुरू करें</span>
-                <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center group-hover:bg-orange-600 transition-all shadow-xs">
-                  <ArrowRight className="w-3.5 h-3.5 text-white" />
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* --- INTERACTIVE RAM NAAM JAAP TOOL (ALWAYS RENDERED ON INITIAL LOAD) --- */}
+            {/* --- INTERACTIVE RAM NAAM JAAP TOOL (ALWAYS RENDERED ON INITIAL LOAD) --- */}
       <NaamJapSection user={user} onSaveSuccess={checkAuth} />
 
       {/* --- ALL DIVINE SERVICES SECTION (WHITE-AND-ORANGE THEMED) --- */}
@@ -1169,7 +1008,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-5">
             {filteredServices.map(service => (
               <div
                 key={service.serviceId || service.id || service._id}
@@ -1177,7 +1016,7 @@ export default function HomePage() {
                 className="bg-white rounded-2xl sm:rounded-3xl border border-slate-100 hover:border-orange-300 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between cursor-pointer group"
               >
                 <div>
-                  <div className="relative h-28 sm:h-56 overflow-hidden bg-slate-100">
+                  <div className="relative h-28 sm:h-44 overflow-hidden bg-slate-100">
                     <Image
                       src={service.img}
                       alt={service.title}
@@ -1205,11 +1044,11 @@ export default function HomePage() {
                     )}
                   </div>
 
-                  <div className="p-2.5 sm:p-5">
+                  <div className="p-2.5 sm:p-4">
                     <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-orange-600 mb-0.5 line-clamp-1">
                       {service.subtitle}
                     </p>
-                    <h3 className="text-xs sm:text-lg font-black text-slate-900 group-hover:text-orange-600 transition-colors line-clamp-1 sm:line-clamp-none">
+                    <h3 className="text-xs sm:text-base font-black text-slate-900 group-hover:text-orange-600 transition-colors line-clamp-1">
                       {service.title}
                     </h3>
                     <p className="text-[10px] sm:text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
