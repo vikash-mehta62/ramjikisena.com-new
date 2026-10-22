@@ -346,6 +346,18 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    // Ensure fresh visit starts at top unless specific anchor requested
+    if (typeof window !== 'undefined') {
+      if (!window.location.hash) {
+        window.scrollTo(0, 0);
+      } else if (window.location.hash === '#jaap') {
+        const el = document.getElementById('jaap');
+        if (el) {
+          setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+        }
+      }
+    }
+
     checkAuth();
     fetchLiveStats();
     fetchDailyInspirations();
@@ -710,78 +722,114 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* --- 4-GATEWAY FLOATING ACTION DOCK (EXACTLY MATCHING USER MOCKUP "WEBSITE - HOMEPAGE") --- */}
-      <div className="relative z-30 max-w-5xl mx-auto px-3 sm:px-4 -mt-5 sm:-mt-8 lg:-mt-10">
+      {/* --- 6-GATEWAY FLOATING ACTION DOCK (EXACTLY MATCHING USER MOCKUPS) --- */}
+      <div className="relative z-30 max-w-6xl mx-auto px-2 sm:px-4 -mt-5 sm:-mt-8 lg:-mt-10">
         <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl shadow-orange-950/10 border border-orange-200/80 p-2 sm:p-2.5">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
-            {/* 1. Pandit Booking */}
-            <button
-              onClick={() => safeNavigate('/pandits')}
-              className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-orange-50/70 border border-orange-100 hover:border-orange-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
-            >
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
-                🔱
-              </div>
-              <div className="min-w-0">
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight truncate">
-                  पंडित बुक करें
-                </h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate font-medium">
-                  पूजा / हवन / संस्कार
-                </p>
-              </div>
-            </button>
-
-            {/* 2. Astrologer Booking */}
-            <button
-              onClick={() => safeNavigate('/astrology')}
-              className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-amber-50/70 border border-orange-100 hover:border-amber-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
-            >
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-500 text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
-                🔮
-              </div>
-              <div className="min-w-0">
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-amber-700 transition-colors leading-tight truncate">
-                  ज्योतिषी बुक करें
-                </h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate font-medium">
-                  कुंडली / विवाह / करियर
-                </p>
-              </div>
-            </button>
-
-            {/* 3. Bhajan & Aarti */}
+          <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 sm:gap-2">
+            {/* 1. Ram Naam Jaap (Lead Action) */}
             <button
               onClick={() => safeNavigate('/#jaap')}
-              className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-rose-50/70 border border-orange-100 hover:border-rose-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+              className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-emerald-50/70 border border-orange-100 hover:border-emerald-300 transition-all text-center sm:text-left group shadow-2xs hover:shadow-sm cursor-pointer"
             >
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-rose-500 to-orange-500 text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
-                🪔
-              </div>
-              <div className="min-w-0">
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-rose-600 transition-colors leading-tight truncate">
-                  भजन / आरती
-                </h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate font-medium">
-                  सुनें और शांति पाएं
-                </p>
-              </div>
-            </button>
-
-            {/* 4. Ram Naam Jaap */}
-            <button
-              onClick={() => safeNavigate('/#jaap')}
-              className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-emerald-50/70 border border-orange-100 hover:border-emerald-300 transition-all text-left group shadow-2xs hover:shadow-sm cursor-pointer"
-            >
-              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-base sm:text-xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
                 📿
               </div>
               <div className="min-w-0">
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 group-hover:text-emerald-700 transition-colors leading-tight truncate">
+                <h3 className="text-[11px] sm:text-xs font-black text-slate-900 group-hover:text-emerald-700 transition-colors leading-tight truncate">
                   राम नाम जप
                 </h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate font-medium">
-                  108 मणियों का दैनिक जप
+                <p className="text-[9px] sm:text-[10px] text-slate-500 mt-0.5 truncate hidden sm:block">
+                  108 मनके महा-जप
+                </p>
+              </div>
+            </button>
+
+            {/* 2. Pandit Booking */}
+            <button
+              onClick={() => safeNavigate('/pandits')}
+              className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-orange-50/70 border border-orange-100 hover:border-orange-300 transition-all text-center sm:text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center text-base sm:text-xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                🔱
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-[11px] sm:text-xs font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight truncate">
+                  पंडित बुक करें
+                </h3>
+                <p className="text-[9px] sm:text-[10px] text-slate-500 mt-0.5 truncate hidden sm:block">
+                  पूजा, हवन व संस्कार
+                </p>
+              </div>
+            </button>
+
+            {/* 3. Astrologer Booking */}
+            <button
+              onClick={() => safeNavigate('/astrology')}
+              className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-amber-50/70 border border-orange-100 hover:border-amber-300 transition-all text-center sm:text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-500 text-white flex items-center justify-center text-base sm:text-xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                🔮
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-[11px] sm:text-xs font-black text-slate-900 group-hover:text-amber-700 transition-colors leading-tight truncate">
+                  ज्योतिषी परामर्श
+                </h3>
+                <p className="text-[9px] sm:text-[10px] text-slate-500 mt-0.5 truncate hidden sm:block">
+                  कुंडली व मार्गदर्शन
+                </p>
+              </div>
+            </button>
+
+            {/* 4. Bhajan & Aarti */}
+            <button
+              onClick={() => safeNavigate('/#jaap')}
+              className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-rose-50/70 border border-orange-100 hover:border-rose-300 transition-all text-center sm:text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-orange-500 text-white flex items-center justify-center text-base sm:text-xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                🪔
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-[11px] sm:text-xs font-black text-slate-900 group-hover:text-rose-600 transition-colors leading-tight truncate">
+                  भजन व आरती
+                </h3>
+                <p className="text-[9px] sm:text-[10px] text-slate-500 mt-0.5 truncate hidden sm:block">
+                  अमृत संकीर्तन सुनें
+                </p>
+              </div>
+            </button>
+
+            {/* 5. Katha & Pravachan */}
+            <button
+              onClick={() => safeNavigate('/katha-vachaks')}
+              className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-purple-50/70 border border-orange-100 hover:border-purple-300 transition-all text-center sm:text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 text-white flex items-center justify-center text-base sm:text-xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                📖
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-[11px] sm:text-xs font-black text-slate-900 group-hover:text-purple-700 transition-colors leading-tight truncate">
+                  कथा व्यास
+                </h3>
+                <p className="text-[9px] sm:text-[10px] text-slate-500 mt-0.5 truncate hidden sm:block">
+                  श्री रामकथा व सत्संग
+                </p>
+              </div>
+            </button>
+
+            {/* 6. Community */}
+            <button
+              onClick={() => safeNavigate('/community')}
+              className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-[#FFFDF9] hover:bg-sky-50/70 border border-orange-100 hover:border-sky-300 transition-all text-center sm:text-left group shadow-2xs hover:shadow-sm cursor-pointer"
+            >
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-blue-500 text-white flex items-center justify-center text-base sm:text-xl shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+                👥
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-[11px] sm:text-xs font-black text-slate-900 group-hover:text-sky-700 transition-colors leading-tight truncate">
+                  भक्त सत्संग
+                </h3>
+                <p className="text-[9px] sm:text-[10px] text-slate-500 mt-0.5 truncate hidden sm:block">
+                  विश्वव्यापी रामभक्त
                 </p>
               </div>
             </button>
