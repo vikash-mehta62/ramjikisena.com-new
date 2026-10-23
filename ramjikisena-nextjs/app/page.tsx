@@ -6,6 +6,10 @@ import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import NaamJapSection from '@/components/NaamJapSection';
 import Footer from '@/components/Footer';
+import DailyPanchang from '@/components/DailyPanchang';
+import LiveAkhandJaapTicker from '@/components/LiveAkhandJaapTicker';
+import VirtualDeepdaan from '@/components/VirtualDeepdaan';
+import RamShalakaModal from '@/components/RamShalakaModal';
 import { authApi, User } from '@/lib/auth';
 import { useJaapNavigate } from '@/lib/useJaapNavigate';
 import {
@@ -264,6 +268,7 @@ export default function HomePage() {
   const [shareSuccess, setShareSuccess] = useState(false);
   const [services, setServices] = useState<ServiceItem[]>(ALL_SERVICES);
   const [serviceCategory, setServiceCategory] = useState<string>('all');
+  const [showShalakaModal, setShowShalakaModal] = useState(false);
   const safeNavigate = useJaapNavigate();
 
   // Dynamic Hero Slides Carousel State
@@ -507,10 +512,38 @@ export default function HomePage() {
   ];
 
   const EXPLORE = [
-    { title: 'भजन', sub: 'सुरीले राम भजन', img: '/ramji.jpg', href: '/#jaap' },
-    { title: 'आरती', sub: 'दैनिक आरती व चालीसा', img: '/hanumanji.jpg', href: '/#jaap' },
-    { title: 'कथा', sub: 'रामायण व प्रसंग', img: '/home/kathavachak.webp', href: '/katha-vachaks' },
-    { title: 'मंदिर दर्शन', sub: 'पावन तीर्थ धाम', img: '/images/Ayodhya Ramji Photo.webp', href: '/mandirs' },
+    {
+      badge: '▶ अमृत वर्षा',
+      title: 'श्री रामकथा व अमृत प्रवचन',
+      sub: 'पूज्य व्यास पीठ द्वारा मानस के गूढ़ रहस्यों और भक्ति की पावन अमृत धारा।',
+      cta: 'कथा सुनें',
+      img: '/home/kathavachak.webp',
+      href: '/katha-vachaks',
+    },
+    {
+      badge: '⚡ संकट मोचन',
+      title: 'संकट मोचन हनुमान चालीसा',
+      sub: 'नित्य हनुमान चालीसा व सुंदरकांड पाठ से हर भय, क्लेश व संकट से मुक्ति पाएं।',
+      cta: 'पाठ करें',
+      img: '/hanumanji.jpg',
+      href: '/#jaap',
+    },
+    {
+      badge: '🎵 अमृत संकीर्तन',
+      title: 'मधुर भजन व दिव्य आरती',
+      sub: 'प्रभु श्री राम की पावन आरती, स्तुति व मधुर संकीर्तन से मन में असीम शांति पाएं।',
+      cta: 'संकीर्तन सुनें',
+      img: '/images/Ayodhya Ramji Photo.webp',
+      href: '/#jaap',
+    },
+    {
+      badge: '📿 अखंड महा-जप',
+      title: 'डिजिटल राम नाम महा-बैंक',
+      sub: '108 मणियों की पवित्र माला फेरें, नाम लेखन करें और अक्षय पुण्य संचित करें।',
+      cta: 'जाप शुरू करें',
+      img: '/ramji.jpg',
+      href: '/#jaap',
+    },
   ];
 
   const FEATURES = [
@@ -656,6 +689,75 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* ================= EXPLORE OUR SPIRITUAL WORLD ================= */}
+      <section className="py-12 sm:py-16 bg-[#FFFDF9] border-t border-orange-100/60">
+        <div className="container mx-auto px-4 sm:px-6 max-w-6xl text-center">
+          
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100/80 text-orange-800 text-xs font-black tracking-wide mb-2.5">
+            🚩 दिव्य आध्यात्मिक संसार
+          </span>
+
+          <h2 className="text-2xl sm:text-4xl font-serif font-black text-slate-900 tracking-tight">
+            Explore Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-amber-500">Spiritual World</span>
+          </h2>
+
+          <p className="text-xs sm:text-sm text-slate-600 mt-2 max-w-xl mx-auto font-medium">
+            प्रभु श्री राम की पावन कथा, स्तुति, संकीर्तन और नित्य साधना से अपने जीवन को पावन बनाएं
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-8 sm:mt-10 text-left">
+            {EXPLORE.map((it) => (
+              <div
+                key={it.title}
+                onClick={() => safeNavigate(it.href)}
+                className="group bg-white rounded-3xl border border-orange-100/90 hover:border-orange-300 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer"
+              >
+                <div>
+                  <div className="relative h-44 sm:h-48 overflow-hidden bg-orange-50">
+                    <Image
+                      src={it.img}
+                      alt={it.title}
+                      fill
+                      unoptimized
+                      sizes="(max-width: 640px) 100vw, 25vw"
+                      className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-black bg-black/60 backdrop-blur-xs text-white border border-white/20 shadow-sm">
+                        {it.badge}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 sm:p-5">
+                    <h3 className="text-base font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-snug">
+                      {it.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1.5 leading-relaxed line-clamp-2">
+                      {it.sub}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 flex items-center justify-between border-t border-orange-50 mt-2 pt-3">
+                  <span className="text-xs font-bold text-orange-600 group-hover:text-orange-700">
+                    {it.cta}
+                  </span>
+                  <span className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ================= DAILY PANCHANG & SHUBH MUHURAT ================= */}
+      <DailyPanchang />
+
       {/* ================= STATS BAND ================= */}
       <section className="relative mt-6 sm:mt-8 overflow-hidden bg-gradient-to-r from-[#FFE7C7] via-[#FFF1DC] to-[#FFE7C7]">
         <Image src="/images/Ayodhya Ramji Photo.webp" alt="" fill unoptimized sizes="100vw" className="object-cover object-center opacity-[0.12]" />
@@ -676,17 +778,9 @@ export default function HomePage() {
       <section className="py-8 sm:py-12">
         <div className="container mx-auto px-3 sm:px-6 max-w-6xl">
           <div className="grid lg:grid-cols-12 gap-4 items-stretch">
-            {/* Today's Ram Naam */}
-            <div className="lg:col-span-5 relative overflow-hidden rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-orange-500 via-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 flex flex-col justify-between">
-              <div className="relative z-10">
-                <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full">Today&apos;s Ram Naam</span>
-                <p className="mt-4 text-2xl sm:text-3xl font-serif font-black leading-snug">“ श्री राम जय राम जय जय राम ”</p>
-                <p className="mt-2 text-sm text-white/90">आज के जप से अपने जीवन में शांति और सकारात्मकता लाएं।</p>
-              </div>
-              <button onClick={() => safeNavigate('/#jaap')} className="relative z-10 mt-6 self-start px-6 py-2.5 rounded-full font-black text-xs text-orange-700 bg-white hover:bg-amber-50 shadow-md active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer">
-                <span>Start Jaap Now</span><ArrowRight className="w-3.5 h-3.5" />
-              </button>
-              <span className="absolute -right-2 -bottom-6 text-[9rem] font-serif font-black text-white/10 leading-none select-none pointer-events-none">राम</span>
+            {/* Virtual Mandir & Deepdaan */}
+            <div className="lg:col-span-5 flex flex-col">
+              <VirtualDeepdaan />
             </div>
 
             {/* Daily Inspiration */}
@@ -743,48 +837,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ================= AKHAND RAM NAAM LIVE TICKER ================= */}
+      <LiveAkhandJaapTicker />
+
       {/* ================= INTERACTIVE JAAP TOOL ================= */}
       <NaamJapSection user={user} onSaveSuccess={checkAuth} />
-
-      {/* ================= EXPLORE DIVINE CONTENT ================= */}
-      <section className="py-10 sm:py-14 bg-white border-t border-orange-100/70">
-        <div className="container mx-auto px-3 sm:px-6 max-w-6xl">
-          <SectionTitle title="Explore" accent="Divine Content" />
-          <div className="grid lg:grid-cols-5 gap-4">
-            {/* Featured video */}
-            <button
-              onClick={() => handleHeroButtonClick('https://www.youtube.com/embed/Pj3hXU0w198', 'video')}
-              className="lg:col-span-2 relative min-h-[260px] rounded-3xl overflow-hidden text-left group cursor-pointer shadow-lg"
-            >
-              <Image src="/images/Ayodhya Ramji Photo.webp" alt="Featured video" fill unoptimized sizes="(max-width:1024px) 100vw, 40vw" className="object-cover object-top group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-              <span className="absolute top-4 left-4 text-[11px] font-black px-3 py-1 rounded-full bg-orange-500 text-white">Featured Video</span>
-              <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <Play className="w-7 h-7 text-orange-600 fill-orange-600 ml-1" />
-              </span>
-              <div className="absolute bottom-4 left-4 right-4 text-white">
-                <p className="text-xl font-serif font-black">श्री राम नाम शक्ति</p>
-                <p className="text-xs text-white/85 mt-0.5">राम नाम की दिव्य ऊर्जा का अनुभव करें।</p>
-              </div>
-            </button>
-
-            {/* 4 content tiles */}
-            <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {EXPLORE.map((it) => (
-                <button key={it.title} onClick={() => safeNavigate(it.href)} className="group bg-[#FFF9F1] rounded-2xl border border-orange-100 hover:border-orange-300 hover:shadow-md overflow-hidden transition-all text-left cursor-pointer">
-                  <div className="relative h-32 sm:h-40 lg:h-44">
-                    <Image src={it.img} alt={it.title} fill unoptimized sizes="25vw" className="object-cover object-top group-hover:scale-105 transition-transform duration-700" />
-                  </div>
-                  <div className="p-3 text-center">
-                    <p className="text-sm font-black text-slate-900">{it.title}</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">{it.sub}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ================= ALL SERVICES ================= */}
       <section id="services" className="py-10 sm:py-14 bg-[#FFF9F1] border-t border-orange-100/70">
@@ -933,6 +990,9 @@ export default function HomePage() {
           Start Your Journey Today <ArrowRight className="w-4 h-4" />
         </button>
       </section>
+
+      {/* --- RAM SHALAKA MODAL --- */}
+      <RamShalakaModal isOpen={showShalakaModal} onClose={() => setShowShalakaModal(false)} />
 
       {/* --- WATCH VIDEO MODAL --- */}
       <AnimatePresence>
