@@ -39,29 +39,23 @@ export default function LiveAkhandJaapTicker() {
   };
 
   return (
-    <div className="container mx-auto px-3 sm:px-6 max-w-6xl mt-6 sm:mt-8 mb-1">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#2A0E04] via-[#4A1705] to-[#2A0E04] text-white p-3 sm:p-4 border border-amber-500/30 shadow-lg shadow-orange-950/20">
-        
-        {/* Subtle background glow */}
-        <div className="absolute top-0 right-1/4 w-48 h-48 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
-
+    <div className="w-full mb-4">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#581404] via-[#7A1D05] to-[#581404] text-white p-3.5 sm:p-4 border border-amber-500/30 shadow-md">
         <div className="relative flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
           
           {/* Left: Flame & Title */}
           <div className="flex items-center gap-2.5 shrink-0">
-            <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-white shadow-md shadow-orange-500/30">
-              <Flame className="w-5 h-5 text-yellow-200 animate-pulse" />
+            <span className="w-9 h-9 rounded-xl bg-orange-600 flex items-center justify-center text-white shadow-sm">
+              <Flame className="w-5 h-5 text-amber-200" />
             </span>
             <div>
               <div className="flex items-center gap-1.5 justify-center md:justify-start">
                 <span className="text-xs sm:text-sm font-serif font-black tracking-wide text-amber-200">
                   अखंड राम नाम महायज्ञ
                 </span>
-                <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  LIVE
                 </span>
-                <span className="text-[10px] font-bold uppercase text-emerald-400 tracking-wider">LIVE</span>
               </div>
               <p className="text-[11px] text-amber-100/70 font-medium">विश्वव्यापी डिजिटल राम नाम साधना</p>
             </div>
@@ -72,11 +66,11 @@ export default function LiveAkhandJaapTicker() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeIdx}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
-                className="flex items-center justify-center md:justify-start gap-2 bg-white/10 backdrop-blur-xs py-1.5 px-3 rounded-full border border-white/10 text-xs"
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-center md:justify-start gap-2 bg-white/10 py-1.5 px-3.5 rounded-full border border-white/10 text-xs"
               >
                 <span className="text-orange-300 font-bold">🚩 {cur.city}:</span>
                 <span className="text-white font-medium truncate">{cur.name}</span>
@@ -96,8 +90,9 @@ export default function LiveAkhandJaapTicker() {
             </div>
 
             <button
+              type="button"
               onClick={scrollToJaap}
-              className="py-1.5 px-3.5 rounded-full text-xs font-black bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-[#451a03] shadow-md shadow-orange-500/25 flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
+              className="py-1.5 px-4 rounded-full text-xs font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-sm flex items-center gap-1 active:scale-95 transition-all cursor-pointer"
             >
               <span>आप भी जपें</span>
               <ArrowDown className="w-3 h-3" />
@@ -105,7 +100,6 @@ export default function LiveAkhandJaapTicker() {
           </div>
 
         </div>
-
       </div>
     </div>
   );

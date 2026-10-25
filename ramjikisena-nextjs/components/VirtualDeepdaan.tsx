@@ -61,7 +61,7 @@ export default function VirtualDeepdaan() {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#2D0D02] via-[#481804] to-[#1F0700] text-white shadow-xl shadow-orange-950/25 flex flex-col justify-between border border-amber-500/30">
+    <div id="deepdaan" className="relative overflow-hidden rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-[#260e04] via-[#3a1506] to-[#200b03] text-white shadow-xl shadow-orange-950/20 flex flex-col justify-between border border-amber-500/30 h-full">
       
       {/* Background glow when Diya is lit */}
       <div className={`absolute inset-0 bg-gradient-to-t from-amber-500/20 via-orange-500/10 to-transparent transition-opacity duration-700 pointer-events-none ${diyaLit ? 'opacity-100' : 'opacity-0'}`} />

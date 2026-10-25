@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,24 +15,134 @@ import {
 import { requestGlobalNavigation } from '@/lib/jaapContext';
 interface NavbarProps { showAuthButtons?: boolean; }
 
-const exploreLinks = [
-  { href: '/astrology',     label: 'ज्योतिष & टैरो',  icon: Sparkles,     desc: 'Consult Astrologers & Tarot',   color: 'text-amber-600 bg-amber-50' },
-  { href: '/katha-vachaks', label: 'कथा वाचक',       icon: Scroll,       desc: 'Find katha vachaks',            color: 'text-purple-600 bg-purple-50' },
-  { href: '/community',     label: 'कम्युनिटी',       icon: Users,        desc: 'Join devotee community',        color: 'text-orange-600 bg-orange-50' },
-  { href: '/glory',         label: 'राम महिमा',       icon: Star,         desc: 'Glory of Ram Naam',             color: 'text-amber-600 bg-amber-50' },
-  { href: '/blogs',         label: 'ब्लॉग व विचार',   icon: BookOpen,     desc: 'Spiritual blogs & articles',    color: 'text-cyan-600 bg-cyan-50' },
-  { href: '/forum',         label: 'सत्संग फोरम',      icon: HelpCircle,   desc: 'Ask spiritual questions',       color: 'text-teal-600 bg-teal-50' },
-  { href: '/gallery',       label: 'दिव्य गैलरी',     icon: ImageIcon,    desc: 'Divine moments & events',       color: 'text-pink-600 bg-pink-50' },
-  { href: '/mission',       label: 'हमारा मिशन',      icon: Flag,         desc: 'Our spiritual mission',         color: 'text-red-600 bg-red-50' },
-  { href: '/about',         label: 'हमारे बारे में',  icon: BookOpen,     desc: 'About Jai Shri Ram Naam',       color: 'text-indigo-600 bg-indigo-50' },
-  { href: '/contact',       label: 'संपर्क करें',      icon: Phone,        desc: 'Get in touch with us',          color: 'text-slate-600 bg-slate-50' },
+interface ExploreLinkItem {
+  href: string;
+  label: string;
+  sub: string;
+  desc: string;
+  img: string;
+  badge?: string;
+  icon?: any;
+}
+
+const exploreLinks: ExploreLinkItem[] = [
+  {
+    href: '/#jaap',
+    label: 'राम नाम जप बैंक',
+    sub: 'Akhand Ram Naam Bank',
+    desc: '108 मनका माला, अखंड संकीर्तन व पुण्य संचय',
+    img: '/ramji.jpg',
+    badge: '🏆 1.42 Cr+',
+    icon: Flame,
+  },
+  {
+    href: '/katha-vachaks',
+    label: 'श्री कथा वाचक',
+    sub: 'Katha Vyas & Pravachan',
+    desc: 'पूज्य व्यास पीठ द्वारा अमृत रामकथा व प्रवचन',
+    img: '/home/kathavachak.webp',
+    badge: '📖 कथा व्यास',
+    icon: Scroll,
+  },
+  {
+    href: '/pandits',
+    label: 'वैदिक पंडित जी',
+    sub: 'Vedic Purohits Booking',
+    desc: 'विवाह, गृह प्रवेश, रुद्राभिषेक व 16 संस्कार पुरोहित',
+    img: '/home/pandit.jpg',
+    badge: '🔱 प्रमाणित',
+    icon: Sparkles,
+  },
+  {
+    href: '/mandirs',
+    label: 'पावन मंदिर दर्शन',
+    sub: 'Sacred Temples & Darshan',
+    desc: 'अयोध्या धाम, काशी विश्वनाथ व तीर्थ मार्गदर्शिका',
+    img: '/images/Ayodhya Ramji Photo.webp',
+    badge: '🛕 तीर्थ दर्शन',
+    icon: Church,
+  },
+  {
+    href: '/astrology',
+    label: 'ज्योतिष & टैरो',
+    sub: 'Vedic Astrology & Tarot',
+    desc: 'कुंडली, ग्रह गोचर व प्रामाणिक ज्योतिष मार्गदर्शन',
+    img: '/images/hero-mobile-ramji.webp',
+    badge: '🔮 परामर्श',
+    icon: Sparkles,
+  },
+  {
+    href: '/community',
+    label: 'राम भक्त परिवार',
+    sub: 'Devotee Satsang Community',
+    desc: 'देश-विदेश के हजारों रामभक्तों का पावन समुदाय',
+    img: '/home/Pradeep-Ji-Mishra.webp',
+    badge: '🤝 सत्संग',
+    icon: Users,
+  },
+  {
+    href: '/glory',
+    label: 'राम नाम महिमा',
+    sub: 'Glory of Prabhu Ram Naam',
+    desc: 'शास्त्रों व संतों के मुख से पावन नाम महिमा के अमृत वचन',
+    img: '/hanumanji.jpg',
+    badge: '⭐ अमृत ज्ञान',
+    icon: Star,
+  },
+  {
+    href: '/blogs',
+    label: 'ब्लॉग व प्रेरक विचार',
+    sub: 'Spiritual Articles & Katha',
+    desc: 'धार्मिक प्रेरक प्रसंग, रामायण कथाएं व पावन आलेख',
+    img: '/images/gallery-1.webp',
+    badge: '📚 ज्ञान अमृत',
+    icon: BookOpen,
+  },
+  {
+    href: '/forum',
+    label: 'सत्संग फोरम',
+    sub: 'Devotional Q&A Forum',
+    desc: 'धार्मिक प्रश्नोत्तरी व संतों के साथ आध्यात्मिक विचार',
+    img: '/images/aboutImg1.webp',
+    badge: '💬 संवाद',
+    icon: HelpCircle,
+  },
+  {
+    href: '/gallery',
+    label: 'दिव्य पावन गैलरी',
+    sub: 'Sacred Moments & Darshan',
+    desc: 'भव्य उत्सव, आरती व पावन दर्शन छायाचित्र',
+    img: '/images/gallery-1.webp',
+    badge: '📸 दर्शन',
+    icon: ImageIcon,
+  },
+  /*
+  {
+    href: '/samagri',
+    label: 'शुद्ध वैदिक सामग्री',
+    sub: 'Pure Vedic Puja Store',
+    desc: '100% सात्विक हवन व पूजन सामग्री, रोली, गंगाजल',
+    img: '/images/aboutImg1.webp',
+    badge: '🪔 100% शुद्ध',
+    icon: ShoppingBag,
+  },
+  */
+  {
+    href: '/about',
+    label: 'हमारे बारे में',
+    sub: 'About Jai Shri Ram Naam',
+    desc: 'जय श्री राम नाम मिशन, उद्देश्य, सेवा व संपर्क',
+    img: '/images/hero-ayodhya-ramji-hd.webp',
+    badge: '🚩 सेवा',
+    icon: Flag,
+  },
 ];
 
 const mainLinks = [
   { href: '/#jaap',         label: 'Naam Jaap',     icon: Flame },
   { href: '/pandits',       label: 'Pandits',       icon: Sparkles },
   { href: '/mandirs',       label: 'Mandirs',       icon: Church },
-  { href: '/samagri',       label: 'Samagri',       icon: ShoppingBag },
+  // { href: '/samagri',       label: 'Samagri',       icon: ShoppingBag },
 ];
 
 export default function Navbar({ showAuthButtons = true }: NavbarProps) {
@@ -194,15 +305,21 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
         <div className="container mx-auto px-3 sm:px-6 flex items-center justify-between gap-3">
 
           {/* Logo */}
-          <button onClick={() => safeNavigate('/')} className="flex items-center gap-2 group flex-shrink-0 cursor-pointer">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shadow-md bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 text-white group-hover:scale-105 transition-transform">
-              <Flag className="w-4 h-4 text-white" />
+          <button onClick={() => safeNavigate('/')} className="flex items-center gap-2.5 group flex-shrink-0 cursor-pointer text-left">
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden shadow-md border border-[#D4AF37]/60 group-hover:scale-105 transition-transform bg-[#FFF8EE]">
+              <Image
+                src="/images/ramjikisena_logo.webp"
+                alt="राम जी की सेना लोगो"
+                fill
+                priority
+                className="object-cover"
+              />
             </div>
             <div className="text-left">
-              <p className="text-sm sm:text-base font-black tracking-tight leading-none text-slate-900">
+              <p className="text-sm sm:text-base font-black tracking-tight leading-none text-[#581404]">
                 <span className="text-orange-600">JaiShri</span><span>RamNaam</span>
               </p>
-              <p className="text-[8px] text-orange-600/80 font-bold tracking-widest uppercase mt-0.5">Jai Shree Ram</p>
+              <p className="text-[8px] sm:text-[9px] text-[#8C2206] font-bold tracking-wider uppercase mt-0.5">राम जी की सेना • Jai Shree Ram</p>
             </div>
           </button>
 
@@ -252,51 +369,115 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                       position: 'absolute',
                       top: 'calc(100% + 10px)',
                       right: '0',
-                      width: '440px',
-                      maxWidth: 'calc(100vw - 24px)',
+                      width: '600px',
+                      maxWidth: 'calc(100vw - 20px)',
                       zIndex: 9999,
                     }}
                   >
-                    {/* Arrow pointing to Explore button */}
+                    {/* Arrow pointing to More button */}
                     <div className="flex justify-end pr-8 mb-1">
-                      <div className="w-3 h-3 rotate-45 bg-white border-t border-l border-orange-200" />
+                      <div className="w-3.5 h-3.5 rotate-45 bg-white border-t border-l border-amber-200" />
                     </div>
-                    <div className="rounded-[1.5rem] shadow-2xl overflow-hidden bg-white border border-orange-100 max-h-[calc(100vh-90px)] flex flex-col">
+                    <div className="rounded-[1.75rem] shadow-2xl overflow-hidden bg-white border border-amber-200 max-h-[calc(100vh-90px)] flex flex-col">
+                      
                       {/* Header */}
-                      <div className="px-4 py-3 border-b border-orange-100 bg-orange-50/70 flex items-center justify-between shrink-0">
+                      <div className="px-5 py-3 border-b border-amber-100 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 flex items-center justify-between shrink-0">
                         <div>
-                          <p className="text-[9px] font-black uppercase tracking-[0.25em] text-orange-600">सभी सेवाएं</p>
-                          <p className="text-sm font-black text-slate-800">Explore Everything</p>
+                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-600">समस्त पावन सेवाएं</p>
+                          <p className="text-base font-serif font-black text-[#7A1D05]">Explore Devotional Services</p>
                         </div>
-                        <div className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-white text-orange-600 border border-orange-200 shadow-sm">
-                          🚩 Jai Shri Ram Naam
+                        <div className="flex items-center gap-1.5 text-xs font-black px-3 py-1 rounded-full bg-white text-orange-700 border border-amber-200 shadow-2xs">
+                          <span>🚩</span>
+                          <span>जय श्री राम</span>
                         </div>
                       </div>
 
-                      {/* Grid */}
-                      <div className="p-3 grid grid-cols-2 gap-2 overflow-y-auto flex-1 overscroll-contain">
-                        {exploreLinks.map(({ href, label, icon: Icon, desc }) => (
-                          <button key={href} onClick={() => safeNavigate(href)}
-                            className="flex items-start gap-2.5 p-2 rounded-xl transition-all group text-left w-full hover:bg-orange-50/80 border border-transparent hover:border-orange-200 cursor-pointer">
-                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform bg-orange-100/70 border border-orange-200 text-orange-600">
-                              <Icon className="w-4 h-4" />
+                      {/* Featured Top Sacred Banner with Ramji Photo */}
+                      <div className="px-3 pt-3 pb-1 shrink-0">
+                        <button
+                          onClick={() => safeNavigate('/#jaap')}
+                          className="w-full flex items-center justify-between gap-3 p-2.5 rounded-2xl bg-gradient-to-r from-[#FFF5E6] via-[#FFF0DB] to-[#FFF5E6] border border-amber-300/80 hover:border-orange-400 shadow-2xs hover:shadow-md transition-all group text-left cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="relative w-11 h-11 rounded-xl overflow-hidden border border-amber-300 shadow-2xs shrink-0 bg-amber-100">
+                              <Image
+                                src="/images/hero-mobile-ramji.webp"
+                                alt="Shri Ram"
+                                fill
+                                unoptimized
+                                className="object-cover group-hover:scale-110 transition-transform"
+                              />
                             </div>
                             <div className="min-w-0">
-                              <p className="text-xs font-black leading-tight text-slate-800 truncate">{label}</p>
-                              <p className="text-[10px] leading-tight mt-0.5 text-slate-500 truncate">{desc}</p>
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-black text-[#7A1D05] truncate">डिजिटल राम नाम बैंक</span>
+                                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-orange-500 text-white">#1 साधना</span>
+                              </div>
+                              <p className="text-[11px] text-amber-900/80 truncate">1.42+ करोड़ नाम संचित • 108 मनका पावन माला जाप करें</p>
+                            </div>
+                          </div>
+                          <span className="text-xs font-black text-orange-600 bg-white px-2.5 py-1 rounded-full border border-amber-200 shadow-2xs shrink-0 group-hover:bg-orange-500 group-hover:text-white transition-all flex items-center gap-1">
+                            जाप करें <ArrowRight className="w-3 h-3" />
+                          </span>
+                        </button>
+                      </div>
+
+                      {/* Grid with Real Photos for every item */}
+                      <div className="p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 overflow-y-auto flex-1 overscroll-contain max-h-[360px]">
+                        {exploreLinks.map(({ href, label, sub, desc, img, badge }) => (
+                          <button
+                            key={href}
+                            onClick={() => safeNavigate(href)}
+                            className="flex items-center gap-2.5 p-2 rounded-xl transition-all group text-left w-full hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50/70 border border-amber-100/70 hover:border-amber-300 bg-white shadow-2xs hover:shadow-xs cursor-pointer active:scale-[0.98]"
+                          >
+                            {/* Photo Thumbnail */}
+                            <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border border-amber-200 shadow-2xs group-hover:scale-105 transition-transform bg-amber-50">
+                              <Image
+                                src={img}
+                                alt={label}
+                                fill
+                                unoptimized
+                                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                            </div>
+
+                            {/* Text Info */}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center justify-between gap-1">
+                                <p className="text-xs font-black leading-tight text-slate-800 group-hover:text-orange-600 truncate">
+                                  {label}
+                                </p>
+                                {badge && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-100/80 text-amber-900 border border-amber-200/80 shrink-0">
+                                    {badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] font-semibold text-orange-600/90 leading-tight mt-0.5 truncate">
+                                {sub}
+                              </p>
+                              <p className="text-[10px] leading-tight mt-0.5 text-slate-500 truncate">
+                                {desc}
+                              </p>
                             </div>
                           </button>
                         ))}
                       </div>
 
                       {/* Footer */}
-                      <div className="px-4 py-2.5 flex items-center justify-between border-t border-orange-100 bg-orange-50/50 shrink-0">
-                        <p className="text-[10px] font-medium text-orange-700/80">🙏 जय श्री राम — सेवा में आपका स्वागत है</p>
-                        <button onClick={() => safeNavigate('/dashboard')}
-                          className="text-[10px] font-black flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500 text-white shadow-sm hover:bg-orange-600 transition-all cursor-pointer">
-                          Dashboard →
+                      <div className="px-5 py-2.5 flex items-center justify-between border-t border-amber-100 bg-gradient-to-r from-amber-50/60 to-orange-50/60 shrink-0">
+                        <p className="text-[11px] font-semibold text-amber-900 flex items-center gap-1">
+                          <span>🙏</span>
+                          <span>जय श्री राम — सेवा में आपका स्वागत है</span>
+                        </p>
+                        <button
+                          onClick={() => safeNavigate('/dashboard')}
+                          className="text-xs font-black flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-sm hover:shadow-md hover:scale-102 transition-all cursor-pointer"
+                        >
+                          भक्त डैशबोर्ड →
                         </button>
                       </div>
+
                     </div>
                   </motion.div>
                 )}
@@ -306,7 +487,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
 
           {/* Right: Actions & Auth */}
           <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
-            {/* Quick Search */}
+            {/* Quick Search - Commented out as requested
             <button
               onClick={() => safeNavigate('/#explore')}
               title="खोजें / Search"
@@ -314,6 +495,7 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
             >
               <Search className="w-4 h-4" />
             </button>
+            */}
 
             {showAuthButtons && (
               <div className="hidden lg:flex items-center gap-2">
@@ -859,14 +1041,19 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
               className="lg:hidden fixed top-0 right-0 h-screen w-[85%] max-w-sm bg-white border-l border-orange-100 z-[99] flex flex-col overflow-y-auto shadow-2xl">
 
               {/* Mobile Header */}
-              <div className="flex items-center justify-between p-4 border-b border-orange-100 bg-orange-50/60">
+              <div className="flex items-center justify-between p-4 border-b border-orange-100 bg-[#FFF8EE]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white shadow-sm">
-                    <Flag className="w-4 h-4 text-white" />
+                  <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-[#D4AF37] shadow-sm bg-white">
+                    <Image
+                      src="/images/ramjikisena_logo.webp"
+                      alt="राम जी की सेना लोगो"
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                   <div>
-                    <p className="text-sm font-black text-slate-900 leading-none">JaiShri<span className="text-orange-600">RamNaam</span></p>
-                    <p className="text-[8px] text-orange-600 font-bold tracking-widest uppercase mt-0.5">Jai Shree Ram</p>
+                    <p className="text-sm font-black text-[#581404] leading-none">JaiShri<span className="text-orange-600">RamNaam</span></p>
+                    <p className="text-[8px] text-[#8C2206] font-bold tracking-wider uppercase mt-0.5">राम जी की सेना • Jai Shree Ram</p>
                   </div>
                 </div>
                 <button onClick={() => setMobileOpen(false)} className="w-8 h-8 bg-white border border-orange-200 rounded-xl flex items-center justify-center text-slate-600 shadow-sm">
@@ -900,10 +1087,17 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
                 <div>
                   <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2 px-1">Explore</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {exploreLinks.map(({ href, label, icon: Icon }) => (
+                    {exploreLinks.map(({ href, label, img, icon: Icon }) => (
                       <button key={href} onClick={() => safeNavigate(href)}
-                        className="flex items-center gap-2 p-2.5 rounded-2xl text-xs font-bold bg-slate-50 border border-slate-100 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-all">
-                        <Icon className="w-4 h-4 text-orange-600" /> {label}
+                        className="flex items-center gap-2 p-2 rounded-2xl text-xs font-bold bg-white border border-amber-100 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-all shadow-2xs">
+                        {img ? (
+                          <div className="relative w-6 h-6 rounded-lg overflow-hidden shrink-0 border border-amber-200">
+                            <Image src={img} alt={label} fill unoptimized className="object-cover" />
+                          </div>
+                        ) : Icon ? (
+                          <Icon className="w-4 h-4 text-orange-600" />
+                        ) : null}
+                        <span className="truncate">{label}</span>
                       </button>
                     ))}
                   </div>

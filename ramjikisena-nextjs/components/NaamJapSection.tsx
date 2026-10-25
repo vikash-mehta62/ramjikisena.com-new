@@ -22,8 +22,19 @@ interface CustomName { id: string; label: string; chars: string[]; }
 const PRESET_CONFIG = {
   RAM:          { label: 'राम',        Icon: Flag,    keys: [['R','र','र'],['A','ा','।'],['M','म','म']],                          cols: 'grid-cols-3', beadColor: '#ea580c', accentColor: '#f97316', scrollText: 'राम ' },
   RADHE:        { label: 'राधे',       Icon: Flower2, keys: [['RA','रा','रा'],['DHE','धे','धे']],                               cols: 'grid-cols-2', beadColor: '#e11d48', accentColor: '#fb7185', scrollText: 'राधे ' },
-  HARE_KRISHNA: { label: 'हरे कृष्णा', Icon: Bird,    keys: [['HA','ह','ह'],['RE','रे','रे'],['KRI','कृ','कृ'],['SHNA','ष्णा','ष्णा']], cols: 'grid-cols-4', beadColor: '#2563eb', accentColor: '#60a5fa', scrollText: 'हरे कृष्णा ' },
+  HARE_KRISHNA: { label: 'हरे कृष्णा', Icon: Bird,    keys: [['HARE','हरे','हरे'],['KRISHNA','कृष्णा','कृष्णा']], cols: 'grid-cols-2', beadColor: '#2563eb', accentColor: '#60a5fa', scrollText: 'हरे कृष्णा ' },
 };
+
+const LIVE_DEVOTEE_ACTIVITY = [
+  { name: 'रमेश शर्मा जी', city: 'अयोध्या धाम', count: '108', malas: '1', action: 'ने 1 माला (108 जप) पूर्ण की!', badge: '🎉 1 माला पूर्ण', time: 'अभी-अभी' },
+  { name: 'अंजली गुप्ता', city: 'काशी (वाराणसी)', count: '54', malas: '0', action: 'ने 54 पावन नाम जप अर्पित किए!', badge: '🪔 +54 जप', time: '1s ago' },
+  { name: 'विक्रम सिंह राठौड़', city: 'जयपुर', count: '216', malas: '2', action: 'ने आज 2 मालाएं (216 जप) पूर्ण की!', badge: '✨ 2 माला पूर्ण', time: 'अभी-अभी' },
+  { name: 'सुनीता पटेल', city: 'अहमदाबाद', count: '108', malas: '1', action: 'ने 1 माला पूर्ण की!', badge: '🏆 108 जप', time: '3s ago' },
+  { name: 'गोपाल कृष्ण दास', city: 'श्री वृन्दावन धाम', count: '108', malas: '1', action: 'ने 108 हरे कृष्णा महामंत्र जप पूर्ण किए!', badge: '🌸 महामंत्र पूर्ण', time: 'अभी-अभी' },
+  { name: 'दीपक शास्त्री', city: 'हरिद्वार', count: '324', malas: '3', action: 'ने आज 3 मालाएं (324 जप) पूर्ण की!', badge: '🚩 3 माला पूर्ण', time: '4s ago' },
+  { name: 'मीनाक्षी जोशी', city: 'उज्जैन धाम', count: '108', malas: '1', action: 'ने 108 पावन नाम जप पूरे किए!', badge: '📿 माला पूर्ण', time: 'अभी-अभी' },
+  { name: 'पंकज कुमार', city: 'नई दिल्ली', count: '108', malas: '1', action: 'ने डिजिटल राम नाम बैंक में 108 नाम जोड़े!', badge: '🙏 पुण्य संचित', time: '2s ago' },
+];
 
 const SONGS = [
   { displayName: 'राम धुन',        file: '/audios/ramdhun.mp3',      emoji: '🚩' },
@@ -146,7 +157,7 @@ function MiniPlayer() {
     setTimeout(() => { if (audioRef.current) { audioRef.current.volume = 1; audioRef.current.play(); setPlaying(true); } }, 80);
   };
   return (
-    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/80 w-full">
+    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-amber-200/80 w-full">
       <audio ref={audioRef} src={SONGS[idx].file} onEnded={next} />
       <button onClick={toggle} className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 active:scale-90 bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-xs cursor-pointer hover:opacity-95">
         {playing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5 fill-white" />}
@@ -196,6 +207,14 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
   // Manual typing mode
   const [manualMode, setManualMode] = useState(false);
   const [manualInput, setManualInput] = useState('');
+  const [activeDevoteeIdx, setActiveDevoteeIdx] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveDevoteeIdx(prev => (prev + 1) % LIVE_DEVOTEE_ACTIVITY.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (user?.customJaapNames) setCustomNames(user.customJaapNames);
@@ -283,50 +302,52 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
     if (isCustom) {
       const label = customCfg?.label || char;
       setTextareaValue(p => p + label + ' ');
-      setCurrentCount(p => p + 1);
-      triggerBeadFeedback();
+      setCurrentCount(p => {
+        const next = p + 1;
+        if (next > 0 && next % 108 === 0) triggerBeadFeedback(true);
+        return next;
+      });
       return;
     }
     let t = textareaValue;
     if (selectedName === 'RAM') {
-      if (char === 'R' && (userInput === '' || userInput === 'RAM')) { setUserInput('R'); t += 'र'; triggerBeadFeedback(false); }
-      else if (char === 'A' && userInput === 'R') { setUserInput('RA'); t += 'ा'; triggerBeadFeedback(false); }
+      if (char === 'R' && (userInput === '' || userInput === 'RAM')) { setUserInput('R'); t += 'र'; }
+      else if (char === 'A' && userInput === 'R') { setUserInput('RA'); t += 'ा'; }
       else if (char === 'M' && userInput === 'RA') {
         setUserInput('');
         t += 'म ';
         setCurrentCount(p => {
           const next = p + 1;
-          triggerBeadFeedback(next > 0 && next % 108 === 0);
+          if (next > 0 && next % 108 === 0) triggerBeadFeedback(true);
           return next;
         });
       }
       else return;
     } else if (selectedName === 'RADHE') {
-      if (char === 'RA' && (userInput === '' || userInput === 'RADHE')) { setUserInput('RA'); t += 'रा'; triggerBeadFeedback(false); }
+      if (char === 'RA' && (userInput === '' || userInput === 'RADHE')) { setUserInput('RA'); t += 'रा'; }
       else if (char === 'DHE' && userInput === 'RA') {
         setUserInput('');
         t += 'धे ';
         setCurrentCount(p => {
           const next = p + 1;
-          triggerBeadFeedback(next > 0 && next % 108 === 0);
+          if (next > 0 && next % 108 === 0) triggerBeadFeedback(true);
           return next;
         });
       }
       else return;
     } else if (selectedName === 'HARE_KRISHNA') {
-      if (char === 'HA' && (userInput === '' || userInput === 'HAREKRISHNA')) { setUserInput('HA'); t += 'ह'; triggerBeadFeedback(false); }
-      else if (char === 'RE' && userInput === 'HA') { setUserInput('HARE'); t += 'रे '; triggerBeadFeedback(false); }
-      else if (char === 'KRI' && userInput === 'HARE') { setUserInput('HAREKRI'); t += 'कृ'; triggerBeadFeedback(false); }
-      else if (char === 'SHNA' && userInput === 'HAREKRI') {
+      if (char === 'HARE' && (userInput === '' || userInput === 'HAREKRISHNA')) {
+        setUserInput('HARE');
+        t += 'हरे ';
+      } else if (char === 'KRISHNA' && userInput === 'HARE') {
         setUserInput('');
-        t += 'ष्णा ';
+        t += 'कृष्णा ';
         setCurrentCount(p => {
           const next = p + 1;
-          triggerBeadFeedback(next > 0 && next % 108 === 0);
+          if (next > 0 && next % 108 === 0) triggerBeadFeedback(true);
           return next;
         });
-      }
-      else return;
+      } else return;
     }
     setTextareaValue(t);
   }, [textareaValue, userInput, selectedName, isCustom, customCfg, triggerBeadFeedback]);
@@ -440,10 +461,8 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
         if (e.key === 'r' || e.key === 'R') appendCharacter('RA');
         else if (e.key === 'd' || e.key === 'D') appendCharacter('DHE');
       } else if (selectedName === 'HARE_KRISHNA') {
-        if (e.key === 'h' || e.key === 'H') appendCharacter('HA');
-        else if (e.key === 'r' || e.key === 'R') appendCharacter('RE');
-        else if (e.key === 'k' || e.key === 'K') appendCharacter('KRI');
-        else if (e.key === 's' || e.key === 'S') appendCharacter('SHNA');
+        if (e.key === 'h' || e.key === 'H') appendCharacter('HARE');
+        else if (e.key === 'k' || e.key === 'K') appendCharacter('KRISHNA');
       }
     };
     window.addEventListener('keydown', handler);
@@ -459,10 +478,8 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
       if (userInput === '' || userInput === 'RADHE') return 'RA';
       if (userInput === 'RA') return 'DHE';
     } else if (selectedName === 'HARE_KRISHNA') {
-      if (userInput === '' || userInput === 'HAREKRISHNA') return 'HA';
-      if (userInput === 'HA') return 'RE';
-      if (userInput === 'HARE') return 'KRI';
-      if (userInput === 'HAREKRI') return 'SHNA';
+      if (userInput === '' || userInput === 'HAREKRISHNA') return 'HARE';
+      if (userInput === 'HARE') return 'KRISHNA';
     }
     return null;
   };
@@ -598,7 +615,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
     </AnimatePresence>
 
     {/* Main Jaap Section */}
-    <section id="jaap" className="relative py-3.5 sm:py-5 bg-gradient-to-b from-[#FFF9F1] via-[#FFF3E2] to-[#FFF9F1] border-t border-orange-100/80 scroll-mt-16 overflow-hidden">
+    <div className="relative">
       {/* 108 Mala Celebration Banner */}
       <AnimatePresence>
         {showCelebration && (
@@ -625,34 +642,73 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] sm:text-[11px] font-black tracking-wide mb-1">
             🚩 108 पावन मनके
           </span>
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black text-[#A52A0A]">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-black text-[#7A1D05]">
             {user ? <>जय श्री राम, <span className="text-orange-600">{user.name}</span>!</> : <>श्री <span className="text-orange-600">राम नाम</span> जाप माला</>}
           </h2>
           <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">माला फेरें, मन में शांति और अनंत पुण्य का संचार करें</p>
         </div>
 
+        {/* ============ GAMING-STYLE LIVE DEVOTEE JAPA TICKER ============ */}
+        <div className="mb-3 max-w-4xl mx-auto">
+          <div className="relative overflow-hidden rounded-full bg-gradient-to-r from-[#581404] via-[#7A1D05] to-[#581404] border border-amber-500/40 shadow-md shadow-orange-950/20 py-1.5 px-3 sm:px-4 flex items-center justify-between gap-2 text-white">
+            
+            {/* Left: Live indicator badge */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="flex h-2.5 w-2.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              </span>
+              <span className="text-[10px] sm:text-[11px] font-black uppercase text-emerald-400 tracking-wider">
+                LIVE JAP
+              </span>
+            </div>
+
+            {/* Middle: Rotating devotee activity ticker (Gaming Winner Style) */}
+            <div className="flex-1 overflow-hidden text-center sm:text-left px-1">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeDevoteeIdx}
+                  initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                  transition={{ duration: 0.22 }}
+                  className="flex items-center justify-center sm:justify-start gap-1.5 text-xs truncate"
+                >
+                  <span className="font-black text-amber-300 truncate">
+                    {LIVE_DEVOTEE_ACTIVITY[activeDevoteeIdx].name}
+                  </span>
+                  <span className="text-amber-200/80 text-[11px] shrink-0">
+                    ({LIVE_DEVOTEE_ACTIVITY[activeDevoteeIdx].city})
+                  </span>
+                  <span className="text-amber-100 text-[11px] truncate hidden md:inline">
+                    {LIVE_DEVOTEE_ACTIVITY[activeDevoteeIdx].action}
+                  </span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-amber-950 shrink-0 shadow-2xs ml-auto">
+                    {LIVE_DEVOTEE_ACTIVITY[activeDevoteeIdx].badge}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Right: Real-time Live Sadhaks online count */}
+            <div className="hidden lg:flex items-center gap-1 shrink-0 text-[10px] font-bold text-amber-200/80 pl-2 border-l border-amber-500/30">
+              <span>👥</span>
+              <span>1,280+ भक्त लाइव</span>
+            </div>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-12 gap-3.5 sm:gap-5 items-stretch">
 
           {/* ============ LEFT: MALA ============ */}
-          <div className="lg:col-span-5 relative rounded-2xl sm:rounded-3xl border border-orange-200/80 bg-gradient-to-b from-[#FFF7EA] via-white to-[#FFF7EA] p-3 sm:p-3.5 shadow-lg shadow-orange-900/5 flex flex-col gap-2 overflow-hidden">
-            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-orange-300/20 blur-3xl pointer-events-none" />
+          <div className="lg:col-span-5 relative rounded-2xl border border-amber-200/80 bg-white p-3 sm:p-3.5 shadow-lg shadow-orange-900/5 flex flex-col gap-2 overflow-hidden">
+            
 
-            {/* Top row: Mode switch + Sound toggle & Bead selector */}
+            {/* Top row: 108 मनका माला Badge + Sound toggle & Bead selector */}
             <div className="relative flex items-center justify-between gap-1.5 flex-wrap sm:flex-nowrap">
-              <div className="flex-1 min-w-[170px] flex items-center p-0.5 rounded-full bg-orange-100/70 border border-orange-200/70">
-                {MODES.map(({ id, label, Icon }) => (
-                  <button key={id}
-                    onClick={() => {
-                      setJaapMode(id);
-                      if (id !== 'auto') setAutoCounting(false);
-                      if (id !== 'timer') setTimerRunning(false);
-                    }}
-                    className={`flex-1 py-1 rounded-full text-[11px] font-black transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                      jaapMode === id ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-600'
-                    }`}>
-                    <Icon className="w-3 h-3" /> {label}
-                  </button>
-                ))}
+              <div className="inline-flex items-center gap-1.5 py-1 px-3.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-[11px] font-black shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-yellow-200" />
+                <span>108 मनका माला</span>
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 <button onClick={() => setSoundEnabled(prev => !prev)} title="ध्वनि ऑन/ऑफ"
@@ -664,6 +720,55 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                   className="py-1 px-2 rounded-full text-[10px] sm:text-[11px] font-bold flex items-center gap-1 bg-white hover:bg-amber-50 text-amber-800 border border-amber-200 cursor-pointer transition-all shadow-xs">
                   <span>📿 {BEAD_LABEL[beadStyle]}</span>
                 </button>
+              </div>
+            </div>
+
+            {/* 3 Compact Stats Badges (Transferred from right card) */}
+            <div className="relative grid grid-cols-3 gap-1.5 pt-0.5">
+              {/* 1. Total Jaap */}
+              <div className="rounded-xl border border-amber-200/80 bg-[#FFF8EE] p-1.5 text-center shadow-2xs">
+                <div className="flex items-center justify-center gap-1 mb-0.5">
+                  <span className="w-4 h-4 rounded-full flex items-center justify-center bg-orange-100 text-orange-600">
+                    <Trophy className="w-2.5 h-2.5" />
+                  </span>
+                  <p className="text-[9px] uppercase font-bold text-slate-500 tracking-wider truncate">Total Jaap</p>
+                </div>
+                <p className="text-sm sm:text-base font-serif font-black text-slate-900 truncate leading-tight">
+                  {((user?.totalCount || 0) + currentCount).toLocaleString('en-IN')}
+                </p>
+              </div>
+
+              {/* 2. आज (Today) */}
+              <div className="rounded-xl border border-amber-200/80 bg-[#FFF8EE] p-1.5 text-center shadow-2xs">
+                <div className="flex items-center justify-center gap-1 mb-0.5">
+                  <span className="w-4 h-4 rounded-full flex items-center justify-center bg-amber-100 text-amber-600">
+                    <Flame className="w-2.5 h-2.5" />
+                  </span>
+                  <p className="text-[9px] uppercase font-bold text-slate-500 tracking-wider truncate">आज (Today)</p>
+                </div>
+                <p className="text-sm sm:text-base font-serif font-black text-slate-900 truncate leading-tight">
+                  {currentCount.toLocaleString('en-IN')}
+                </p>
+              </div>
+
+              {/* 3. पूर्ण माला */}
+              <div className="rounded-xl border border-amber-200/80 bg-[#FFF8EE] p-1.5 text-center shadow-2xs">
+                <div className="flex items-center justify-center gap-1 mb-0.5">
+                  <span className="w-4 h-4 rounded-full flex items-center justify-center bg-orange-100 text-orange-600">
+                    <Sparkles className="w-2.5 h-2.5" />
+                  </span>
+                  <p className="text-[9px] uppercase font-bold text-slate-500 tracking-wider truncate">पूर्ण माला</p>
+                </div>
+                <div className="flex items-center justify-center gap-1">
+                  <p className="text-sm sm:text-base font-serif font-black text-slate-900 leading-tight">
+                    {completedMalas.toString()}
+                  </p>
+                  {completedMalas > 0 && (
+                    <button onClick={() => setShowCertificate(true)} title="प्रशस्ति पत्र देखें" className="text-[8px] font-bold text-amber-900 bg-amber-200/80 hover:bg-amber-300 px-1 rounded-full cursor-pointer">
+                      📜
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -705,8 +810,8 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                   {Array.from({ length: 108 }).map((_, i) => {
                     const angle = (i / 108) * 2 * Math.PI - Math.PI / 2;
                     const r = 100;
-                    const cx = 130 + r * Math.cos(angle);
-                    const cy = 130 + r * Math.sin(angle);
+                    const cx = Math.round((130 + r * Math.cos(angle)) * 100) / 100;
+                    const cy = Math.round((130 + r * Math.sin(angle)) * 100) / 100;
                     const isFilled = i < beadsFilled;
                     const isMeru = i === 0;
                     return (
@@ -719,7 +824,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                 </svg>
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-3xl sm:text-4xl font-black text-[#7a2a08] font-serif leading-none">{shownCount}</span>
+                  <span className="text-3xl sm:text-4xl font-black text-[#7A1D05] font-serif leading-none">{shownCount}</span>
                   <span className="text-[10px] sm:text-[11px] font-bold text-orange-700 mt-1 tracking-wide">
                     {currentCount > 0 && currentCount % 108 === 0 ? 'जप पूर्ण 🙏' : 'जप जारी'}
                   </span>
@@ -735,60 +840,17 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                   <Minus className="w-4 h-4 stroke-[2.5]" />
                 </button>
                 <button
-                  onClick={jaapMode === 'auto' ? () => setAutoCounting(prev => !prev) : incrementCount}
-                  title={jaapMode === 'auto' ? (autoCounting ? 'Pause Auto Jaap' : 'Start Auto Jaap') : 'क्लिक करके जाप करें (+1)'}
-                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-md shadow-orange-500/40 flex items-center justify-center transition-all active:scale-90 border-2 border-white cursor-pointer ${
-                    jaapMode === 'auto' && autoCounting ? 'ring-4 ring-orange-400/50 animate-pulse' : ''
-                  }`}>
-                  {jaapMode === 'auto' && autoCounting ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5 fill-white" />}
+                  onClick={incrementCount}
+                  title="क्लिक करके जाप करें (+1)"
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-md shadow-orange-500/40 flex items-center justify-center transition-all active:scale-90 border-2 border-white cursor-pointer hover:scale-105">
+                  <Play className="w-4 h-4 ml-0.5 fill-white" />
                 </button>
                 <button onClick={incrementCount} title="एक जाप जोड़ें (+1)"
                   className="w-8 h-8 rounded-full bg-white border border-orange-200 text-orange-600 hover:bg-orange-50 shadow-xs flex items-center justify-center transition-all active:scale-90 cursor-pointer">
                   <Plus className="w-4 h-4 stroke-[2.5]" />
                 </button>
               </div>
-
-              {jaapMode === 'auto' && (
-                <div className="flex items-center gap-1 text-[10px] bg-orange-100/70 p-0.5 rounded-full border border-orange-200/60">
-                  <span className="text-orange-950 px-1 font-bold">गति:</span>
-                  {[
-                    { label: 'धीमी', ms: 1800 },
-                    { label: 'मध्यम', ms: 1200 },
-                    { label: 'तीव्र', ms: 800 },
-                  ].map(s => (
-                    <button key={s.ms} onClick={() => setAutoSpeed(s.ms)}
-                      className={`px-2 py-0.5 rounded-full font-bold transition-all cursor-pointer ${
-                        autoSpeed === s.ms ? 'bg-orange-600 text-white shadow-xs' : 'text-slate-600 hover:text-orange-600'
-                      }`}>{s.label}</button>
-                  ))}
-                </div>
-              )}
             </div>
-
-            {/* Timer panel (when in timer mode) */}
-            {jaapMode === 'timer' && (
-              <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="relative p-2 rounded-xl bg-amber-50 border border-amber-200">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[11px] font-bold text-slate-700 flex items-center gap-1"><Timer className="w-3 h-3 text-orange-600" /> साधना समय</span>
-                  <span className="text-base font-black text-orange-600 font-mono">
-                    {Math.floor(timerLeft / 60).toString().padStart(2, '0')}:{(timerLeft % 60).toString().padStart(2, '0')}
-                  </span>
-                </div>
-                <div className="grid grid-cols-4 gap-1 mb-1.5">
-                  {[{ label: '5m', sec: 300 }, { label: '10m', sec: 600 }, { label: '15m', sec: 900 }, { label: '21m', sec: 1260 }].map(t => (
-                    <button key={t.sec}
-                      onClick={() => { setTimerDuration(t.sec); setTimerLeft(t.sec); setTimerRunning(false); }}
-                      className={`py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
-                        timerDuration === t.sec ? 'bg-orange-600 text-white shadow-xs' : 'bg-white text-slate-700 border border-amber-200 hover:bg-orange-50'
-                      }`}>{t.label}</button>
-                  ))}
-                </div>
-                <button onClick={() => setTimerRunning(prev => !prev)}
-                  className="w-full py-1.5 rounded-full font-black text-[11px] text-white bg-gradient-to-r from-orange-500 to-orange-600 shadow-xs cursor-pointer">
-                  {timerRunning ? 'Pause Timer' : 'Start Timer'}
-                </button>
-              </motion.div>
-            )}
 
             {/* Goal bar */}
             <div className="relative px-3 py-1.5 rounded-xl bg-white border border-orange-100 shadow-xs">
@@ -809,45 +871,32 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
             <div className="relative mt-auto pt-0.5"><MiniPlayer /></div>
           </div>
 
-          {/* ============ RIGHT: STATS + LEKHAN ============ */}
-          <div className="lg:col-span-7 rounded-2xl sm:rounded-3xl border border-orange-200/80 bg-white p-3 sm:p-3.5 shadow-lg shadow-orange-900/5 flex flex-col gap-2.5 overflow-hidden">
+          {/* ============ RIGHT: ISHTA DEV + LEKHAN (Enlarged Typed Box) ============ */}
+          <div className="lg:col-span-7 rounded-2xl border border-amber-200/80 bg-white p-3.5 sm:p-4 shadow-lg shadow-orange-900/5 flex flex-col gap-3 overflow-hidden">
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { Icon: Trophy, label: 'Total Jaap', value: ((user?.totalCount || 0) + currentCount).toLocaleString('en-IN'), tone: 'from-orange-50 to-amber-50 border-orange-100', ic: 'bg-orange-100 text-orange-600' },
-                { Icon: Flame, label: 'आज (Today)', value: currentCount.toLocaleString('en-IN'), tone: 'from-amber-50 to-yellow-50 border-amber-100', ic: 'bg-amber-100 text-amber-600' },
-                { Icon: Sparkles, label: 'पूर्ण माला', value: completedMalas.toString(), sub: completedMalas > 0 ? undefined : 'साधना जारी', tone: 'from-rose-50 to-orange-50 border-rose-100', ic: 'bg-rose-100 text-rose-500' },
-              ].map(({ Icon, label, value, sub, tone, ic }) => (
-                <div key={label} className={`rounded-xl border bg-gradient-to-br ${tone} p-1.5 sm:p-2 text-center`}>
-                  <div className="flex items-center justify-center gap-1 mb-0.5">
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center ${ic}`}><Icon className="w-3 h-3" /></span>
-                    <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider truncate">{label}</p>
-                  </div>
-                  <p className="text-base sm:text-lg font-serif font-black text-slate-900 truncate leading-tight">{value}</p>
-                  {label === 'पूर्ण माला' ? (
-                    <button onClick={() => setShowCertificate(true)} title="प्रशस्ति पत्र देखें व शेयर करें" className="mt-0.5 text-[9px] font-bold text-amber-800 hover:text-orange-950 bg-amber-100/90 hover:bg-amber-200/90 px-1.5 py-0.2 rounded-full inline-flex items-center gap-0.5 cursor-pointer transition-all">
-                      📜 प्रशस्ति पत्र
-                    </button>
-                  ) : sub ? (
-                    <p className="text-[9px] text-orange-600 font-semibold leading-tight">{sub}</p>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-
-            {/* Ishta dev */}
+            {/* Ishta dev Selector Chips */}
             <div>
-              <p className="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">इष्ट देव नाम चयन</p>
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="text-[11px] font-black uppercase tracking-wider text-slate-600 flex items-center gap-1">
+                  <span>📿</span>
+                  <span>इष्ट देव नाम चयन</span>
+                </p>
+                <span className="text-[10px] text-amber-700 font-bold bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                  {cfg.label} जाप सक्रिय
+                </span>
+              </div>
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1 no-scrollbar">
                 <NameTabs />
               </div>
             </div>
 
-            {/* Lekhan */}
-            <div className="pt-2 sm:pt-2.5 border-t border-orange-100">
+            {/* Lekhan Controls */}
+            <div className="pt-2.5 border-t border-orange-100 flex-1 flex flex-col">
               <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-1">✍️ लिखित नाम संकीर्तन</span>
+                <span className="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-1">
+                  <span>✍️</span>
+                  <span>लिखित नाम संकीर्तन</span>
+                </span>
                 <button onClick={() => setManualMode(m => !m)}
                   className="text-[10px] sm:text-[11px] font-bold text-orange-700 hover:bg-orange-100 flex items-center gap-1 cursor-pointer bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200 transition-all">
                   <Pencil className="w-2.5 h-2.5" />
@@ -863,7 +912,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                       const isNext = getNextKey() === char;
                       return (
                         <motion.button key={char} onClick={() => appendCharacter(char)} whileTap={{ scale: 0.94, y: 2 }}
-                          className={`relative overflow-hidden rounded-xl sm:rounded-2xl border border-amber-600/30 cursor-pointer hover:brightness-105 py-2 sm:py-2.5 px-1 transition-all ${
+                          className={`relative overflow-hidden rounded-xl sm:rounded-2xl border border-amber-600/30 cursor-pointer hover:brightness-105 py-2.5 sm:py-3 px-1 transition-all ${
                             isNext ? 'ring-2 ring-orange-500 ring-offset-1' : ''
                           }`}
                           style={{
@@ -886,35 +935,68 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
                 <div className="flex gap-2">
                   <input value={manualInput} onChange={e => setManualInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleManualSubmit()}
                     placeholder={`${cfg.label} यहाँ लिखें...`}
-                    className="flex-1 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-orange-200 bg-orange-50/50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    className="flex-1 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-orange-200 bg-orange-50/50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500" />
                   <button onClick={handleManualSubmit} disabled={!manualInput.trim()}
-                    className="px-4 py-2 rounded-xl font-black text-xs sm:text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-xs cursor-pointer disabled:opacity-40">+1</button>
+                    className="px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm bg-orange-500 hover:bg-orange-600 text-white shadow-xs cursor-pointer disabled:opacity-40">+1</button>
                 </div>
               )}
 
-              {/* Written display */}
-              <div className="relative mt-2 p-2 sm:p-2.5 rounded-xl bg-gradient-to-b from-amber-50/80 to-orange-50/40 border border-dashed border-orange-300 text-center min-h-[38px] max-h-16 overflow-y-auto flex items-center justify-center">
-                {textareaValue ? (
-                  <>
-                    <p className="text-xs sm:text-base font-black text-orange-950 font-serif leading-relaxed tracking-wide pr-14">{textareaValue}</p>
-                    <div className="absolute right-1.5 top-1.5 flex items-center gap-1 z-10">
-                      <button onClick={() => {
-                        navigator.clipboard?.writeText(textareaValue.trim());
-                        toast.success('नाम संकीर्तन कॉपी किया गया! 📋');
-                      }} title="कॉपी करें" className="p-1 rounded-md bg-white/90 hover:bg-white text-orange-700 shadow-xs text-[10px] flex items-center cursor-pointer transition-all">
+              {/* Enlarged & Prominent Written Sankirtan Display Box */}
+              <div className="relative mt-2.5 rounded-2xl bg-[#FFF8EE] border-2 border-dashed border-amber-300/90 shadow-inner p-3 sm:p-4 min-h-[95px] sm:min-h-[120px] max-h-48 flex flex-col justify-between overflow-hidden">
+                {/* Header bar inside box */}
+                <div className="flex items-center justify-between gap-2 border-b border-amber-200/70 pb-1.5 mb-1.5">
+                  <span className="text-[11px] font-black text-[#8A4A1C] flex items-center gap-1">
+                    <span>📜</span>
+                    <span>लिखित नाम संकीर्तन पट्टिका</span>
+                  </span>
+                  {textareaValue && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono font-black text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full border border-orange-200">
+                        {textareaValue.trim().split(/\s+/).filter(Boolean).length} बार संकीर्तित
+                      </span>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard?.writeText(textareaValue.trim());
+                          toast.success('नाम संकीर्तन कॉपी किया गया! 📋');
+                        }}
+                        title="कॉपी करें"
+                        className="px-2 py-0.5 rounded-md bg-white hover:bg-orange-50 text-orange-700 border border-orange-200 shadow-2xs text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all"
+                      >
                         <Copy className="w-3 h-3" />
+                        <span>कॉपी</span>
                       </button>
-                      <button onClick={() => {
-                        setTextareaValue('');
-                        setUserInput('');
-                      }} title="साफ़ करें" className="p-1 rounded-md bg-white/90 hover:bg-white text-slate-500 hover:text-red-600 shadow-xs text-[10px] flex items-center cursor-pointer transition-all">
+                      <button
+                        onClick={() => {
+                          setTextareaValue('');
+                          setUserInput('');
+                        }}
+                        title="साफ़ करें"
+                        className="px-2 py-0.5 rounded-md bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 border border-slate-200 shadow-2xs text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all"
+                      >
                         <RotateCcw className="w-3 h-3" />
+                        <span>साफ़</span>
                       </button>
                     </div>
-                  </>
-                ) : (
-                  <p className="text-[11px] text-slate-400 italic">यहाँ आपके द्वारा लिखित नाम संकीर्तन प्रदर्शित होगा...</p>
-                )}
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto flex items-center justify-center py-1">
+                  {textareaValue ? (
+                    <p className="text-base sm:text-xl lg:text-2xl font-serif font-black text-[#7A1D05] leading-relaxed tracking-wider text-center select-all">
+                      {textareaValue}
+                    </p>
+                  ) : (
+                    <div className="text-center py-2">
+                      <p className="text-xs sm:text-sm font-serif font-bold text-amber-900/80">
+                        ✨ प्रभु श्री राम का पावन नाम यहाँ प्रकट होगा...
+                      </p>
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        ऊपर दिए गए बटनों [ {cfg.keys.map(k => k[2] || k[1] || k[0]).join(' ')} ] पर क्लिक करें या कीबोर्ड से टाइप करें
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -922,8 +1004,12 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
             <div className="mt-auto pt-2 sm:pt-2.5 border-t border-orange-100 flex flex-col gap-2">
               <ActionButtons />
               <div className="text-center">
-                <p className="text-sm sm:text-base font-black text-orange-600 font-serif tracking-wider">|| श्री राम जय राम जय जय राम ||</p>
-                <p className="text-[10px] text-slate-400 mt-0.5 hidden sm:block">कीबोर्ड शॉर्टकट: R, A, M या + / - दबाकर भी जाप कर सकते हैं</p>
+                <p className="text-sm sm:text-base font-black text-orange-600 font-serif tracking-wider">
+                  {selectedName === 'RADHE' ? '|| श्री राधे कृष्ण ||' : selectedName === 'HARE_KRISHNA' ? '|| हरे कृष्ण हरे कृष्ण कृष्ण कृष्ण हरे हरे ||' : '|| श्री राम जय राम जय जय राम ||'}
+                </p>
+                <p className="text-[10px] text-slate-400 mt-0.5 hidden sm:block">
+                  {selectedName === 'RADHE' ? 'कीबोर्ड शॉर्टकट: R, D या + / - दबाकर भी जाप कर सकते हैं' : selectedName === 'HARE_KRISHNA' ? 'कीबोर्ड शॉर्टकट: H (हरे), K (कृष्णा) या + / - दबाकर भी जाप कर सकते हैं' : 'कीबोर्ड शॉर्टकट: R, A, M या + / - दबाकर भी जाप कर सकते हैं'}
+                </p>
               </div>
             </div>
           </div>
@@ -937,7 +1023,7 @@ export default function NaamJapSection({ user, onSaveSuccess }: NaamJapSectionPr
         totalJaap={((user?.totalCount || 0) + currentCount)}
         completedMalas={completedMalas}
       />
-    </section>
+    </div>
     </>
   );
 }

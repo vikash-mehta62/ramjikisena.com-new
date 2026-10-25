@@ -15,11 +15,9 @@ export default function DailyPanchang() {
     const monthNamesHindi = ['चैत्र', 'वैशाख', 'ज्येष्ठ', 'आषाढ़', 'श्रावण', 'भाद्रपद', 'अश्विन', 'कार्तिक', 'मार्गशीर्ष', 'पौष', 'माघ', 'फाल्गुन'];
     
     const dayOfWeek = dayNames[today.getDay()];
-    // Approximate Hindu month mapping for display
     const monthIdx = (today.getMonth() + 10) % 12;
     const hinduMonth = monthNamesHindi[monthIdx];
     
-    // Tithi approximation
     const dayNum = today.getDate();
     const paksha = dayNum <= 15 ? 'शुक्ल पक्ष' : 'कृष्ण पक्ष';
     const tithiNum = (dayNum % 15) || 15;
@@ -33,7 +31,6 @@ export default function DailyPanchang() {
     const nakshatraList = ['रोहिणी', 'मृगशिरा', 'पुनर्वसु', 'पुष्य', 'हस्त', 'चित्रा', 'स्वाति', 'अनुराधा', 'श्रवण'];
     const nakshatra = nakshatraList[dayNum % nakshatraList.length];
 
-    // Formatted date
     const dateStr = today.toLocaleDateString('hi-IN', {
       day: 'numeric',
       month: 'long',
@@ -58,29 +55,27 @@ export default function DailyPanchang() {
   }, []);
 
   return (
-    <div className="container mx-auto px-3 sm:px-6 max-w-6xl mt-4 sm:mt-6">
-      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-amber-300/60 bg-gradient-to-r from-[#FFF8EE] via-[#FFF3DF] to-[#FFF8EE] shadow-md shadow-orange-950/5 p-3.5 sm:p-5">
+    <div className="w-full">
+      <div className="relative overflow-hidden rounded-2xl border border-amber-200/80 bg-white text-slate-800 shadow-sm p-5 sm:p-6">
         
-        {/* Subtle background ornamentation */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-orange-400/10 rounded-full blur-2xl pointer-events-none" />
+
 
         {/* Top Header Row */}
-        <div className="relative flex flex-wrap items-center justify-between gap-2.5 pb-3 border-b border-orange-200/70">
-          <div className="flex items-center gap-2.5">
-            <span className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shadow-sm">
-              <Calendar className="w-4 h-4" />
+        <div className="relative flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-amber-200/80">
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-500/20">
+              <Calendar className="w-5 h-5 text-white" />
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm sm:text-base font-black text-amber-950 font-serif">
+                <h3 className="text-base sm:text-lg font-black text-[#7A1D05] font-serif tracking-tight">
                   आज का दैनिक पंचांग व शुभ मुहूर्त
                 </h3>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-600 text-white text-[10px] font-bold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[10px] font-black shadow-xs">
                   आज • {panchangData.dayOfWeek}
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-amber-900/80 font-medium">
+              <p className="text-xs text-[#8A4A1C] font-semibold mt-0.5">
                 {panchangData.dateStr} • {panchangData.hinduMonth}, {panchangData.paksha} {panchangData.tithiName}
               </p>
             </div>
@@ -89,7 +84,7 @@ export default function DailyPanchang() {
           {/* Toggle button */}
           <button
             onClick={() => setExpanded(prev => !prev)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-orange-800 bg-white/90 hover:bg-white border border-amber-300 shadow-xs transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#7A1D05] bg-white hover:bg-amber-50 border border-amber-300/80 shadow-xs transition-all cursor-pointer"
           >
             <span>{expanded ? 'संक्षिप्त देखें' : 'विस्तृत मुहूर्त'}</span>
             {expanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -97,59 +92,59 @@ export default function DailyPanchang() {
         </div>
 
         {/* Core Muhurat Grid */}
-        <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3">
+        <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3.5">
           
           {/* Tithi & Nakshatra */}
-          <div className="p-2 sm:p-2.5 rounded-xl bg-white/80 border border-orange-100 flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center shrink-0">
-              <Sparkles className="w-3.5 h-3.5" />
+          <div className="p-3.5 rounded-xl bg-[#FFF8EE] border border-amber-200/80 flex items-center gap-3 shadow-2xs">
+            <span className="w-9 h-9 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4" />
             </span>
             <div className="min-w-0">
               <p className="text-[10px] uppercase font-bold text-slate-500 truncate">तिथि व नक्षत्र</p>
-              <p className="text-xs sm:text-sm font-black text-slate-900 truncate">{panchangData.tithiName}</p>
-              <p className="text-[10px] text-orange-700 font-semibold truncate">{panchangData.nakshatra} नक्षत्र</p>
+              <p className="text-sm font-black text-slate-900 truncate">{panchangData.tithiName}</p>
+              <p className="text-[11px] text-orange-700 font-semibold truncate">{panchangData.nakshatra} नक्षत्र</p>
             </div>
           </div>
 
           {/* Abhijit Muhurat */}
-          <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-emerald-50/90 to-amber-50/60 border border-emerald-200/80 flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-              <Clock className="w-3.5 h-3.5" />
+          <div className="p-3.5 rounded-xl bg-[#FFF8EE] border border-amber-200/80 flex items-center gap-3 shadow-2xs">
+            <span className="w-9 h-9 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4" />
             </span>
             <div className="min-w-0">
-              <p className="text-[10px] uppercase font-bold text-emerald-800 truncate">शुभ अभिजित मुहूर्त</p>
-              <p className="text-xs sm:text-sm font-black text-emerald-950 truncate">{panchangData.abhijit}</p>
-              <p className="text-[10px] text-emerald-700 font-semibold truncate">सर्वश्रेष्ठ फलदायी</p>
+              <p className="text-[10px] uppercase font-bold text-orange-800 truncate">शुभ अभिजित मुहूर्त</p>
+              <p className="text-sm font-black text-slate-900 truncate">{panchangData.abhijit}</p>
+              <p className="text-[11px] text-orange-700 font-semibold truncate">सर्वश्रेष्ठ फलदायी</p>
             </div>
           </div>
 
           {/* Rahukaal */}
-          <div className="p-2 sm:p-2.5 rounded-xl bg-white/80 border border-orange-100 flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
-              <Shield className="w-3.5 h-3.5" />
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3 shadow-2xs">
+            <span className="w-9 h-9 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
+              <Shield className="w-4 h-4" />
             </span>
             <div className="min-w-0">
               <p className="text-[10px] uppercase font-bold text-slate-500 truncate">राहुकाल (त्याज्य)</p>
-              <p className="text-xs sm:text-sm font-black text-rose-900 truncate">{panchangData.rahukaal}</p>
-              <p className="text-[10px] text-slate-500 font-medium truncate">शुभ कार्य वर्जित</p>
+              <p className="text-sm font-bold text-slate-800 truncate">{panchangData.rahukaal}</p>
+              <p className="text-[11px] text-slate-500 font-medium truncate">शुभ कार्य वर्जित</p>
             </div>
           </div>
 
           {/* Sun timings */}
-          <div className="p-2 sm:p-2.5 rounded-xl bg-white/80 border border-orange-100 flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-              <Sunrise className="w-3.5 h-3.5" />
+          <div className="p-3.5 rounded-xl bg-[#FFF8EE] border border-amber-200/80 flex items-center gap-3 shadow-2xs">
+            <span className="w-9 h-9 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center shrink-0">
+              <Sunrise className="w-4 h-4" />
             </span>
             <div className="min-w-0">
               <p className="text-[10px] uppercase font-bold text-slate-500 truncate">सूर्योदय • सूर्यास्त</p>
-              <p className="text-xs sm:text-sm font-black text-slate-900 truncate">{panchangData.sunrise} • {panchangData.sunset}</p>
-              <p className="text-[10px] text-amber-800 font-semibold truncate">{panchangData.samvat}</p>
+              <p className="text-sm font-black text-slate-900 truncate">{panchangData.sunrise} • {panchangData.sunset}</p>
+              <p className="text-[11px] text-orange-700 font-semibold truncate">{panchangData.samvat}</p>
             </div>
           </div>
 
         </div>
 
-        {/* Expanded Details */}
+        {/* Collapsible Expanded View */}
         <AnimatePresence>
           {expanded && (
             <motion.div
@@ -157,24 +152,23 @@ export default function DailyPanchang() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2 }}
-              className="overflow-hidden pt-3 mt-3 border-t border-orange-200/60"
+              className="mt-3.5 pt-3.5 border-t border-amber-200/80"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded-xl bg-white border border-amber-100">
-                  <p className="text-[10px] font-bold uppercase text-slate-500 flex items-center gap-1">
-                    <Compass className="w-3 h-3 text-orange-600" /> आज का चौघड़िया (Choghadiya)
-                  </p>
-                  <p className="text-xs font-bold text-slate-800 mt-1 leading-relaxed">
-                    {panchangData.shubhChoghadiya}
-                  </p>
+              <div className="grid sm:grid-cols-2 gap-3 text-xs bg-white/70 p-3.5 rounded-2xl border border-amber-200">
+                <div className="flex items-start gap-2">
+                  <Compass className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-black text-[#7A1D05]">शुभ चौघड़िया मुहूर्त</p>
+                    <p className="text-slate-700 mt-0.5">{panchangData.shubhChoghadiya}</p>
+                  </div>
                 </div>
-                <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
-                  <p className="text-[10px] font-bold uppercase text-amber-900 flex items-center gap-1">
-                    🚩 आज का पावन संकल्प (Sankalp)
-                  </p>
-                  <p className="text-xs font-bold text-amber-950 mt-1 leading-relaxed">
-                    {panchangData.specialNote} — आज के दिन 108 राम नाम का जप विशेष पुण्यकारी है।
-                  </p>
+
+                <div className="flex items-start gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-black text-[#7A1D05]">विशेष आध्यात्मिक फल</p>
+                    <p className="text-slate-700 mt-0.5">{panchangData.specialNote}</p>
+                  </div>
                 </div>
               </div>
             </motion.div>
