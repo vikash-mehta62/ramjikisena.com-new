@@ -139,9 +139,12 @@ const exploreLinks: ExploreLinkItem[] = [
 ];
 
 const mainLinks = [
-  { href: '/#jaap',         label: 'Naam Jaap',     icon: Flame },
+  { href: '/#jaap',         label: 'Ram Naam Sadhna', icon: Flame },
   { href: '/pandits',       label: 'Pandits',       icon: Sparkles },
   { href: '/mandirs',       label: 'Mandirs',       icon: Church },
+  { href: '/glory',         label: 'Bhajan',        icon: Star },
+  { href: '/community',     label: 'Community',     icon: Users },
+  { href: '/blogs',         label: 'Blog',          icon: BookOpen },
   // { href: '/samagri',       label: 'Samagri',       icon: ShoppingBag },
 ];
 
@@ -316,33 +319,22 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
               />
             </div>
             <div className="text-left">
-              <p className="text-sm sm:text-base font-black tracking-tight leading-none text-[#581404]">
-                <span className="text-orange-600">JaiShri</span><span>RamNaam</span>
+              <p className="font-serif font-black leading-[1.05] text-orange-600 text-[15px] sm:text-lg">
+                Jai Shri<br />Ram Naam
               </p>
-              <p className="text-[8px] sm:text-[9px] text-[#8C2206] font-bold tracking-wider uppercase mt-0.5">राम जी की सेना • Jai Shree Ram</p>
             </div>
           </button>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1 rounded-full p-1 bg-orange-50/70 border border-orange-200/70 shadow-sm shadow-orange-500/5">
-            {/* Home Button */}
-            <button onClick={() => safeNavigate('/')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                isActive('/')
-                  ? 'bg-orange-500 text-white shadow-sm font-black'
-                  : 'text-slate-700 hover:text-orange-600 hover:bg-orange-100/70'
-              }`}>
-              <Home className="w-3.5 h-3.5" /> Home
-            </button>
-
-            {mainLinks.map(({ href, label, icon: Icon }) => (
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5">
+            {[{ href: '/', label: 'Home' }, ...mainLinks].map(({ href, label }) => (
               <button key={href} onClick={() => safeNavigate(href)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`relative px-2.5 xl:px-3 py-2 text-[13px] font-semibold whitespace-nowrap transition-colors cursor-pointer after:absolute after:left-3 after:right-3 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-orange-600 after:transition-transform after:origin-center ${
                   isActive(href)
-                    ? 'bg-orange-500 text-white shadow-sm font-black'
-                    : 'text-slate-700 hover:text-orange-600 hover:bg-orange-100/70'
+                    ? 'text-orange-600 after:scale-x-100'
+                    : 'text-slate-700 hover:text-orange-600 after:scale-x-0 hover:after:scale-x-100'
                 }`}>
-                <Icon className="w-3.5 h-3.5" /> {label}
+                {label}
               </button>
             ))}
 
@@ -350,10 +342,9 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
             <div className="relative" ref={exploreRef}>
               <button
                 onClick={() => { setExploreOpen(o => !o); setUserMenuOpen(false); setLoginOpen(false); }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                  exploreOpen ? 'bg-orange-200/80 text-orange-900' : 'text-slate-700 hover:text-orange-600 hover:bg-orange-100/70'
+                className={`flex items-center gap-1 px-2.5 xl:px-3 py-2 text-[13px] font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                  exploreOpen ? 'text-orange-600' : 'text-slate-700 hover:text-orange-600'
                 }`}>
-                <Compass className="w-3.5 h-3.5" />
                 More
                 <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${exploreOpen ? 'rotate-180' : ''}`} />
               </button>

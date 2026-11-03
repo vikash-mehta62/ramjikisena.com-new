@@ -12,8 +12,9 @@ import RamShalakaModal from '@/components/RamShalakaModal';
 import { authApi, User } from '@/lib/auth';
 import { useJaapNavigate } from '@/lib/useJaapNavigate';
 import {
-  Sparkles, Flame, Users, ArrowRight, Star, Calendar, Play, BookOpen,
-  Headphones, Share2, Heart, Bell, HelpCircle, FileText, X, Volume2, VolumeX
+  Sparkles, Flame, Users, ArrowRight, Calendar, Play, BookOpen,
+  Heart, Bell, HelpCircle, FileText, X, Volume2, VolumeX,
+  Music, HandHeart, Timer
 } from 'lucide-react';
 
 import { SEED_CHAUPAIS, ChaupaiItem } from '@/lib/seedInspirations';
@@ -182,12 +183,143 @@ function formatIndianNumber(num: number): string {
   return num.toLocaleString('en-IN');
 }
 
-function LotusDivider() {
+function SectionHeading({ kicker, title, sub, align = 'center', action }: {
+  kicker: string;
+  title: string;
+  sub?: string;
+  align?: 'center' | 'left';
+  action?: React.ReactNode;
+}) {
+  const centered = align === 'center';
   return (
-    <div className="flex items-center justify-center gap-3 py-4 opacity-70 select-none pointer-events-none">
-      <span className="h-[1px] w-20 sm:w-32 bg-gradient-to-r from-transparent to-[#D4AF37]" />
-      <span className="text-base sm:text-lg text-[#D4AF37]">🪷</span>
-      <span className="h-[1px] w-20 sm:w-32 bg-gradient-to-l from-transparent to-[#D4AF37]" />
+    <div className={`mb-8 sm:mb-10 flex gap-3 ${centered ? 'flex-col items-center text-center' : 'flex-row items-end justify-between'}`}>
+      <div className={centered ? 'flex flex-col items-center' : 'min-w-0'}>
+        <span className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-orange-600 mb-2">
+          <span className="text-sm">🪷</span>
+          {kicker}
+        </span>
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-[#3D2A1E] leading-tight">
+          {title}
+        </h2>
+        {sub && (
+          <p className={`text-sm sm:text-base text-slate-600 mt-2 max-w-xl ${centered ? 'mx-auto' : ''}`}>{sub}</p>
+        )}
+        <span className={`block h-1 w-16 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 mt-4 ${centered ? 'mx-auto' : ''}`} />
+      </div>
+      {action}
+    </div>
+  );
+}
+
+// Fades sections in as they scroll into view
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll<HTMLElement>('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+}
+
+// Golden diya embers drifting upward (fixed positions so server and client render the same)
+const EMBERS = [
+  { l: 6, s: 6, d: 9, delay: 0, drift: 30 }, { l: 14, s: 4, d: 11, delay: 2.5, drift: -20 },
+  { l: 22, s: 5, d: 8, delay: 5, drift: 25 }, { l: 31, s: 3, d: 12, delay: 1.2, drift: -30 },
+  { l: 39, s: 6, d: 10, delay: 6.5, drift: 15 }, { l: 47, s: 4, d: 9, delay: 3.4, drift: -15 },
+  { l: 55, s: 5, d: 13, delay: 0.8, drift: 35 }, { l: 63, s: 3, d: 10, delay: 4.6, drift: -25 },
+  { l: 71, s: 6, d: 11, delay: 7.2, drift: 20 }, { l: 79, s: 4, d: 9, delay: 2, drift: -35 },
+  { l: 87, s: 5, d: 12, delay: 5.8, drift: 25 }, { l: 94, s: 3, d: 10, delay: 3.9, drift: -10 },
+];
+
+function Embers({ className = '' }: { className?: string }) {
+  return (
+    <div className={`absolute inset-0 overflow-hidden pointer-events-none z-[1] ${className}`} aria-hidden>
+      {EMBERS.map((e, i) => (
+        <span
+          key={i}
+          className="ember"
+          style={{
+            left: `${e.l}%`,
+            width: e.s,
+            height: e.s,
+            animationDuration: `${e.d}s`,
+            animationDelay: `${e.delay}s`,
+            ['--drift' as string]: `${e.drift}px`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Counts up from 0 the first time it scrolls into view, then follows live updates
+function CountUp({ value, format }: { value: number; format: (n: number) => string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [shown, setShown] = useState(0);
+  const started = useRef(false);
+  const fromRef = useRef(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const run = () => {
+      const from = fromRef.current;
+      const t0 = performance.now();
+      const dur = 1600;
+      let raf = 0;
+      const tick = (t: number) => {
+        const p = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const n = from + (value - from) * eased;
+        fromRef.current = n;
+        setShown(n);
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+      return () => cancelAnimationFrame(raf);
+    };
+    if (started.current) return run();
+    if (!('IntersectionObserver' in window)) { setShown(value); return; }
+    let cancel: (() => void) | undefined;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        started.current = true;
+        io.disconnect();
+        cancel = run();
+      }
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => { io.disconnect(); cancel?.(); };
+  }, [value]);
+
+  return <span ref={ref}>{format(shown)}</span>;
+}
+
+const PETALS = ['🌸', '🌺', '🌼', '🌸', '🌺', '🌼', '🌸', '🌺'];
+
+function PetalShower() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
+      {PETALS.map((p, i) => (
+        <span
+          key={i}
+          className="petal text-xl"
+          style={{ left: `${6 + i * 11.5}%`, animationDelay: `${(i % 4) * 0.18}s` }}
+        >
+          {p}
+        </span>
+      ))}
     </div>
   );
 }
@@ -202,6 +334,53 @@ export default function HomePage() {
   const [showShalakaModal, setShowShalakaModal] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const safeNavigate = useJaapNavigate();
+  useScrollReveal();
+
+  // Services carousel (phones / narrow windows): arrows, dots and mouse drag
+  const servicesRef = useRef<HTMLDivElement>(null);
+  const [serviceIdx, setServiceIdx] = useState(0);
+  const dragRef = useRef({ active: false, x: 0, left: 0, moved: false });
+
+  const serviceStep = () => {
+    const el = servicesRef.current;
+    const card = el?.firstElementChild as HTMLElement | null;
+    return card ? card.offsetWidth + 16 : (el?.clientWidth || 300) * 0.8;
+  };
+  const goToService = (i: number) => {
+    servicesRef.current?.scrollTo({ left: i * serviceStep(), behavior: 'smooth' });
+  };
+  const onServicesScroll = () => {
+    const el = servicesRef.current;
+    if (el) setServiceIdx(Math.round(el.scrollLeft / serviceStep()));
+  };
+  const onServicesMouseDown = (e: React.MouseEvent) => {
+    const el = servicesRef.current;
+    if (!el) return;
+    dragRef.current = { active: true, x: e.clientX, left: el.scrollLeft, moved: false };
+    el.style.scrollSnapType = 'none';
+  };
+  const onServicesMouseMove = (e: React.MouseEvent) => {
+    const el = servicesRef.current;
+    const d = dragRef.current;
+    if (!el || !d.active) return;
+    const dx = e.clientX - d.x;
+    if (Math.abs(dx) > 5) d.moved = true;
+    el.scrollLeft = d.left - dx;
+  };
+  const endServicesDrag = () => {
+    const el = servicesRef.current;
+    if (!el || !dragRef.current.active) return;
+    dragRef.current.active = false;
+    el.style.scrollSnapType = '';
+    goToService(Math.round(el.scrollLeft / serviceStep()));
+  };
+
+  useEffect(() => {
+    if (!videoModalOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setVideoModalOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [videoModalOpen]);
 
   // Interactive Live Diya & Pushpa Arpan State
   const [diyaLit, setDiyaLit] = useState(false);
@@ -336,453 +515,350 @@ export default function HomePage() {
         }
       `}} />
 
-      {/* ================= COMPACT FESTIVE ANNOUNCEMENT BANNER ================= */}
-      <div className="mt-14 sm:mt-16 bg-[#581404] text-white py-2 px-4 text-center text-xs border-b border-[#D4AF37]/40 flex items-center justify-center gap-2 relative z-30">
-        <span className="text-[#D4AF37] text-xs">✦</span>
-        <span className="font-serif font-bold tracking-wide text-[#FBE192]">पावन कार्तिक मास पर्व:</span>
-        <span className="text-amber-100/90 hidden sm:inline text-xs">प्रतिदिन दीपदान एवं 108 राम नाम जप का अनंत पुण्य प्राप्त करें</span>
-        <button
-          type="button"
-          onClick={() => safeNavigate('/#jaap')}
-          className="text-[11px] font-bold text-[#F3CF7A] hover:text-white underline underline-offset-2 ml-1 cursor-pointer transition-colors"
-        >
-          साधना करें →
-        </button>
-        <span className="text-[#D4AF37] text-xs">✦</span>
-      </div>
-
-      {/* ================= 1. HERO SECTION WITH ICONIC MANDIR ARCH (MEHRAB) ================= */}
-      <section className="relative w-full bg-[#FFFDF8] pt-10 sm:pt-16 pb-14 sm:pb-20 border-b border-amber-200/50 overflow-hidden">
-        {/* Subtle Ayodhya Mandir Backdrop (12% Opacity for Temple Depth) */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+      {/* ================= 1. HERO — Ayodhya panorama with Prabhu Shri Ram ================= */}
+      <section className="relative w-full overflow-hidden bg-[#FFF3E2] mt-14 sm:mt-16">
+        {/* Desktop panorama */}
+        <div className="hidden md:block absolute inset-0 z-0">
           <Image
-            src="/images/Ayodhya Ramji Photo.webp"
-            alt="Ayodhya Mandir"
+            src="/images/hero-ayodhya-ramji-hd.webp"
+            alt="अयोध्या धाम में प्रभु श्री राम"
             fill
-            unoptimized
-            className="object-cover object-center opacity-[0.12] filter saturate-50"
+            priority
+            sizes="100vw"
+            className="object-cover object-[62%_center] hero-kenburns"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#FFFDF8]/85 via-[#FFFDF8]/92 to-[#FFFDF8]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FFF6EA] via-[#FFF6EA]/85 lg:via-[#FFF6EA]/65 to-transparent to-[60%]" />
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#FFF6EA]/90 to-transparent" />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-center">
-            
-            {/* Left Column: Regal Maroon & Gold Typography */}
-            <div className="md:col-span-7 flex flex-col items-center md:items-start text-center md:text-left">
-              
-              {/* Kicker + Ambient Dhun Pill */}
-              <div className="flex flex-wrap items-center gap-2.5 mb-3 justify-center md:justify-start">
-                <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-[#8C2206] uppercase">
-                  <span className="text-[#D4AF37]">✦</span>
-                  <span>Chant • Connect • Grow • Serve</span>
-                  <span className="text-[#D4AF37]">✦</span>
-                </div>
+        {/* Mobile portrait */}
+        <div className="md:hidden relative h-[360px] sm:h-[440px]">
+          <Image
+            src="/images/hero-mobile-ramji.webp"
+            alt="प्रभु श्री राम"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[center_18%]"
+          />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#FFF3E2] via-[#FFF3E2]/70 to-transparent" />
+          {pushpaShower && <PetalShower />}
+        </div>
 
-                {/* Subtle Ambient Dhun Toggle (Default OFF) */}
-                <button
-                  type="button"
-                  onClick={toggleAmbient}
-                  title="पावन मंदिर धुन (Ambient Music)"
-                  className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white hover:bg-orange-50 border border-[#D4AF37]/50 text-[11px] font-bold text-[#581404] shadow-2xs transition-all cursor-pointer active:scale-95"
-                >
-                  {ambientPlaying ? <Volume2 className="w-3 h-3 text-orange-600" /> : <VolumeX className="w-3 h-3 text-slate-400" />}
-                  <span>मंदिर धुन: {ambientPlaying ? 'चालू' : 'बंद'}</span>
-                </button>
-              </div>
+        {pushpaShower && <div className="hidden md:block"><PetalShower /></div>}
+        <Embers />
 
-              {/* H1 in Deep Maroon */}
-              <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-serif font-black text-[#581404] leading-[1.14] tracking-tight mb-4">
-                Jai Shri Ram Naam
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl relative z-10 -mt-20 md:mt-0 md:min-h-[580px] lg:min-h-[640px] pb-20 md:pb-36 md:pt-16 lg:pt-20">
+          <div className="grid md:grid-cols-12 gap-6 w-full">
+            {/* Title, tagline, CTAs */}
+            <div className="md:col-span-7 lg:col-span-6 flex flex-col items-center md:items-start text-center md:text-left">
+              <h1 className="relative">
+                {/* Calligraphy swirl flourishes */}
+                <svg viewBox="0 0 120 120" className="absolute -left-6 sm:-left-10 top-[38%] w-14 sm:w-20 text-orange-600/80 hidden sm:block" fill="none" aria-hidden>
+                  <path d="M110 20 C 60 5, 10 30, 18 70 C 24 100, 70 104, 72 78 C 74 58, 46 56, 44 72" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+                </svg>
+                <span className="block text-[60px] sm:text-[84px] lg:text-[104px] font-display hero-title text-saffron-foil drop-shadow-[0_2px_0_rgba(255,255,255,0.7)] hero-in">
+                  जय श्री
+                </span>
+                <span className="block text-[68px] sm:text-[96px] lg:text-[124px] font-display hero-title hero-title-2 text-saffron-foil drop-shadow-[0_2px_0_rgba(255,255,255,0.7)] hero-in d1">
+                  राम नाम
+                </span>
               </h1>
 
-              {/* Mobile Only: Sacred Mandir Arch (Mehrab) Frame */}
-              <div className="md:hidden my-5 w-52 sm:w-60 mx-auto">
-                <div className="flex justify-center -mb-2 relative z-20">
-                  <div className="px-3.5 py-0.5 rounded-full bg-[#581404] border border-[#D4AF37] text-[#D4AF37] text-[10px] font-serif font-black tracking-wider shadow-sm">
-                    ✦ श्री राम लला दर्शन ✦
-                  </div>
-                </div>
-                <div className="relative aspect-[4/5.3] rounded-t-[130px] rounded-b-2xl overflow-hidden border-2 border-[#D4AF37] shadow-xl bg-[#FFF8EE] p-1">
-                  <div className="relative w-full h-full rounded-t-[124px] rounded-b-xl overflow-hidden border border-[#D4AF37]/50 bg-white">
-                    <Image
-                      src="/images/hero-mobile-ramji.webp"
-                      alt="श्री राम लला दर्शन"
-                      fill
-                      priority
-                      unoptimized
-                      className="object-cover object-center"
-                    />
-
-                    {/* Flower Shower Overlay */}
-                    {pushpaShower && (
-                      <div className="absolute inset-0 pointer-events-none flex flex-wrap justify-around items-start p-2 text-xl animate-bounce">
-                        <span>🌸</span><span>🌺</span><span>🌼</span><span>🌸</span>
-                      </div>
-                    )}
-
-                    {/* Diya Flame at Base */}
-                    {diyaLit && (
-                      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none">
-                        <div className="w-4 h-6 rounded-full bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-200 diya-flame" />
-                        <span className="text-lg -mt-1">🪔</span>
-                      </div>
-                    )}
-
-                    <div className="absolute inset-x-0 bottom-0 py-2.5 bg-gradient-to-t from-[#3D0C02] via-[#581404]/80 to-transparent text-center">
-                      <span className="text-xs font-serif font-black text-[#D4AF37]">अयोध्या धाम • जय श्री राम</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mobile Diya & Pushpa Buttons */}
-                <div className="flex items-center justify-center gap-2 mt-2">
-                  <button
-                    type="button"
-                    onClick={handleLightDiya}
-                    className="px-3 py-1 rounded-full text-xs font-bold bg-[#FFF8EE] border border-[#D4AF37]/60 text-[#581404] hover:bg-orange-50 shadow-2xs cursor-pointer active:scale-95"
-                  >
-                    🪔 {diyaLit ? 'दीप अर्पित 🙏' : 'दीप जलाएं'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleOfferPushpa}
-                    className="px-3 py-1 rounded-full text-xs font-bold bg-[#FFF8EE] border border-[#D4AF37]/60 text-[#581404] hover:bg-orange-50 shadow-2xs cursor-pointer active:scale-95"
-                  >
-                    🌸 पुष्प अर्पण
-                  </button>
-                </div>
-              </div>
-
-              {/* Tulsidas Quote Box */}
-              <div className="p-3.5 sm:p-4 rounded-xl bg-[#FFF8EE] border border-[#D4AF37]/50 text-[#581404] font-serif text-sm sm:text-[15px] font-semibold shadow-2xs mb-4 max-w-xl">
-                “रामनाम मनुष्य को शांति, शक्ति और सही मार्ग दिखाता है” <span className="text-[#8C2206] font-sans text-xs font-normal ml-1">— संत तुलसीदास</span>
-              </div>
-
-              {/* Subtitle */}
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 max-w-xl">
-                Let the divine name of Lord Ram fill your life with peace, positivity and eternal happiness.
+              <svg viewBox="0 0 420 40" className="hero-in d2 w-64 sm:w-96 -mt-2 text-orange-600/80 mx-auto md:mx-0" fill="none" aria-hidden>
+                <path d="M4 26 C 90 40, 200 2, 300 18 C 350 26, 380 30, 414 8 C 404 24, 392 30, 376 30" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+              <p className="hero-in d2 mt-2 text-xl sm:text-[26px] font-medium text-[#3D2A1E] tracking-wide">
+                Chant <span className="text-orange-500">•</span> Connect <span className="text-orange-500">•</span> Grow <span className="text-orange-500">•</span> Serve
+              </p>
+              <p className="hero-in d3 mt-4 text-slate-700 text-sm sm:text-[17px] leading-relaxed max-w-md">
+                Experience the power of Shri Ram Naam. Join a global community for devotion, knowledge and positive living.
               </p>
 
-              {/* CTAs: Saffron ONLY on action buttons */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3.5 mb-5">
+              <div className="hero-in d4 flex flex-wrap items-center justify-center md:justify-start gap-3 mt-7">
                 <button
                   type="button"
                   onClick={() => safeNavigate('/#jaap')}
-                  className="px-6 py-3 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="group px-6 py-3 rounded-full btn-shine bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-sm shadow-divine hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer active:scale-95"
                 >
-                  <span>Start Chanting Now</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>Start Ram Naam Sadhna</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
-
                 <button
                   type="button"
                   onClick={() => setVideoModalOpen(true)}
-                  className="px-5 py-3 rounded-full bg-white hover:bg-[#FFF8EE] text-[#581404] font-bold text-sm border border-[#D4AF37]/60 shadow-2xs hover:shadow-sm transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  className="px-5 py-3 rounded-full bg-white/90 hover:bg-white text-slate-800 font-bold text-sm border border-orange-300 shadow-xs flex items-center gap-2 cursor-pointer active:scale-95"
                 >
-                  <span className="w-5 h-5 rounded-full bg-orange-50 text-orange-600 border border-orange-200/60 flex items-center justify-center">
-                    <Play className="w-3 h-3 fill-current ml-0.5" />
+                  <span className="w-5 h-5 rounded-full bg-orange-600 text-white flex items-center justify-center">
+                    <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
                   </span>
                   <span>Watch Video</span>
                 </button>
               </div>
 
-              {/* Heart Note */}
-              <p className="text-xs text-[#581404]/80 font-medium flex items-center gap-1.5">
-                <Heart className="w-3.5 h-3.5 text-orange-600 fill-orange-600" />
-                <span>Together for a Better & More Devotional World</span>
-              </p>
+              {/* Seva actions: Deep-daan, Pushpa Arpan, Mandir Dhun */}
+              <div className="hero-in d5 flex flex-wrap items-center justify-center md:justify-start gap-2 mt-5">
+                <button
+                  type="button"
+                  onClick={handleLightDiya}
+                  className="px-3 py-1.5 rounded-full text-xs font-bold bg-white/70 backdrop-blur hover:bg-white border border-[#D4AF37]/50 text-[#581404] cursor-pointer active:scale-95"
+                >
+                  <span className={diyaLit ? 'diya-flame inline-block' : ''}>🪔</span> {diyaLit ? 'दीप अर्पित 🙏' : 'दीप जलाएं'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOfferPushpa}
+                  className="px-3 py-1.5 rounded-full text-xs font-bold bg-white/70 backdrop-blur hover:bg-white border border-[#D4AF37]/50 text-[#581404] cursor-pointer active:scale-95"
+                >
+                  🌸 पुष्प अर्पण
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleAmbient}
+                  title="पावन मंदिर धुन (Ambient Music)"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-white/70 backdrop-blur hover:bg-white border border-[#D4AF37]/50 text-[#581404] cursor-pointer active:scale-95"
+                >
+                  {ambientPlaying ? <Volume2 className="w-3.5 h-3.5 text-orange-600" /> : <VolumeX className="w-3.5 h-3.5 text-slate-400" />}
+                  मंदिर धुन
+                </button>
+              </div>
+              <p className="hero-in d5 text-[11px] text-slate-500 mt-2">✨ आज {diyaCount.toLocaleString('en-IN')}+ भक्तों ने दीप प्रज्वलित किया</p>
             </div>
 
-            {/* Right Column (Desktop): Iconic Temple Mandir Arch (Mehrab) Framing Prabhu Shri Ram */}
-            <div className="hidden md:flex md:col-span-5 justify-center relative">
-              <div className="relative w-full max-w-[340px] lg:max-w-[370px]">
-                
-                {/* Temple Arch Crown (Crest) */}
-                <div className="flex justify-center -mb-2.5 relative z-20">
-                  <div className="px-4 py-1 rounded-full bg-[#581404] border border-[#D4AF37] text-[#D4AF37] text-[10px] font-serif font-black tracking-widest shadow-md flex items-center gap-1.5 uppercase">
-                    <span>✦</span>
-                    <span>श्री राम लला दर्शन</span>
-                    <span>✦</span>
-                  </div>
-                </div>
-
-                {/* Mandir Arch (Mehrab) Shaped Portrait Container */}
-                <div className="relative aspect-[4/5.3] rounded-t-[145px] lg:rounded-t-[165px] rounded-b-2xl overflow-hidden border-2 border-[#D4AF37] shadow-xl bg-[#FFF8EE] p-1.5 group">
-                  <div className="relative w-full h-full rounded-t-[136px] lg:rounded-t-[156px] rounded-b-xl overflow-hidden border border-[#D4AF37]/50 bg-white">
-                    <Image
-                      src="/images/hero-mobile-ramji.webp"
-                      alt="प्रभु श्री राम लला - अयोध्या धाम"
-                      fill
-                      priority
-                      unoptimized
-                      className="object-cover object-center group-hover:scale-102 transition-transform duration-500"
-                    />
-
-                    {/* Flower Shower Animation */}
-                    {pushpaShower && (
-                      <div className="absolute inset-0 pointer-events-none flex flex-wrap justify-around items-start p-4 text-2xl animate-bounce z-20">
-                        <span>🌸</span><span>🌺</span><span>🌼</span><span>🌸</span><span>🌺</span>
-                      </div>
-                    )}
-
-                    {/* Diya Flame at Lotus Feet */}
-                    {diyaLit && (
-                      <div className="absolute bottom-11 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none">
-                        <div className="w-5 h-7 rounded-full bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-200 diya-flame" />
-                        <span className="text-xl -mt-1.5">🪔</span>
-                      </div>
-                    )}
-
-                    {/* Bottom Golden Nameplate */}
-                    <div className="absolute inset-x-0 bottom-0 py-3 bg-gradient-to-t from-[#3D0C02] via-[#581404]/85 to-transparent flex flex-col justify-end text-center px-4">
-                      <span className="text-xs font-serif font-black text-[#D4AF37] tracking-wider">
-                        अयोध्या धाम • जय श्री राम
-                      </span>
-                      <span className="text-[10px] text-amber-100/90 font-medium mt-0.5">
-                        पावन विग्रह दर्शन
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 1-Click Interactive Diya & Pushpa Arpan Dock */}
-                <div className="mt-3 flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-[#D4AF37]/50 shadow-xs">
-                  <button
-                    type="button"
-                    onClick={handleLightDiya}
-                    className="flex-1 py-1.5 px-2.5 rounded-full text-xs font-bold bg-[#FFF8EE] hover:bg-orange-50 text-[#581404] border border-[#D4AF37]/50 shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-                  >
-                    <span>🪔</span>
-                    <span>{diyaLit ? 'दीप प्रज्वलित 🙏' : 'दीप जलाएं'}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleOfferPushpa}
-                    className="flex-1 py-1.5 px-2.5 rounded-full text-xs font-bold bg-[#FFF8EE] hover:bg-orange-50 text-[#581404] border border-[#D4AF37]/50 shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-                  >
-                    <span>🌸</span>
-                    <span>पुष्प अर्पण</span>
-                  </button>
-                </div>
-
-                <p className="text-[10px] text-center text-slate-500 font-medium mt-1.5">
-                  ✨ {diyaCount.toLocaleString('en-IN')}+ भक्तों ने आज पावन दीप प्रज्वलित किया
+            {/* Tulsidas quote card floating in the sky */}
+            <div className="hidden md:block md:col-span-5 lg:col-span-6 relative hero-in d3">
+              <div className="float-soft absolute top-0 right-[36%] lg:right-[44%] w-[250px] lg:w-[280px] p-5 lg:p-6 rounded-3xl bg-white/30 backdrop-blur-md border border-white/60 shadow-lg">
+                <p className="font-serif text-[17px] lg:text-xl leading-relaxed text-[#3D2A1E]">
+                  <span className="text-orange-600 text-2xl leading-none">“</span>रामनाम मनुष्य को शांति, शक्ति और सही मार्ग दिखाता है<span className="text-orange-600 text-2xl leading-none">”</span>
                 </p>
+                <p className="text-sm text-[#5C3A21] mt-2 text-right">– संत तुलसीदास</p>
               </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ================= 2. FLOATING QUICK ACTION DOCK (With Rich Devotional Images) ================= */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl -mt-6 sm:-mt-8 relative z-20">
-        <div className="p-3 sm:p-4 rounded-2xl bg-white shadow-lg border border-[#D4AF37]/50">
-          <div className="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-amber-100 text-center">
-            
-            {/* 1. Listen & Chant */}
-            <button
-              type="button"
-              onClick={() => safeNavigate('/#jaap')}
-              className="p-3 hover:bg-[#FFF8EE] rounded-xl transition-all cursor-pointer flex flex-col items-center group"
-            >
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-sm mb-1.5 group-hover:scale-105 transition-transform bg-amber-50">
-                <Image
-                  src="/hanumanji.jpg"
-                  alt="Listen & Chant"
-                  fill
-                  className="object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-black/20" />
-                <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow">
-                  <Headphones className="w-5 h-5 text-white" />
-                </span>
-              </div>
-              <span className="text-xs font-bold text-slate-900 group-hover:text-orange-700 transition-colors">Listen & Chant</span>
-              <span className="text-[10px] text-slate-500 mt-0.5">Hanuman Chalisa, Ram Naam</span>
-            </button>
-
-            {/* 2. Read & Learn */}
-            <button
-              type="button"
-              onClick={() => safeNavigate('/blogs')}
-              className="p-3 hover:bg-[#FFF8EE] rounded-xl transition-all cursor-pointer flex flex-col items-center group"
-            >
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-sm mb-1.5 group-hover:scale-105 transition-transform bg-amber-50">
-                <Image
-                  src="/images/gallery-1.webp"
-                  alt="Read & Learn"
-                  fill
-                  className="object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-black/20" />
-                <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow">
-                  <BookOpen className="w-5 h-5 text-white" />
-                </span>
-              </div>
-              <span className="text-xs font-bold text-slate-900 group-hover:text-orange-700 transition-colors">Read & Learn</span>
-              <span className="text-[10px] text-slate-500 mt-0.5">Spiritual Stories & Quotes</span>
-            </button>
-
-            {/* 3. Join Events */}
-            <button
-              type="button"
-              onClick={() => safeNavigate('/katha-vachaks')}
-              className="p-3 hover:bg-[#FFF8EE] rounded-xl transition-all cursor-pointer flex flex-col items-center group"
-            >
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-sm mb-1.5 group-hover:scale-105 transition-transform bg-amber-50">
-                <Image
-                  src="/home/kathavachak.webp"
-                  alt="Join Events"
-                  fill
-                  className="object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-black/20" />
-                <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow">
-                  <Calendar className="w-5 h-5 text-white" />
-                </span>
-              </div>
-              <span className="text-xs font-bold text-slate-900 group-hover:text-orange-700 transition-colors">Join Events</span>
-              <span className="text-[10px] text-slate-500 mt-0.5">Katha, Bhajan & Satsang</span>
-            </button>
-
-            {/* 4. Devotional Community */}
-            <button
-              type="button"
-              onClick={() => safeNavigate('/community')}
-              className="p-3 hover:bg-[#FFF8EE] rounded-xl transition-all cursor-pointer flex flex-col items-center group"
-            >
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-sm mb-1.5 group-hover:scale-105 transition-transform bg-amber-50">
-                <Image
-                  src="/home/Pradeep-Ji-Mishra.webp"
-                  alt="Community"
-                  fill
-                  className="object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-black/20" />
-                <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow">
-                  <Users className="w-5 h-5 text-white" />
-                </span>
-              </div>
-              <span className="text-xs font-bold text-slate-900 group-hover:text-orange-700 transition-colors">Community</span>
-              <span className="text-[10px] text-slate-500 mt-0.5">Share Bhakti & Positivity</span>
-            </button>
-
-            {/* 5. Spread Bhakti */}
-            <button
-              type="button"
-              onClick={() => setShowShalakaModal(true)}
-              className="p-3 hover:bg-[#FFF8EE] rounded-xl transition-all cursor-pointer flex flex-col items-center col-span-2 md:col-span-1 group"
-            >
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-sm mb-1.5 group-hover:scale-105 transition-transform bg-amber-50">
-                <Image
-                  src="/images/hero-mobile-ramji.webp"
-                  alt="Spread Bhakti"
-                  fill
-                  className="object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-black/20" />
-                <span className="absolute inset-0 flex items-center justify-center text-white drop-shadow">
-                  <Share2 className="w-5 h-5 text-white" />
-                </span>
-              </div>
-              <span className="text-xs font-bold text-slate-900 group-hover:text-orange-700 transition-colors">Spread Bhakti</span>
-              <span className="text-[10px] text-slate-500 mt-0.5">Ram Shalaka & Prerna</span>
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-      {/* ================= 3. STATS STRIP ================= */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mt-6 sm:mt-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 sm:p-6 rounded-2xl bg-[#FFF8EE] border border-[#D4AF37]/40 text-center">
-          <div>
-            <p className="text-2xl sm:text-3xl font-serif font-black text-[#581404]">{crore}</p>
-            <p className="text-xs font-medium text-slate-600 mt-0.5">Ram Naam Japa</p>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-3xl font-serif font-black text-[#581404]">{formatIndianNumber(stats.totalMalas)}+</p>
-            <p className="text-xs font-medium text-slate-600 mt-0.5">Completed Malas</p>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-3xl font-serif font-black text-[#581404]">{formatIndianNumber(stats.totalDevotees)}+</p>
-            <p className="text-xs font-medium text-slate-600 mt-0.5">Happy Devotees</p>
-          </div>
-          <div>
-            <p className="text-2xl sm:text-3xl font-serif font-black text-[#581404]">108+</p>
-            <p className="text-xs font-medium text-slate-600 mt-0.5">Spiritual Articles & Katha</p>
-          </div>
-        </div>
-      </div>
-
-      <LotusDivider />
-
-      {/* ================= 4. DAILY CHAUPAI BHOJPATRA SCROLL + WHATSAPP SHARE ================= */}
-      <section className="py-12 sm:py-16 bg-[#FFFDF8]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-          <div className="relative rounded-2xl bg-gradient-to-b from-[#FFFDF8] via-[#FFF9EE] to-[#FFF6E5] border-2 border-[#D4AF37]/60 shadow-md p-6 sm:p-8 overflow-hidden text-center">
-            {/* Ornamental Gold Corner Icons */}
-            <div className="absolute top-2.5 left-2.5 text-[#D4AF37] text-xs opacity-60">❖</div>
-            <div className="absolute top-2.5 right-2.5 text-[#D4AF37] text-xs opacity-60">❖</div>
-            <div className="absolute bottom-2.5 left-2.5 text-[#D4AF37] text-xs opacity-60">❖</div>
-            <div className="absolute bottom-2.5 right-2.5 text-[#D4AF37] text-xs opacity-60">❖</div>
-
-            {/* Header Tag */}
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#581404] text-[#D4AF37] border border-[#D4AF37]/50 text-xs font-serif font-bold tracking-wider mb-4 shadow-2xs">
-              <span>📜</span>
-              <span>दैनिक पावन चौपाई • श्री रामचरितमानस</span>
-            </div>
-
-            {/* Sacred Chaupai Text */}
-            <h3 className="text-lg sm:text-2xl font-serif font-black text-[#581404] leading-relaxed tracking-wide my-3">
-              “{currentChaupai.chaupai}”
-            </h3>
-
-            {/* Bhavarth Box */}
-            <div className="p-3 sm:p-4 rounded-xl bg-white/80 border border-[#D4AF37]/30 max-w-2xl mx-auto my-3 text-slate-700 text-xs sm:text-sm leading-relaxed">
-              <span className="font-bold text-[#8C2206] block sm:inline mr-1">सरल भावार्थ:</span>
-              <span>{currentChaupai.bhavarth}</span>
-            </div>
-
-            <p className="text-[11px] text-slate-500 font-medium mb-5">
-              स्रोत: {currentChaupai.source || 'श्री रामचरितमानस'}
-            </p>
-
-            {/* Action Buttons: WhatsApp Share + Next */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  const shareText = `🚩 *जय श्री राम* 🚩\n\n📜 *आज की पावन चौपाई*\n${currentChaupai.chaupai}\n\n✨ *भावार्थ:* ${currentChaupai.bhavarth}\n\n🙏 प्रतिदिन पावन नाम संकीर्तन व दर्शन हेतु जुड़ें:\n${typeof window !== 'undefined' ? window.location.origin : 'https://ramjikisena.com'}`;
-                  window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
-                }}
-                className="px-5 py-2.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow-md transition-all flex items-center gap-2 cursor-pointer active:scale-95"
-              >
-                <span>📲 WhatsApp पर शेयर करें</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveChaupaiIdx(idx => (idx + 1) % dailyChaupais.length)}
-                className="px-4 py-2.5 rounded-full bg-white hover:bg-orange-50 text-[#581404] border border-[#D4AF37]/60 font-bold text-xs sm:text-sm shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
-              >
-                <span>अगली चौपाई ▶</span>
-              </button>
             </div>
           </div>
         </div>
       </section>
 
-      <LotusDivider />
+      {/* ================= 2. SIX FEATURE CARDS (overlap the hero) ================= */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl -mt-10 md:-mt-24 relative z-20">
+        <div className="reveal stagger grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          {[
+            { icon: 'om', t: 'Ram Naam Jap Counter', s: 'Count & Stay Connected', go: () => safeNavigate('/#jaap') },
+            { icon: Music, t: 'Daily Bhajan', s: 'Audio, Chalisa & Lyrics', go: () => safeNavigate('/glory') },
+            { icon: Calendar, t: 'Panchang', s: 'Tithi, Vrat & Muhurat', go: () => safeNavigate('/#panchang') },
+            { icon: BookOpen, t: 'Spiritual Knowledge', s: 'Articles, Stories, Teachings', go: () => safeNavigate('/blogs') },
+            { icon: Users, t: 'Community', s: 'Join Devotees Worldwide', go: () => safeNavigate('/community') },
+            { icon: HandHeart, t: 'Pandit Booking', s: 'Puja, Katha & Sanskar', go: () => safeNavigate('/pandits') },
+          ].map(({ icon: Icon, t, s, go }) => (
+            <button
+              key={t}
+              type="button"
+              onClick={go}
+              className="group flex flex-col items-center text-center px-3 py-5 sm:py-6 rounded-2xl bg-white border border-orange-100 shadow-lg shadow-orange-900/5 hover:shadow-divine hover:-translate-y-1 hover:border-orange-300 cursor-pointer"
+            >
+              <span className="w-16 h-16 rounded-full bg-gradient-to-b from-orange-50 to-orange-100/80 border border-orange-100 flex items-center justify-center mb-3 group-hover:from-orange-500 group-hover:to-orange-600 transition-colors">
+                {Icon === 'om'
+                  ? <span className="icon-pop text-4xl leading-none font-serif text-orange-600 group-hover:text-white transition-colors">ॐ</span>
+                  : <Icon className="icon-pop w-8 h-8 text-orange-600 group-hover:text-white transition-colors" strokeWidth={1.6} />}
+              </span>
+              <span className="text-[15px] font-bold text-slate-900 leading-snug">{t}</span>
+              <span className="text-[11px] text-slate-500 mt-1 leading-snug">{s}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
-      {/* ================= 5. DAILY PANCHANG & SHUBH MUHURAT (With Faint Mandala Watermark) ================= */}
-      <section id="panchang" className="py-14 sm:py-18 bg-[#FFFDF8] relative overflow-hidden">
-        {/* Subtle Sacred Mandala Background Watermark (6% Opacity) */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.06] select-none">
-          <svg viewBox="0 0 400 400" className="w-[450px] h-[450px] stroke-[#581404]" fill="none" strokeWidth="1.2">
+      {/* ================= 3. STATS BAND with Ayodhya panorama ================= */}
+      <section className="relative mt-10 sm:mt-12 overflow-hidden bg-gradient-to-r from-[#FFE9CF] via-[#FFF4E6] to-[#FFF4E6] border-y border-orange-100">
+        <div className="absolute inset-y-0 left-0 w-full md:w-[42%] overflow-hidden pointer-events-none">
+          <Image
+            src="/images/hero-clean-bg.webp"
+            alt=""
+            fill
+            sizes="(max-width:768px) 100vw, 42vw"
+            className="object-cover object-[0%_60%] scale-[1.9] origin-left opacity-40 md:opacity-90"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FFF4E6]/40 to-[#FFF4E6]" />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl relative">
+          <div className="reveal stagger md:ml-[34%] grid grid-cols-2 md:grid-cols-4 gap-y-8 py-10 sm:py-12 md:divide-x divide-orange-200 text-center">
+            {[
+              { icon: <span className="text-4xl leading-none font-serif">ॐ</span>, value: stats.totalRamNaam, format: (n: number) => n >= 10000000 ? `${(n / 10000000).toFixed(1)} Cr+` : `${formatIndianNumber(Math.round(n))}+`, label: 'Ram Naam Japa' },
+              { icon: <Users className="w-9 h-9" strokeWidth={1.5} />, value: stats.totalDevotees, format: (n: number) => `${formatIndianNumber(Math.round(n))}+`, label: 'Happy Devotees' },
+              { icon: <Sparkles className="w-9 h-9" strokeWidth={1.5} />, value: stats.totalMalas, format: (n: number) => `${formatIndianNumber(Math.round(n))}+`, label: 'Completed Malas' },
+              { icon: <FileText className="w-9 h-9" strokeWidth={1.5} />, value: 108, format: (n: number) => `${Math.round(n)}+`, label: 'Spiritual Articles' },
+            ].map(({ icon, value, format, label }) => (
+              <div key={label} className="flex flex-col items-center px-2">
+                <span className="text-orange-600 h-10 flex items-center">{icon}</span>
+                <p className="mt-2 text-3xl sm:text-4xl font-black text-orange-600 tabular-nums"><CountUp value={value} format={format} /></p>
+                <p className="text-sm text-slate-600 mt-1">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 4. AKHAND JAAP MALA COUNTER ================= */}
+      <section
+        id="jaap"
+        className="relative overflow-hidden scroll-mt-14 py-14 sm:py-20 lg:pt-5 lg:pb-12 bg-gradient-to-b from-[#FFFCF7] via-[#FFF1DE] to-[#FFFCF7]"
+      >
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_30%,rgba(251,146,60,0.18)_0%,transparent_55%)]" />
+        <span className="absolute -left-10 top-24 text-[260px] leading-none font-serif text-orange-500/[0.06] select-none pointer-events-none hidden md:block">ॐ</span>
+        <span className="absolute -right-6 bottom-10 text-[220px] leading-none font-serif text-orange-500/[0.06] select-none pointer-events-none hidden md:block">राम</span>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl relative z-10">
+          <LiveAkhandJaapTicker />
+          <div className="mt-4">
+            <NaamJapSection user={user} onSaveSuccess={checkAuth} />
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 5. EXPLORE DIVINE CONTENT ================= */}
+      <section className="py-14 sm:py-20 bg-[#FFFCF7]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl">
+          <div className="reveal grid lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+            {/* Featured video */}
+            <button
+              type="button"
+              onClick={() => setVideoModalOpen(true)}
+              className="lg:col-span-5 relative rounded-3xl overflow-hidden shadow-xl cursor-pointer group min-h-[280px] sm:min-h-[320px] flex flex-col justify-end p-6 sm:p-8 text-left"
+            >
+              <Image
+                src="/images/hero-clean-bg.webp"
+                alt="श्री राम नाम शक्ति"
+                fill
+                sizes="(max-width:1024px) 100vw, 40vw"
+                className="object-cover object-[12%_center] group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10" />
+              <span className="absolute top-1/2 right-[18%] -translate-y-1/2 w-16 h-16 rounded-full bg-white/95 text-orange-600 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                <Play className="w-7 h-7 fill-current ml-1" />
+              </span>
+              <div className="relative z-10">
+                <span className="inline-block px-3 py-1 rounded-full bg-orange-600 text-white text-[11px] font-bold mb-3">
+                  Featured Video
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white">श्री राम नाम शक्ति</h3>
+                <p className="text-sm text-white/85 mt-1 max-w-[240px]">Experience the divine energy of Shri Ram Naam.</p>
+                <span className="mt-4 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-orange-600 text-white font-bold text-sm shadow-md">
+                  Watch Now <ArrowRight className="w-4 h-4" />
+                </span>
+              </div>
+            </button>
+
+            {/* Content cards */}
+            <div className="lg:col-span-7 flex flex-col">
+              <div className="flex items-end justify-between mb-4">
+                <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#3D2A1E]">Explore Divine Content</h2>
+                <Link href="/blogs" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+                  View All <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div className="reveal stagger grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 flex-1">
+                {[
+                  { title: 'Bhajans', sub: 'Soulful Ram Bhajans', img: '/ramji.jpg', href: '/glory' },
+                  { title: 'Aarti', sub: 'Daily Aarti & Chalisa', img: '/hanumanji.jpg', href: '/glory' },
+                  { title: 'Katha', sub: 'Ramayan & Stories', img: '/home/kathavachak.webp', href: '/katha-vachaks' },
+                  { title: 'Quotes', sub: 'Inspirational Quotes', img: '/images/gallery-1.webp', href: '/blogs' },
+                ].map(item => (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className="group rounded-2xl overflow-hidden bg-white border border-orange-100 shadow-md shadow-orange-900/5 hover:shadow-divine hover:-translate-y-1 flex flex-col"
+                  >
+                    <div className="relative aspect-[4/3.4] overflow-hidden bg-amber-50">
+                      <Image src={item.img} alt={item.title} fill sizes="(max-width:640px) 50vw, 15vw" className="object-cover object-top group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                    <div className="p-3 sm:p-4 text-center">
+                      <p className="text-base font-serif font-bold text-slate-900">{item.title}</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">{item.sub}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 6. DAILY CHAUPAI — Bhojpatra scroll + WhatsApp share ================= */}
+      <section className="py-14 sm:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl">
+          <SectionHeading
+            kicker="Daily Chaupai"
+            title="आज की पावन चौपाई"
+            sub="श्री रामचरितमानस से प्रतिदिन एक अमृत वचन — भावार्थ सहित"
+          />
+
+          <div className="reveal grid md:grid-cols-12 rounded-3xl overflow-hidden border border-orange-200 shadow-xl shadow-orange-900/5 bg-[#FFF8EE]">
+            {/* Darshan panel */}
+            <div className="relative md:col-span-4 min-h-[220px] md:min-h-full">
+              <Image
+                src="/images/hero-mobile-ramji.webp"
+                alt="प्रभु श्री राम"
+                fill
+                sizes="(max-width:768px) 100vw, 33vw"
+                className="object-cover object-[center_15%]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/50 via-transparent to-transparent md:from-transparent md:via-transparent md:to-[#FFF8EE]/30" />
+              <span className="absolute bottom-4 left-4 md:bottom-6 md:left-6 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 text-[11px] font-bold text-orange-700 shadow-sm">
+                📜 श्री रामचरितमानस
+              </span>
+            </div>
+
+            {/* Scroll text */}
+            <div className="relative md:col-span-8 p-6 sm:p-10 lg:p-12 flex flex-col justify-center bg-[radial-gradient(ellipse_at_top_right,#FFE9C7_0%,transparent_60%)]">
+              <span className="absolute top-4 right-6 text-[110px] leading-none font-serif text-orange-500/10 select-none pointer-events-none">“</span>
+
+              <p className="text-xl sm:text-2xl lg:text-[28px] font-serif font-bold text-[#5A1A06] leading-relaxed">
+                {currentChaupai.chaupai}
+              </p>
+
+              <div className="mt-5 pl-4 border-l-4 border-orange-400">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-orange-600 mb-1">सरल भावार्थ</p>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed">{currentChaupai.bhavarth}</p>
+              </div>
+
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const shareText = `🚩 *जय श्री राम* 🚩\n\n📜 *आज की पावन चौपाई*\n${currentChaupai.chaupai}\n\n✨ *भावार्थ:* ${currentChaupai.bhavarth}\n\n🙏 प्रतिदिन पावन नाम संकीर्तन व दर्शन हेतु जुड़ें:\n${typeof window !== 'undefined' ? window.location.origin : 'https://ramjikisena.com'}`;
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+                  }}
+                  className="px-5 py-2.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-sm hover:shadow-md flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  📲 WhatsApp पर शेयर करें
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveChaupaiIdx(idx => (idx + 1) % dailyChaupais.length)}
+                  className="px-5 py-2.5 rounded-full bg-white hover:bg-orange-50 text-orange-700 border border-orange-300 font-bold text-sm flex items-center gap-1.5 cursor-pointer active:scale-95"
+                >
+                  अगली चौपाई <ArrowRight className="w-4 h-4" />
+                </button>
+                <span className="ml-auto flex items-center gap-1.5" aria-label="चौपाई क्रम">
+                  {dailyChaupais.map((_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      aria-label={`चौपाई ${i + 1}`}
+                      onClick={() => setActiveChaupaiIdx(i)}
+                      className={`h-2 rounded-full cursor-pointer transition-all ${i === activeChaupaiIdx % dailyChaupais.length ? 'w-6 bg-orange-500' : 'w-2 bg-orange-200 hover:bg-orange-300'}`}
+                    />
+                  ))}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 mt-4">स्रोत: {currentChaupai.source || 'श्री रामचरितमानस'}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 7. DAILY PANCHANG & SHUBH MUHURAT ================= */}
+      <section id="panchang" className="py-14 sm:py-20 bg-[#FFF6EA] border-y border-orange-100 relative overflow-hidden scroll-mt-16">
+        <div className="absolute -right-24 top-1/2 -translate-y-1/2 pointer-events-none opacity-[0.07] select-none">
+          <svg viewBox="0 0 400 400" className="w-[520px] h-[520px] stroke-orange-800" fill="none" strokeWidth="1.2">
             <circle cx="200" cy="200" r="180" />
             <circle cx="200" cy="200" r="150" />
             <circle cx="200" cy="200" r="120" />
@@ -791,340 +867,334 @@ export default function HomePage() {
             <polygon points="200,20 230,120 330,70 270,160 380,200 270,240 330,330 230,280 200,380 170,280 70,330 130,240 20,200 130,160 70,70 170,120" />
           </svg>
         </div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
-          <DailyPanchang />
-        </div>
-      </section>
-
-      <LotusDivider />
-
-      {/* ================= 6. AKHAND JAAP MALA COUNTER (Deep Maroon + Soft Diya Radiance) ================= */}
-      <section
-        id="jaap"
-        className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[#4A1003] via-[#350A01] to-[#4A1003] text-white border-t border-b border-[#D4AF37]/40 relative overflow-hidden scroll-mt-16"
-        style={{
-          backgroundImage: 'radial-gradient(circle at 50% 35%, rgba(245, 158, 11, 0.16) 0%, rgba(56, 11, 1, 0) 65%)',
-        }}
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl relative z-10">
-          <LiveAkhandJaapTicker />
-          <div className="mt-4">
-            <NaamJapSection user={user} onSaveSuccess={checkAuth} />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl relative z-10">
+          <SectionHeading
+            kicker="Panchang"
+            title="शुभ समय जानें, शुभ कार्य करें"
+            sub="तिथि, नक्षत्र, राहुकाल और शुभ समय — हर दिन अपडेट"
+          />
+          <div className="reveal">
+            <DailyPanchang />
           </div>
         </div>
       </section>
 
-      <LotusDivider />
-
-      {/* ================= 7. EXPLORE OUR SPIRITUAL WORLD ================= */}
-      <section className="py-14 sm:py-18 bg-[#FFFDF8]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-          <div className="text-center mb-10 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#581404]">
-              Explore Our Spiritual World
-            </h2>
-            <p className="text-sm text-slate-600 mt-1 max-w-xl mx-auto">
-              Inspire your life with sacred Katha, divine Chalisa, soul-stirring Bhajans and daily prayers
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {[
-              {
-                title: 'Ram Katha & Spiritual Content',
-                sub: 'Inspire Your Life',
-                img: '/home/kathavachak.webp',
-                href: '/katha-vachaks',
-              },
-              {
-                title: 'Hanuman Chalisa',
-                sub: 'Find Strength & Peace',
-                img: '/hanumanji.jpg',
-                href: '/glory',
-              },
-              {
-                title: 'Bhajans & Aarti',
-                sub: 'Feel the Devotion',
-                img: '/images/gallery-1.webp',
-                href: '/blogs',
-              },
-              {
-                title: 'Daily Prayers & Panchang',
-                sub: 'Start Your Day with Ram',
-                img: '/images/Ayodhya Ramji Photo.webp',
-                href: '/#panchang',
-              },
-            ].map((card, i) => (
-              <Link
-                key={i}
-                href={card.href}
-                className="group rounded-2xl overflow-hidden border border-[#D4AF37]/40 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all bg-white flex flex-col justify-between"
-              >
-                <div className="relative h-36 sm:h-44 overflow-hidden bg-amber-50">
-                  <Image
-                    src={card.img}
-                    alt={card.title}
-                    fill
-                    sizes="(max-width:768px) 50vw, 25vw"
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-                  <span className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center shadow-sm">
-                    <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
-                  </span>
-                </div>
-                <div className="p-3.5 bg-white">
-                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-orange-700 transition-colors line-clamp-1">
-                    {card.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                    {card.sub}
-                  </p>
-                </div>
+      {/* ================= 8. POPULAR SERVICES ================= */}
+      <section id="services" className="py-14 sm:py-20 bg-[#FFFCF7]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl">
+          <SectionHeading
+            align="left"
+            kicker="Popular Services"
+            title="लोकप्रिय सेवाएं"
+            sub="प्रमाणित पंडित बुकिंग, कथा व्यास, पावन मंदिर दर्शन एवं सत्संग"
+            action={
+              <Link href="/pandits" className="shrink-0 text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+                सभी सेवाएं देखें <ArrowRight className="w-4 h-4" />
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+            }
+          />
 
-      <LotusDivider />
-
-      {/* ================= 8. EXPLORE DIVINE CONTENT ================= */}
-      <section className="py-14 sm:py-18 bg-[#FFF8EE] border-t border-b border-amber-200/60">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#581404]">
-                Explore Divine Content
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
-                Immerse yourself in soulful Bhajans, Aarti, Katha and sacred teachings
-              </p>
-            </div>
-            <Link
-              href="/blogs"
-              className="text-xs sm:text-sm font-bold text-orange-700 hover:text-orange-800 flex items-center gap-1"
-            >
-              <span>View All</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid lg:grid-cols-12 gap-6 items-stretch">
-            {/* Featured Left Card */}
-            <button
-              type="button"
-              onClick={() => setVideoModalOpen(true)}
-              className="lg:col-span-5 relative rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer group min-h-[220px] flex flex-col justify-end p-6 text-left"
-            >
-              <Image
-                src="/images/Ayodhya Ramji Photo.webp"
-                alt="Shri Ram Naam Shakti"
-                fill
-                className="object-cover object-top group-hover:scale-102 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-              
-              <div className="relative z-10">
-                <span className="inline-block px-3 py-1 rounded-full bg-orange-600 text-white text-[10px] font-bold uppercase tracking-wider mb-2">
-                  Featured Video
-                </span>
-                <h3 className="text-lg sm:text-xl font-serif font-black text-white mb-1">
-                  श्री राम नाम शक्ति
-                </h3>
-                <p className="text-xs text-amber-100/90 mb-3">
-                  Experience the divine energy of Shri Ram Naam in your daily life.
-                </p>
-                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white text-orange-800 font-bold text-xs shadow-sm">
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>Watch Now</span>
-                </span>
-              </div>
-            </button>
-
-            {/* 4 Compact Cards Grid */}
-            <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-              {[
-                { title: 'Bhajans', sub: 'Soulful Ram Bhajans', img: '/images/gallery-1.webp', href: '/blogs' },
-                { title: 'Aarti', sub: 'Daily Aarti & Chalisa', img: '/hanumanji.jpg', href: '/glory' },
-                { title: 'Katha', sub: 'Ramayan & Stories', img: '/home/kathavachak.webp', href: '/katha-vachaks' },
-                { title: 'Quotes', sub: 'Inspirational Quotes', img: '/ramji.jpg', href: '/community' },
-              ].map((item, idx) => (
-                <Link
-                  key={idx}
-                  href={item.href}
-                  className="rounded-xl overflow-hidden bg-white border border-[#D4AF37]/40 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between"
-                >
-                  <div className="relative h-28 overflow-hidden bg-amber-50">
-                    <Image src={item.img} alt={item.title} fill className="object-cover object-top" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  </div>
-                  <div className="p-3 text-center">
-                    <p className="text-xs font-bold text-slate-800">{item.title}</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-1">{item.sub}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <LotusDivider />
-
-      {/* ================= 9. POPULAR SERVICES ================= */}
-      <section id="services" className="py-14 sm:py-18 bg-[#FFFDF8]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#581404]">
-                लोकप्रिय सेवाएं (Popular Services)
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
-                प्रमाणित पंडित बुकिंग, कथा व्यास, पावन मंदिर दर्शन एवं सत्संग
-              </p>
-            </div>
-            <Link
-              href="/pandits"
-              className="text-xs sm:text-sm font-bold text-orange-700 hover:text-orange-800 flex items-center gap-1"
-            >
-              <span>सभी सेवाएं देखें</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          <div className="relative">
+          <button
+            type="button"
+            aria-label="पिछली सेवा"
+            onClick={() => goToService(Math.max(0, serviceIdx - 1))}
+            disabled={serviceIdx === 0}
+            className="sm:hidden absolute left-0 top-[34%] -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/95 border border-orange-200 shadow-lg text-orange-600 flex items-center justify-center cursor-pointer active:scale-90 disabled:opacity-0 transition-opacity"
+          >
+            <ArrowRight className="w-5 h-5 rotate-180" />
+          </button>
+          <button
+            type="button"
+            aria-label="अगली सेवा"
+            onClick={() => goToService(Math.min(Math.min(services.length, 6) - 1, serviceIdx + 1))}
+            disabled={serviceIdx >= Math.min(services.length, 6) - 1}
+            className="sm:hidden absolute right-0 top-[34%] -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-orange-600 shadow-lg text-white flex items-center justify-center cursor-pointer active:scale-90 disabled:opacity-0 transition-opacity"
+          >
+            <ArrowRight className="w-5 h-5" />
+          </button>
+          <div
+            ref={servicesRef}
+            onScroll={onServicesScroll}
+            onMouseDown={onServicesMouseDown}
+            onMouseMove={onServicesMouseMove}
+            onMouseUp={endServicesDrag}
+            onMouseLeave={endServicesDrag}
+            onClickCapture={e => { if (dragRef.current.moved) { e.preventDefault(); e.stopPropagation(); dragRef.current.moved = false; } }}
+            onDragStart={e => e.preventDefault()}
+            className="reveal stagger cursor-grab active:cursor-grabbing sm:cursor-auto select-none sm:select-auto flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
             {services.slice(0, 6).map((service) => (
               <Link
                 key={service.id || service._id}
                 href={service.href}
-                className="group rounded-2xl overflow-hidden bg-white border border-[#D4AF37]/40 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between"
+                className="group shrink-0 w-[82%] sm:w-auto snap-center rounded-3xl overflow-hidden bg-white border border-orange-100 shadow-md shadow-orange-900/5 hover:shadow-divine hover:-translate-y-1 flex flex-col"
               >
-                <div>
-                  <div className="relative h-28 overflow-hidden bg-amber-50">
-                    <Image
-                      src={service.img}
-                      alt={service.title}
-                      fill
-                      className={`object-cover ${service.imgPosition || 'object-top'}`}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    {service.rating && (
-                      <span className="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 text-amber-300">
-                        {service.rating}
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-3 text-center">
-                    <h3 className="text-xs font-bold text-slate-800 line-clamp-1 group-hover:text-orange-700 transition-colors">
-                      {service.title}
-                    </h3>
-                    <p className="text-[11px] text-orange-700 font-semibold mt-1">
-                      {service.price || 'सेवा उपलब्ध'}
-                    </p>
+                <div className="relative h-44 sm:h-48 overflow-hidden bg-amber-50">
+                  <Image
+                    src={service.img}
+                    alt={service.title}
+                    fill
+                    sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
+                    className={`object-cover ${service.imgPosition || 'object-top'} group-hover:scale-105 transition-transform duration-700`}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                  {service.popular && (
+                    <span className="absolute top-3 left-3 text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/95 text-orange-700 shadow-sm">
+                      {service.popular}
+                    </span>
+                  )}
+                  {service.rating && (
+                    <span className="absolute top-3 right-3 text-[11px] font-bold px-2 py-1 rounded-full bg-black/60 text-amber-300 backdrop-blur">
+                      {service.rating}
+                    </span>
+                  )}
+                  <div className="absolute bottom-3 left-4 right-4">
+                    <h3 className="text-lg font-serif font-bold text-white leading-snug line-clamp-1">{service.title}</h3>
+                    <p className="text-[11px] text-white/80 line-clamp-1">{service.subtitle}</p>
                   </div>
                 </div>
-                <div className="p-3 pt-0">
-                  <span className="w-full py-1.5 rounded-full bg-orange-50 group-hover:bg-orange-600 text-orange-700 group-hover:text-white font-bold text-xs transition-colors flex items-center justify-center">
-                    {service.ctaText || 'विवरण देखें'}
-                  </span>
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
+                  <p className="text-sm text-slate-600 leading-relaxed line-clamp-2">{service.desc}</p>
+                  {service.features && service.features.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-3">
+                      {service.features.slice(0, 3).map(f => (
+                        <span key={f} className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-100">✓ {f}</span>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-auto pt-4 flex items-center justify-between gap-2">
+                    <span className="text-sm font-bold text-orange-600">{service.price || 'सेवा उपलब्ध'}</span>
+                    <span className="px-4 py-2 rounded-full bg-orange-50 group-hover:bg-orange-600 text-orange-700 group-hover:text-white font-bold text-xs flex items-center gap-1 transition-colors">
+                      {service.ctaText || 'विवरण देखें'} <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
                 </div>
               </Link>
+            ))}
+          </div>
+          </div>
+
+          {/* Dots (phones only) */}
+          <div className="sm:hidden flex items-center justify-center gap-1.5 mt-4">
+            {services.slice(0, 6).map((s, i) => (
+              <button
+                key={s.id || s._id || i}
+                type="button"
+                aria-label={`सेवा ${i + 1}`}
+                onClick={() => goToService(i)}
+                className={`h-2 rounded-full cursor-pointer transition-all ${i === serviceIdx ? 'w-6 bg-orange-500' : 'w-2 bg-orange-200'}`}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      <LotusDivider />
-
-      {/* ================= 10. OUR KEY FEATURES ================= */}
-      <section className="py-14 sm:py-18 bg-[#FFF8EE] border-t border-amber-200/60">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-          <div className="text-center mb-10 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#581404]">
-              Our Key Features
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl mx-auto">
-              Everything you need for a peaceful, connected and spiritual life
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-            {[
-              { icon: Bell, t: 'Daily Notifications', d: 'Bhajan, quotes & panchang' },
-              { icon: Sparkles, t: 'Personal Jap Counter', d: 'Track chanting progress' },
-              { icon: Calendar, t: 'Events & Satsang', d: 'Join online & offline' },
-              { icon: HelpCircle, t: 'Ask Questions', d: 'Connect with experts' },
-              { icon: FileText, t: 'E-Books & Downloads', d: 'Ramayan, Chalisa, Stotra' },
-              { icon: Heart, t: 'Seva & Donation', d: 'Support spiritual causes' },
-            ].map((item, idx) => {
-              const IconComp = item.icon;
-              return (
-                <div
-                  key={idx}
-                  className="p-4 rounded-2xl bg-white border border-[#D4AF37]/40 shadow-2xs text-center flex flex-col items-center"
-                >
-                  <div className="w-10 h-10 rounded-full bg-orange-50 text-orange-700 border border-orange-200/60 flex items-center justify-center mb-2.5">
-                    <IconComp className="w-5 h-5" />
-                  </div>
-                  <p className="text-xs font-bold text-slate-900">{item.t}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">{item.d}</p>
-                </div>
-              );
-            })}
+      {/* ================= 9. JOIN THE RAM NAAM MOVEMENT ================= */}
+      <section className="py-10 sm:py-14 bg-[#FFFCF7]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl">
+          <div className="reveal relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#FFE7CC] via-[#FFF1E0] to-[#FFE2C2] border border-orange-200 px-6 py-10 sm:py-14 text-center">
+            <div className="absolute inset-y-0 right-0 w-1/2 md:w-[38%] pointer-events-none">
+              <Image
+                src="/images/hero-clean-bg.webp"
+                alt=""
+                fill
+                sizes="40vw"
+                className="object-cover object-[0%_55%] scale-[1.9] origin-left opacity-60"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#FFF1E0] via-[#FFF1E0]/60 to-transparent" />
+            </div>
+            <div className="absolute inset-y-0 left-0 w-1/3 pointer-events-none opacity-[0.07] flex items-center justify-start pl-8 text-[180px] font-serif text-orange-700 select-none">ॐ</div>
+            <div className="relative z-10">
+              <h2 className="text-2xl sm:text-4xl font-serif font-black text-[#3D2A1E]">Join the Ram Naam Movement</h2>
+              <p className="text-sm sm:text-base text-slate-600 mt-2 max-w-xl mx-auto">
+                Be a part of a global community spreading positivity, devotion and good deeds.
+              </p>
+              <button
+                type="button"
+                onClick={() => safeNavigate('/community')}
+                className="group mt-6 inline-flex items-center gap-2 px-8 py-3 rounded-full btn-shine bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-sm shadow-divine cursor-pointer active:scale-95"
+              >
+                Join Now <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ================= 11. GRAND COMMUNITY BANNER (With Majestic Temple Imagery) ================= */}
-      <section className="py-14 sm:py-18 bg-[#FFFDF8]">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
-          <div className="relative p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#4A1003] via-[#681704] to-[#3B0C02] text-white shadow-xl border-2 border-[#D4AF37]/60 flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden">
-            
-            {/* Ayodhya Panoramic Background Image with subtle devotional glow */}
-            <div className="absolute inset-0 pointer-events-none opacity-20 select-none">
-              <Image
-                src="/images/Ayodhya Ramji Photo.webp"
-                alt="अयोध्या धाम"
-                fill
-                className="object-cover object-center"
-              />
-            </div>
-            
-            <div className="relative z-10 text-center md:text-left max-w-xl">
-              <span className="inline-block px-3.5 py-1 rounded-full bg-white/15 text-[#FBE192] text-xs font-serif font-bold uppercase tracking-wider mb-3 border border-[#D4AF37]/40 shadow-xs">
-                ✦ Join the Ram Naam Movement ✦
-              </span>
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-white leading-tight">
-                Together, Let&apos;s Spread the Message of <br />
-                <span className="text-[#FBE192]">&ldquo;Jai Shri Ram Naam&rdquo;</span>
-              </h3>
-              <p className="text-amber-100/90 text-xs sm:text-sm mt-3 leading-relaxed">
-                Peace in Heart • Positivity in Life • Devotion for a Better Tomorrow
-              </p>
-            </div>
-
-            <div className="relative z-10 shrink-0 flex flex-col sm:flex-row items-center gap-4">
-              {/* Sacred Miniature Arch Frame */}
-              <div className="relative w-20 h-24 rounded-t-full rounded-b-xl overflow-hidden border-2 border-[#D4AF37] shadow-lg bg-[#FFF8EE] hidden md:block">
-                <Image
-                  src="/images/hero-mobile-ramji.webp"
-                  alt="श्री राम लला"
-                  fill
-                  className="object-cover object-center"
-                />
+      {/* ================= 10. OUR KEY FEATURES ================= */}
+      <section className="py-12 sm:py-16 bg-[#FFFCF7]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl">
+          <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#3D2A1E] mb-8 sm:mb-10 text-center md:text-left">Our Key Features</h2>
+          <div className="reveal stagger grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8">
+            {[
+              { icon: Bell, t: 'Daily Notifications', d: 'Get daily bhajan, quotes & panchang' },
+              { icon: Timer, t: 'Personal Jap Counter', d: 'Track your chanting progress' },
+              { icon: Calendar, t: 'Events & Satsang', d: 'Join online & offline events' },
+              { icon: HelpCircle, t: 'Ask Questions', d: 'Connect with experts' },
+              { icon: FileText, t: 'E-Books & Downloads', d: 'Ramayan, Chalisa, Stotra & More' },
+              { icon: HandHeart, t: 'Seva & Donation', d: 'Support spiritual initiatives' },
+            ].map(({ icon: Icon, t, d }) => (
+              <div key={t} className="group flex flex-col items-center text-center">
+                <Icon className="icon-pop w-10 h-10 text-orange-600 mb-3" strokeWidth={1.5} />
+                <p className="text-sm font-bold text-slate-900">{t}</p>
+                <p className="text-xs text-slate-500 mt-1 max-w-[150px]">{d}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              <button
-                type="button"
-                onClick={() => safeNavigate('/community')}
-                className="px-7 py-3.5 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer active:scale-95 flex items-center gap-2"
-              >
-                <span>Join Devotional Community</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+      {/* ================= 11. MOBILE APP SHOWCASE ================= */}
+      <section className="relative overflow-hidden py-16 sm:py-20 text-white">
+        <Image
+          src="/images/hero-clean-bg.webp"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 backdrop-blur-[3px] bg-gradient-to-b from-[#7A3410]/80 via-[#9A4A12]/65 to-[#5A2208]/85" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-5xl relative z-10 flex flex-col items-center gap-12">
+          <div className="text-center">
+            <h2 className="text-3xl sm:text-5xl font-serif font-black leading-tight">Jai Shri Ram Naam<br />Mobile App</h2>
+            <p className="text-amber-100/90 mt-3 text-base sm:text-lg">Take devotion with you, always.</p>
+            <div className="mt-7 flex flex-wrap gap-3 justify-center">
+              {[
+                { top: 'COMING SOON ON', name: 'Google Play', glyph: <svg viewBox="0 0 24 24" className="w-6 h-6"><path fill="#34A853" d="M3.6 1.8 13.8 12 3.6 22.2c-.4-.2-.6-.6-.6-1.1V2.9c0-.5.2-.9.6-1.1z" /><path fill="#FBBC04" d="m17.3 8.5-3.5 3.5 3.5 3.5 4-2.3c.9-.5.9-1.9 0-2.4l-4-2.3z" /><path fill="#4285F4" d="M3.6 22.2 13.8 12l3.5 3.5L5 22.4c-.5.3-1 .2-1.4-.2z" /><path fill="#EA4335" d="M3.6 1.8c.4-.4.9-.5 1.4-.2l12.3 6.9-3.5 3.5L3.6 1.8z" /></svg> },
+                { top: 'COMING SOON ON', name: 'App Store', glyph: <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor"><path d="M16.4 1.4c0 1.1-.4 2.2-1.2 3-.9.9-2 1.4-3.2 1.3-.1-1.1.4-2.3 1.2-3.1.9-.9 2.1-1.4 3.2-1.2zM20.5 17.2c-.5 1.3-.8 1.8-1.5 3-1 1.6-2.4 3.5-4.1 3.5-1.5 0-1.9-1-4-1s-2.5 1-4.1 1c-1.7 0-3.1-1.8-4-3.3C.1 16-.4 10.9 1.4 8.2c1.3-1.9 3.3-3 5.2-3 1.9 0 3.1 1 4.7 1 1.5 0 2.5-1 4.7-1 1.7 0 3.5.9 4.7 2.5-4.2 2.3-3.5 8.2.8 9.5z" /></svg> },
+              ].map(b => (
+                <div key={b.name} className="flex items-center gap-3 px-4 py-2 rounded-xl bg-black/80 border border-white/30 select-none">
+                  {b.glyph}
+                  <span className="text-left">
+                    <span className="block text-[9px] tracking-wider text-white/70">{b.top}</span>
+                    <span className="block text-lg font-semibold leading-tight">{b.name}</span>
+                  </span>
+                </div>
+              ))}
             </div>
+            <p className="text-xs text-amber-100/70 mt-3">तब तक वेबसाइट पर ही राम नाम जप, भजन और पंचांग का आनंद लें 🙏</p>
+          </div>
+
+          {/* Two phone mockups */}
+          <div className="flex justify-center items-end gap-4 sm:gap-6">
+            <div className="float-soft"><div className="w-[170px] sm:w-[210px] rounded-[34px] bg-slate-900 p-2 shadow-2xl rotate-[-4deg]">
+              <div className="rounded-[28px] overflow-hidden bg-[#FFF8EE] text-slate-800 h-[350px] sm:h-[420px] flex flex-col">
+                <div className="px-3 pt-4 pb-2 flex items-center gap-2">
+                  <span className="relative w-6 h-6 rounded-md overflow-hidden"><Image src="/images/ramjikisena_logo.webp" alt="" fill sizes="24px" className="object-cover" /></span>
+                  <span className="text-[10px] font-bold text-orange-700 leading-tight">Jai Shri<br />Ram Naam</span>
+                </div>
+                <p className="px-3 text-xs font-bold">Jai Shri Ram 🙏</p>
+                <p className="px-3 text-[9px] text-slate-500">Continue your daily sadhna</p>
+                <div className="mx-3 mt-2 rounded-2xl bg-gradient-to-b from-orange-400 to-orange-600 text-white text-center py-4">
+                  <p className="text-4xl font-black leading-none">108</p>
+                  <p className="text-[9px] mt-1 opacity-90">Ram Naam Today</p>
+                  <span className="inline-block mt-2 px-3 py-0.5 rounded-full bg-white/25 text-[9px]">Tap to Chant</span>
+                </div>
+                <div className="grid grid-cols-4 gap-1 px-3 mt-3 text-center">
+                  {[Music, Flame, Calendar, BookOpen].map((I, i) => (
+                    <span key={i} className="flex flex-col items-center"><span className="w-7 h-7 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center"><I className="w-3.5 h-3.5" /></span></span>
+                  ))}
+                </div>
+                <div className="mx-3 mt-3 p-2 rounded-xl bg-white border border-orange-100">
+                  <p className="text-[9px] font-bold">Today&apos;s Thought</p>
+                  <p className="text-[9px] text-slate-600 mt-0.5">“राम नाम ही जीवन की सच्ची शांति है”</p>
+                </div>
+              </div>
+            </div></div>
+            <div className="float-soft-late mb-6"><div className="w-[160px] sm:w-[200px] rounded-[34px] bg-slate-900 p-2 shadow-2xl rotate-[4deg]">
+              <div className="rounded-[28px] overflow-hidden bg-white text-slate-800 h-[330px] sm:h-[400px] flex flex-col">
+                <p className="px-3 pt-4 pb-2 text-xs font-bold">Bhajans</p>
+                <div className="px-3 flex gap-1 mb-2">
+                  {['All', 'Aarti', 'Chalisa'].map((c, i) => (
+                    <span key={c} className={`px-2 py-0.5 rounded-full text-[8px] ${i === 0 ? 'bg-orange-600 text-white' : 'bg-orange-50 text-orange-700'}`}>{c}</span>
+                  ))}
+                </div>
+                {[
+                  { t: 'Shri Ram Jai Ram', d: '5:23', img: '/ramji.jpg' },
+                  { t: 'Shri Ram Aarti', d: '7:12', img: '/images/hero-mobile-ramji.webp' },
+                  { t: 'Ram Dhun', d: '6:05', img: '/images/Ayodhya Ramji Photo.webp' },
+                  { t: 'Hanuman Chalisa', d: '11:20', img: '/hanumanji.jpg' },
+                  { t: 'Shri Ram Stuti', d: '4:42', img: '/images/gallery-1.webp' },
+                ].map(s => (
+                  <div key={s.t} className="flex items-center gap-2 px-3 py-1.5">
+                    <span className="relative w-9 h-9 rounded-lg overflow-hidden shrink-0"><Image src={s.img} alt="" fill sizes="36px" className="object-cover object-top" /></span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-[9px] font-bold truncate">{s.t}</span>
+                      <span className="block text-[8px] text-slate-400">{s.d}</span>
+                    </span>
+                    <Heart className="w-3 h-3 text-slate-400" />
+                  </div>
+                ))}
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 12. DAILY INSPIRATION IN YOUR POCKET ================= */}
+      <section className="py-14 sm:py-20 bg-[#FFFCF7]">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-6xl">
+        <div className="reveal grid md:grid-cols-2 gap-10 items-center rounded-[32px] bg-gradient-to-br from-[#FFE9D2] via-[#FFF3E6] to-[#FFE2C4] border border-orange-200 shadow-xl shadow-orange-900/5 p-8 sm:p-12 overflow-hidden">
+          <div className="flex justify-center order-2 md:order-1">
+            <div className="w-[220px] sm:w-[250px] rounded-[38px] bg-slate-900 p-2 shadow-2xl -rotate-6">
+              <div className="relative rounded-[32px] overflow-hidden h-[440px] sm:h-[500px]">
+                <Image src="/images/hero-mobile-ramji.webp" alt="श्री राम" fill sizes="250px" className="object-cover object-top" />
+                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/70 to-transparent text-white text-center">
+                  <p className="font-serif font-bold text-sm">जय श्री राम</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="order-1 md:order-2 text-center md:text-left">
+            <h2 className="text-3xl sm:text-4xl font-serif font-black text-orange-600 leading-tight">Daily Inspiration<br />in Your Pocket</h2>
+            <ul className="mt-6 space-y-3.5 inline-block text-left">
+              {[
+                { icon: Music, t: 'Daily Bhajan & Aarti', href: '/glory' },
+                { icon: Calendar, t: 'Panchang & Muhurat', href: '/#panchang' },
+                { icon: BookOpen, t: 'Spiritual Articles', href: '/blogs' },
+                { icon: Timer, t: 'Jap Counter', href: '/#jaap' },
+                { icon: Users, t: 'Community & Events', href: '/community' },
+                { icon: FileText, t: 'E-Books & Resources', href: '/blogs' },
+                { icon: HandHeart, t: 'Seva & Donation', href: '/pandits' },
+              ].map(({ icon: Icon, t, href }) => (
+                <li key={t}>
+                  <button type="button" onClick={() => safeNavigate(href)} className="group flex items-center gap-3 cursor-pointer">
+                    <span className="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center shadow-xs group-hover:bg-orange-600">
+                      <Icon className="w-4 h-4" />
+                    </span>
+                    <span className="text-[15px] font-semibold text-slate-800 group-hover:text-orange-700">{t}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+      </section>
+
+      {/* ================= 13. FINAL CTA ================= */}
+      <section className="relative overflow-hidden min-h-[340px] sm:min-h-[400px] flex items-center">
+        <Image
+          src="/images/hero-clean-bg.webp"
+          alt="सरयू तट, अयोध्या"
+          fill
+          sizes="100vw"
+          className="object-cover object-[30%_center]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2A0C03]/90 via-[#3B1205]/55 to-transparent" />
+        <Embers />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl relative z-10 flex justify-center md:justify-start">
+          <div className="reveal max-w-md text-center md:text-left text-white py-12">
+            <p className="text-2xl sm:text-4xl font-serif font-bold leading-snug drop-shadow">
+              “राम नाम से जीवन में नई ऊर्जा और सही दिशा मिलती है”
+            </p>
+            <button
+              type="button"
+              onClick={() => safeNavigate('/#jaap')}
+              className="group mt-7 inline-flex items-center gap-2 px-7 py-3.5 rounded-full btn-shine bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold text-sm shadow-divine cursor-pointer active:scale-95"
+            >
+              Start Your Journey Today <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
       </section>
@@ -1140,10 +1210,19 @@ export default function HomePage() {
 
       {/* ================= YOUTUBE VIDEO MODAL ================= */}
       {videoModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-3xl aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl">
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          onClick={() => setVideoModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="relative w-full max-w-3xl aspect-video rounded-2xl overflow-hidden bg-black shadow-2xl border border-[#D4AF37]/40"
+            onClick={e => e.stopPropagation()}
+          >
             <button
               type="button"
+              aria-label="Close video"
               onClick={() => setVideoModalOpen(false)}
               className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/40 flex items-center justify-center cursor-pointer"
             >

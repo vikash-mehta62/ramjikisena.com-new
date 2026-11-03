@@ -65,11 +65,111 @@
   background: linear-gradient(to bottom, #ff4500, #cc3700);
 }
 
-/* Smooth transitions */
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+html {
+  scroll-behavior: smooth;
+}
+
+/* Smooth transitions on interactive elements only (a global * rule made every element animate) */
+a, button, [role="button"], input, select, textarea {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 200ms;
+}
+
+:focus-visible {
+  outline: 2px solid #D4AF37;
+  outline-offset: 2px;
+}
+
+/* Gold foil text for sacred headings */
+.text-gold-foil {
+  background: linear-gradient(100deg, #8C2206 0%, #581404 35%, #B8860B 55%, #581404 75%, #8C2206 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: foil-shine 8s linear infinite;
+}
+
+@keyframes foil-shine {
+  to { background-position: 200% center; }
+}
+
+/* Saffron calligraphy text for the hero title and stats */
+.text-saffron-foil {
+  background: linear-gradient(100deg, #9A3412 0%, #EA580C 30%, #F59E0B 50%, #EA580C 70%, #9A3412 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: foil-shine 10s linear infinite;
+}
+
+/* Slow cinematic zoom on the hero panorama */
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.06); }
+}
+
+.hero-kenburns {
+  animation: kenburns 18s ease-in-out infinite alternate;
+}
+
+/* Gentle sway of the festive toran */
+@keyframes toran-sway {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(1.5px) rotate(0.15deg); }
+}
+
+.toran-sway {
+  transform-origin: top center;
+  animation: toran-sway 4s ease-in-out infinite;
+}
+
+/* Soft glowing halo behind the Mandir arch */
+.divine-halo {
+  background: radial-gradient(circle, rgba(251, 225, 146, 0.55) 0%, rgba(245, 158, 11, 0.18) 40%, transparent 70%);
+  animation: halo-pulse 6s ease-in-out infinite;
+}
+
+@keyframes halo-pulse {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+/* Falling flower petals for Pushpa Arpan */
+@keyframes petal-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(420px) rotate(360deg); opacity: 0; }
+}
+
+.petal {
+  position: absolute;
+  top: 0;
+  animation: petal-fall 2.4s ease-in forwards;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
 }
 
 /* Divine border animation */
@@ -180,3 +280,123 @@
   font-family: monospace;
 }
 
+
+/* Hero title: extra top room so Devanagari matras (ी, ि) aren't clipped by background-clip:text */
+.hero-title {
+  line-height: 1.12;
+  padding-top: 0.2em;
+  margin-top: -0.1em;
+}
+
+.hero-title-2 {
+  margin-top: -0.28em;
+}
+
+/* Jaap mala: ripple on each count and a gently swaying tassel */
+@keyframes mala-ripple {
+  from { r: 82; opacity: 0.6; stroke-width: 3; }
+  to { r: 124; opacity: 0; stroke-width: 0.5; }
+}
+
+.mala-ripple {
+  animation: mala-ripple 0.6s ease-out forwards;
+}
+
+@keyframes tassel-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+
+.mala-tassel {
+  transform-origin: 130px 236px;
+  transform-box: view-box;
+  animation: tassel-sway 3.5s ease-in-out infinite;
+}
+
+/* ===================== Homepage motion ===================== */
+
+/* Hero entrance: each line rises in, one after another */
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(24px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+.hero-in { animation: hero-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hero-in.d1 { animation-delay: 0.12s; }
+.hero-in.d2 { animation-delay: 0.3s; }
+.hero-in.d3 { animation-delay: 0.45s; }
+.hero-in.d4 { animation-delay: 0.6s; }
+.hero-in.d5 { animation-delay: 0.75s; }
+
+/* Glass quote card drifts gently in the sky */
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-soft { animation: float-soft 6s ease-in-out infinite; }
+.float-soft-late { animation: float-soft 7s ease-in-out 1.5s infinite; }
+
+/* Golden diya embers rising through the hero */
+@keyframes ember-rise {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  12% { opacity: 0.9; }
+  100% { transform: translate(var(--drift, 20px), -340px) scale(0.3); opacity: 0; }
+}
+
+.ember {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #FFF7D6 0%, #FBBF24 45%, rgba(234, 88, 12, 0) 75%);
+  box-shadow: 0 0 10px 2px rgba(251, 191, 36, 0.55);
+  animation: ember-rise linear infinite;
+  pointer-events: none;
+}
+
+/* Light sweep across primary buttons */
+.btn-shine { position: relative; overflow: hidden; isolation: isolate; }
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: btn-sweep 4.5s ease-in-out infinite;
+}
+
+@keyframes btn-sweep {
+  0%, 60% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+/* Staggered card reveals: children rise in one by one */
+.reveal.stagger { opacity: 1; transform: none; }
+.stagger > * {
+  opacity: 0;
+  transform: translateY(22px) scale(0.98);
+}
+.stagger.is-visible > * {
+  animation: hero-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger.is-visible > *:nth-child(2) { animation-delay: 0.08s; }
+.stagger.is-visible > *:nth-child(3) { animation-delay: 0.16s; }
+.stagger.is-visible > *:nth-child(4) { animation-delay: 0.24s; }
+.stagger.is-visible > *:nth-child(5) { animation-delay: 0.32s; }
+.stagger.is-visible > *:nth-child(6) { animation-delay: 0.4s; }
+
+/* Icon pop on card hover */
+@keyframes icon-pop {
+  0% { transform: scale(1) rotate(0); }
+  40% { transform: scale(1.18) rotate(-8deg); }
+  70% { transform: scale(0.96) rotate(4deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.group:hover .icon-pop { animation: icon-pop 0.55s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger > *, .hero-in { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .ember { display: none; }
+}
