@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import { motion } from 'framer-motion';
 
 export default function GloryPage() {
@@ -15,18 +16,8 @@ export default function GloryPage() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
-        <div className="mb-10 text-center md:text-left">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-              राम नाम <span className="text-orange-600 italic">महिमा</span>
-            </h1>
-            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-              The Divine Power of Ram Naam
-            </p>
-          </motion.div>
-        </div>
+      <PageHero kicker="The Divine Power of Ram Naam" title={<>राम नाम <span className="text-orange-600">महिमा</span></>} />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-12">
 
         <div className="grid md:grid-cols-2 gap-6 mb-10">
           {cards.map((card, i) => (
@@ -59,11 +50,11 @@ export default function GloryPage() {
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          className="bg-slate-900 rounded-[2.5rem] p-10 text-center mb-6">
-          <p className="text-orange-400 italic text-xl md:text-3xl font-black leading-relaxed mb-3">
+          className="relative overflow-hidden bg-gradient-to-br from-[#7A3410] via-[#9A4A12] to-[#5A2208] border border-orange-300/40 shadow-xl shadow-orange-900/10 rounded-[2.5rem] p-10 text-center mb-6">
+          <p className="text-amber-200 italic text-xl md:text-3xl font-black leading-relaxed mb-3">
             "कलियुग केवल नाम अधारा।<br />सुमिर सुमिर नर उतरहिं पारा।।"
           </p>
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">— श्री रामचरितमानस</p>
+          <p className="text-amber-100/70 text-xs font-bold uppercase tracking-widest">— श्री रामचरितमानस</p>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}

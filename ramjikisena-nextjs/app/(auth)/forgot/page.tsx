@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Phone, ArrowLeft, Loader2, Flag } from 'lucide-react';
+import { Phone } from 'lucide-react';
+import AuthShell, { AuthField, AuthError, AuthSubmit } from '@/components/AuthShell';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -45,103 +46,39 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
-      style={{ background: 'linear-gradient(160deg, #0f0500 0%, #1a0800 50%, #0f0500 100%)' }}>
+    <AuthShell
+      kicker="Mobile Login"
+      title={<>मोबाइल नंबर से <span className="text-orange-600">लॉगिन</span></>}
+      sub="अपना रजिस्टर्ड मोबाइल नंबर डालें"
+    >
+      {error && <AuthError>{error}</AuthError>}
 
-      {/* OM background */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-        <span className="text-[32rem] font-black leading-none" style={{ color: 'rgba(200,130,0,0.04)' }}>ॐ</span>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <AuthField
+          label="मोबाइल नंबर"
+          icon={Phone}
+          type="tel"
+          value={contact}
+          onChange={e => setContact(e.target.value)}
+          placeholder="9876543210"
+          pattern="[0-9]{10}"
+          maxLength={10}
+          required
+          hint="अपना रजिस्टर्ड मोबाइल नंबर डालें"
+        />
+        <AuthSubmit loading={loading} loadingText="Loading...">🙏 लॉगिन / Login</AuthSubmit>
+      </form>
+
+      <div className="mt-6 pt-5 border-t border-orange-100 space-y-2 text-center text-sm text-slate-600">
+        <p>
+          Username से लॉगिन करें?{' '}
+          <Link href="/login" className="font-bold text-orange-600 hover:text-orange-700 hover:underline">Login with Username</Link>
+        </p>
+        <p>
+          नये सदस्य हैं?{' '}
+          <Link href="/register" className="font-bold text-orange-600 hover:text-orange-700 hover:underline">Register करें ✨</Link>
+        </p>
       </div>
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at 50% 40%, rgba(180,100,0,0.15) 0%, transparent 65%)' }} />
-
-      <div className="w-full max-w-md relative z-10">
-
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-xl"
-            style={{ background: 'linear-gradient(135deg, #f9e07a, #d4920a)', boxShadow: '0 8px 24px rgba(180,100,0,0.4)' }}>
-            <Flag className="w-7 h-7" style={{ color: '#3a0f00' }} />
-          </div>
-          <h1 className="text-2xl font-black text-white tracking-tight">
-            RAMJI KI <span style={{ color: '#f9e07a' }}>SENA</span>
-          </h1>
-          <p className="text-sm mt-1" style={{ color: 'rgba(255,200,120,0.5)' }}>मोबाइल नंबर से लॉगिन करें</p>
-        </div>
-
-        {/* Card */}
-        <div className="rounded-[2rem] p-8"
-          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(200,130,0,0.25)', backdropFilter: 'blur(12px)' }}>
-
-          <h2 className="text-xl font-black text-center mb-6" style={{ color: '#f9e07a' }}>
-            📱 Mobile Login
-          </h2>
-
-          {error && (
-            <div className="px-4 py-3 rounded-2xl mb-5 flex items-center gap-2 text-sm font-bold"
-              style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)', color: '#fca5a5' }}>
-              ⚠️ {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-black uppercase tracking-widest mb-2"
-                style={{ color: 'rgba(255,200,120,0.5)' }}>मोबाइल नंबर</label>
-              <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#d4920a' }} />
-                <input type="tel" value={contact}
-                  onChange={e => setContact(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl text-sm font-bold focus:outline-none transition-all"
-                  style={{
-                    background: 'rgba(255,255,255,0.07)',
-                    border: '1px solid rgba(200,130,0,0.3)',
-                    color: 'white',
-                  }}
-                  placeholder="9876543210"
-                  pattern="[0-9]{10}"
-                  maxLength={10}
-                  required />
-              </div>
-              <p className="text-xs mt-2" style={{ color: 'rgba(255,200,120,0.35)' }}>
-                अपना रजिस्टर्ड मोबाइल नंबर डालें
-              </p>
-            </div>
-
-            <button type="submit" disabled={loading}
-              className="w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-60"
-              style={{
-                background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
-                color: '#3a0f00',
-                boxShadow: '0 6px 20px rgba(180,100,0,0.4)',
-              }}>
-              {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Loading...</> : '🙏 लॉगिन / Login'}
-            </button>
-          </form>
-
-          <div className="mt-6 pt-5 space-y-3 text-center" style={{ borderTop: '1px solid rgba(200,130,0,0.15)' }}>
-            <p className="text-sm" style={{ color: 'rgba(255,200,120,0.5)' }}>
-              Username से लॉगिन करें?{' '}
-              <Link href="/login" className="font-black hover:opacity-80 transition-all" style={{ color: '#f9e07a' }}>
-                Login with Username
-              </Link>
-            </p>
-            <p className="text-sm" style={{ color: 'rgba(255,200,120,0.5)' }}>
-              नये सदस्य हैं?{' '}
-              <Link href="/register" className="font-black hover:opacity-80 transition-all" style={{ color: '#f9e07a' }}>
-                Register करें ✨
-              </Link>
-            </p>
-          </div>
-        </div>
-
-        <div className="text-center mt-6">
-          <Link href="/" className="text-sm font-black inline-flex items-center gap-2 hover:gap-3 transition-all"
-            style={{ color: 'rgba(255,200,120,0.5)' }}>
-            <ArrowLeft className="w-4 h-4" /> Back to Home
-          </Link>
-        </div>
-      </div>
-    </div>
+    </AuthShell>
   );
 }

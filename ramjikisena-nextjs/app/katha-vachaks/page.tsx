@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Star, FilterX, ArrowRight, Radio } from 'lucide-react';
 
@@ -80,33 +80,13 @@ export default function KathaVachakListing() {
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
 
-      {/* Hero Banner */}
-      <div className="relative h-[320px] md:h-[400px] w-full overflow-hidden">
-        <Image
-          src="/home/kathavachak.webp"
-          alt="Katha Vachak"
-          fill
-          className="object-cover object-center"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-[#FFFAF3]" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pt-16">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <span className="inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 text-white"
-              style={{ background: 'rgba(200,130,0,0.5)', border: '1px solid rgba(200,130,0,0.4)' }}>
-              🙏 आध्यात्मिक प्रवचन
-            </span>
-            <h1 className="text-4xl md:text-6xl font-black text-white leading-tight drop-shadow-2xl">
-              कथा <span style={{ color: '#f9e07a' }}>वाचक</span>
-            </h1>
-            <p className="text-orange-200/80 text-sm mt-3 font-medium tracking-widest uppercase">
-              Divine Storytellers &amp; Spiritual Guides
-            </p>
-          </motion.div>
-        </div>
-      </div>
+      <PageHero
+        kicker="Divine Storytellers & Spiritual Guides"
+        title={<>कथा <span className="text-orange-600">वाचक</span></>}
+        sub="श्री रामकथा, श्रीमद्भागवत व शिवकथा के विद्वान व्यास पीठ — अपने आयोजन हेतु कथा व्यास चुनें"
+      />
 
-      <main className="max-w-6xl mx-auto px-2 sm:px-6 pb-12 -mt-6 relative z-10">
+      <main className="max-w-6xl mx-auto px-2 sm:px-6 pt-8 sm:pt-10 pb-12 relative z-10">
 
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3 mb-8 px-2">
@@ -129,7 +109,7 @@ export default function KathaVachakListing() {
             </select>
           </div>
           <button onClick={() => { setSearch(''); setCityFilter(''); setLiveFilter('all'); }}
-            className="md:col-span-2 flex items-center justify-center gap-2 bg-slate-900 text-white py-3.5 rounded-2xl text-xs font-black shadow-lg hover:bg-orange-600 transition-all active:scale-95">
+            className="md:col-span-2 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3.5 rounded-2xl text-xs font-black shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all active:scale-95">
             <FilterX size={16} /> RESET
           </button>
         </div>

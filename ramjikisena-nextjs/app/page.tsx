@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
+import Image, { getImageProps } from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import NaamJapSection from '@/components/NaamJapSection';
@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import DailyPanchang from '@/components/DailyPanchang';
 import LiveAkhandJaapTicker from '@/components/LiveAkhandJaapTicker';
 import RamShalakaModal from '@/components/RamShalakaModal';
+import BackToTop from '@/components/BackToTop';
 import { authApi, User } from '@/lib/auth';
 import { useJaapNavigate } from '@/lib/useJaapNavigate';
 import {
@@ -231,6 +232,14 @@ function useScrollReveal() {
     return () => io.disconnect();
   }, []);
 }
+
+// Art-directed hero: optimized srcsets for the phone portrait and the laptop panorama
+const { props: { srcSet: heroDesktopSrcSet } } = getImageProps({
+  src: '/images/hero-ayodhya-ramji-hd.webp', alt: '', width: 1920, height: 1080, sizes: '100vw', quality: 80,
+});
+const { props: heroMobileProps } = getImageProps({
+  src: '/images/hero-mobile-ramji.webp', alt: '', width: 800, height: 1037, sizes: '100vw', quality: 80, priority: true,
+});
 
 // Golden diya embers drifting upward (fixed positions so server and client render the same)
 const EMBERS = [
@@ -517,35 +526,23 @@ export default function HomePage() {
 
       {/* ================= 1. HERO — Ayodhya panorama with Prabhu Shri Ram ================= */}
       <section className="relative w-full overflow-hidden bg-[#FFF3E2] mt-14 sm:mt-16">
-        {/* Desktop panorama */}
-        <div className="hidden md:block absolute inset-0 z-0">
-          <Image
-            src="/images/hero-ayodhya-ramji-hd.webp"
-            alt="अयोध्या धाम में प्रभु श्री राम"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[62%_center] hero-kenburns"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#FFF6EA] via-[#FFF6EA]/85 lg:via-[#FFF6EA]/65 to-transparent to-[60%]" />
-          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#FFF6EA]/90 to-transparent" />
-        </div>
-
-        {/* Mobile portrait */}
-        <div className="md:hidden relative h-[360px] sm:h-[440px]">
-          <Image
-            src="/images/hero-mobile-ramji.webp"
-            alt="प्रभु श्री राम"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[center_18%]"
-          />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#FFF3E2] via-[#FFF3E2]/70 to-transparent" />
+        {/* One <picture>: phones download only the portrait, laptops only the panorama */}
+        <div className="relative h-[360px] sm:h-[440px] md:absolute md:inset-0 md:h-auto z-0">
+          <picture>
+            <source media="(min-width: 768px)" srcSet={heroDesktopSrcSet} sizes="100vw" />
+            <img
+              {...heroMobileProps}
+              alt="अयोध्या धाम में प्रभु श्री राम"
+              fetchPriority="high"
+              className="absolute inset-0 w-full h-full object-cover object-[center_18%] md:object-[62%_center] hero-kenburns"
+            />
+          </picture>
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-[#FFF6EA] via-[#FFF6EA]/85 lg:via-[#FFF6EA]/65 to-transparent to-[60%]" />
+          <div className="hidden md:block absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#FFF6EA]/90 to-transparent" />
+          <div className="md:hidden absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#FFF3E2] via-[#FFF3E2]/70 to-transparent" />
           {pushpaShower && <PetalShower />}
         </div>
 
-        {pushpaShower && <div className="hidden md:block"><PetalShower /></div>}
         <Embers />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-10 max-w-7xl relative z-10 -mt-20 md:mt-0 md:min-h-[580px] lg:min-h-[640px] pb-20 md:pb-36 md:pt-16 lg:pt-20">
@@ -1201,6 +1198,7 @@ export default function HomePage() {
 
       {/* ================= FOOTER ================= */}
       <Footer />
+      <BackToTop />
 
       {/* ================= RAM SHALAKA MODAL ================= */}
       <RamShalakaModal

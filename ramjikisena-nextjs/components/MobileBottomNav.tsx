@@ -1,12 +1,18 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { Home, Flame, BookOpen, Users, User } from 'lucide-react';
 import { requestGlobalNavigation } from '@/lib/jaapContext';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
   const router = useRouter();
+
+  // Buttons don't get <Link>'s automatic prefetch, so warm up the tab pages
+  useEffect(() => {
+    ['/', '/blogs', '/community', '/dashboard'].forEach(href => router.prefetch(href));
+  }, [router]);
 
   const handleNav = (href: string) => {
     requestGlobalNavigation(href, (target) => {

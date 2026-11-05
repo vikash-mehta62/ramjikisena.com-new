@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import { motion } from 'framer-motion';
 
 const missionCards = [
@@ -22,22 +23,12 @@ export default function MissionPage() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+      <PageHero kicker="Spiritual Awakening Through Ram Naam" title={<>हमारा <span className="text-orange-600">मिशन</span></>} />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-12">
 
-        <div className="mb-10 text-center md:text-left">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-              हमारा <span className="text-orange-600 italic">मिशन</span>
-            </h1>
-            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-              Spiritual Awakening Through Ram Naam
-            </p>
-          </motion.div>
-        </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          className="bg-slate-900 rounded-[2.5rem] p-10 text-center mb-10">
+          className="relative overflow-hidden bg-gradient-to-br from-[#7A3410] via-[#9A4A12] to-[#5A2208] border border-orange-300/40 shadow-xl shadow-orange-900/10 rounded-[2.5rem] p-10 text-center mb-10">
           <p className="text-white text-xl md:text-2xl font-black">राम नाम के माध्यम से आध्यात्मिक जागरण</p>
         </motion.div>
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import { motion } from 'framer-motion';
 
 const galleryItems = [
@@ -17,19 +18,9 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+      <PageHero kicker="Divine Moments & Spiritual Events" title={<>फोटो <span className="text-orange-600">गैलरी</span></>} />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-12">
 
-        <div className="mb-10 text-center md:text-left">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-              फोटो <span className="text-orange-600 italic">गैलरी</span>
-            </h1>
-            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-              Divine Moments &amp; Spiritual Events
-            </p>
-          </motion.div>
-        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {galleryItems.map((item, i) => (
@@ -53,9 +44,9 @@ export default function GalleryPage() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.5 }}
-          className="mt-12 bg-slate-900 rounded-[2.5rem] p-10 text-center">
+          className="mt-12 relative overflow-hidden bg-gradient-to-br from-[#7A3410] via-[#9A4A12] to-[#5A2208] border border-orange-300/40 shadow-xl shadow-orange-900/10 rounded-[2.5rem] p-10 text-center">
           <h2 className="text-2xl md:text-4xl font-black text-white mb-3">अपनी फोटो शेयर करें</h2>
-          <p className="text-slate-400 text-sm font-bold mb-6">अपने भक्ति के पलों को हमारे साथ साझा करें</p>
+          <p className="text-amber-100/80 text-sm font-bold mb-6">अपने भक्ति के पलों को हमारे साथ साझा करें</p>
           <Link href="/contact"
             className="inline-block bg-orange-600 text-white rounded-2xl font-black px-8 py-3.5 hover:bg-orange-700 transition-all active:scale-95">
             संपर्क करें →

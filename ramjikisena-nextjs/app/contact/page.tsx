@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Instagram, Youtube } from 'lucide-react';
 
@@ -24,19 +25,9 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+      <PageHero kicker="We’d Love to Hear From You" title={<>संपर्क <span className="text-orange-600">करें</span></>} />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-12">
 
-        <div className="mb-10 text-center md:text-left">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-              संपर्क <span className="text-orange-600 italic">करें</span>
-            </h1>
-            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-              We'd Love to Hear From You
-            </p>
-          </motion.div>
-        </div>
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Info Cards */}

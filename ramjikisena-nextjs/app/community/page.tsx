@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Heart, MessageCircle, Share2, MoreHorizontal, Send, Image as ImageIcon, X, MapPin, Users, Globe, Loader2, Trash2, AlertTriangle, Sparkles, ChevronDown } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import ImageUploader from '@/components/ImageUploader';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
@@ -517,21 +518,10 @@ export default function CommunityPage() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
+      <PageHero kicker="Community Feed · Share Your Spiritual Journey" title={<>भक्त <span className="text-orange-600">समुदाय</span></>} />
 
-      <main className="max-w-6xl mx-auto px-2 sm:px-6 pt-24 pb-12">
+      <main className="max-w-6xl mx-auto px-2 sm:px-6 pt-8 sm:pt-10 pb-12">
 
-        {/* Header */}
-        <div className="mb-8 text-center md:text-left px-3">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-              भक्त <span className="text-orange-600 italic">समुदाय</span>
-            </h1>
-            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-              Community Feed · Share Your Spiritual Journey
-            </p>
-          </motion.div>
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 

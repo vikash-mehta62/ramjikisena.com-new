@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MessageSquare, Plus, Search, CheckCircle2, Pin, Eye, Heart, Loader2, X, Send } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import api from '@/lib/api';
 
 const CATEGORIES = ['All', 'Puja Help', 'Shastra Questions', 'Bhajan & Kirtan', 'Mandir Info', 'Festivals', 'General'];
@@ -206,18 +207,9 @@ export default function ForumPage() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+      <PageHero kicker="Ask Questions · Share Knowledge · Seek Guidance" title={<>आध्यात्मिक <span className="text-orange-600">फोरम</span></>} />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-12">
 
-        {/* Header */}
-        <div className="mb-8 text-center md:text-left">
-          <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-            आध्यात्मिक <span className="text-orange-600 italic">फोरम</span>
-          </h1>
-          <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-          <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-            Ask Questions · Share Knowledge · Seek Guidance
-          </p>
-        </div>
 
         {/* Search + Ask button */}
         <div className="flex gap-3 mb-5">

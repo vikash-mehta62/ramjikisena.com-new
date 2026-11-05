@@ -152,6 +152,11 @@ export default function Navbar({ showAuthButtons = true }: NavbarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Nav items are buttons (router.push), which Next does not prefetch like <Link>; warm them up
+  useEffect(() => {
+    ['/', ...mainLinks.map(l => l.href)].forEach(href => router.prefetch(href.split('#')[0] || '/'));
+  }, [router]);
+
   const navigate = (href: string) => {
     router.push(href);
     setExploreOpen(false);

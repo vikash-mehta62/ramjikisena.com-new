@@ -257,24 +257,24 @@ export default function AstrologerDetailPage() {
   const isOnline = astro.availabilityStatus === 'online';
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-slate-800 antialiased">
+    <div className="min-h-screen bg-[#FFFCF7] text-slate-800 antialiased">
       <Navbar />
 
       {/* Top Breadcrumb & Hero */}
-      <div className="pt-24 pb-12 bg-gradient-to-b from-[#1b0902] via-[#2c1307] to-[#FDFBF7] text-white">
+      <div className="pt-24 pb-10 bg-gradient-to-b from-[#FFF3E2] to-[#FFFCF7] border-b border-orange-100">
         <div className="container mx-auto px-4 max-w-6xl">
           <Link
             href="/astrology"
-            className="inline-flex items-center gap-1.5 text-xs text-amber-300/80 hover:text-amber-200 font-bold mb-6 transition"
+            className="inline-flex items-center gap-1.5 text-xs text-orange-700 hover:text-orange-800 font-bold mb-6 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>सभी ज्योतिषी एवं टैरो रीडर्स</span>
           </Link>
 
           {/* Profile Card Header */}
-          <div className="bg-white/10 backdrop-blur-xl border border-amber-200/20 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8 shadow-2xl">
+          <div className="hero-in bg-white border border-orange-100 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 sm:gap-8 shadow-xl shadow-orange-900/5">
             {/* Avatar Photo */}
-            <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-3xl overflow-hidden flex-shrink-0 border-2 border-amber-400/50 shadow-xl bg-slate-900">
+            <div className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-3xl overflow-hidden flex-shrink-0 border-2 border-orange-200 shadow-lg bg-gradient-to-br from-orange-100 to-amber-50">
               {astro.photo ? (
                 <img src={astro.photo} alt={astro.name} className="w-full h-full object-cover object-top" />
               ) : (
@@ -298,32 +298,32 @@ export default function AstrologerDetailPage() {
                     <UserCheck className="w-3.5 h-3.5" /> प्रमाणित ज्योतिषी
                   </span>
                 )}
-                <span className="bg-white/15 text-amber-200 text-[11px] font-bold px-3 py-0.5 rounded-full border border-white/20">
+                <span className="bg-orange-50 text-orange-700 text-[11px] font-bold px-3 py-0.5 rounded-full border border-orange-200">
                   {isOnline ? '🟢 उपलब्ध (Online)' : '⚪ व्यस्त / ऑफलाइन'}
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-4xl font-black text-white leading-tight drop-shadow-md">
+              <h1 className="text-2xl sm:text-4xl font-serif font-black text-[#3D2A1E] leading-tight">
                 {astro.name}
               </h1>
-              <p className="text-sm sm:text-base text-amber-200/90 font-medium mt-1">
+              <p className="text-sm sm:text-base text-slate-600 font-medium mt-1">
                 {astro.tagline}
               </p>
 
               {/* Badges strip */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 sm:gap-6 mt-4 text-xs text-white/80">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 sm:gap-6 mt-4 text-xs text-slate-600">
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-amber-400" />
+                  <MapPin className="w-4 h-4 text-orange-500" />
                   <span>{astro.location?.city}, {astro.location?.state}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-amber-400" />
+                  <Award className="w-4 h-4 text-orange-500" />
                   <span>{astro.experience}+ वर्ष अनुभव</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <span className="font-black text-white">{astro.averageRating?.toFixed(1) || '5.0'}</span>
-                  <span className="text-white/60">({astro.reviews?.length || 0} समीक्षाएं)</span>
+                  <span className="font-black text-slate-900">{astro.averageRating?.toFixed(1) || '5.0'}</span>
+                  <span className="text-slate-400">({astro.reviews?.length || 0} समीक्षाएं)</span>
                 </div>
               </div>
 
@@ -332,7 +332,7 @@ export default function AstrologerDetailPage() {
                 {astro.specialties?.map((s, idx) => (
                   <span
                     key={idx}
-                    className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-400/20 text-amber-200 border border-amber-300/30"
+                    className="px-2.5 py-1 rounded-full text-xs font-bold bg-orange-50 text-orange-700 border border-orange-200"
                   >
                     {s}
                   </span>
@@ -341,21 +341,18 @@ export default function AstrologerDetailPage() {
             </div>
 
             {/* Price & Primary CTA */}
-            <div className="w-full md:w-auto flex md:flex-col items-center justify-between md:justify-center gap-3 p-4 rounded-2xl bg-white/10 border border-white/15 flex-shrink-0">
+            <div className="w-full md:w-auto flex md:flex-col items-center justify-between md:justify-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-[#FFE9D2] to-[#FFF3E6] border border-orange-200 flex-shrink-0">
               <div className="text-left md:text-center">
-                <span className="text-[10px] uppercase font-bold text-amber-200/70 block">परामर्श शुल्क</span>
-                <span className="text-2xl sm:text-3xl font-black text-white">
+                <span className="text-[10px] uppercase font-bold text-orange-700/80 block">परामर्श शुल्क</span>
+                <span className="text-2xl sm:text-3xl font-black text-orange-600">
                   ₹{astro.fee || 501}
                 </span>
-                <span className="text-[11px] text-white/60 block">/ 30 मिनट सत्र</span>
+                <span className="text-[11px] text-slate-500 block">/ 30 मिनट सत्र</span>
               </div>
 
               <button
                 onClick={() => handleOpenBooking()}
-                className="px-6 py-3.5 rounded-2xl font-black text-xs sm:text-sm text-slate-950 transition-all shadow-xl active:scale-95 flex items-center gap-2"
-                style={{
-                  background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
-                }}
+                className="btn-shine px-6 py-3.5 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-divine active:scale-95 flex items-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>परामर्श बुक करें</span>
@@ -543,11 +540,7 @@ export default function AstrologerDetailPage() {
 
               <button
                 onClick={() => handleOpenBooking()}
-                className="w-full py-4 rounded-2xl font-black text-sm text-slate-950 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
-                style={{
-                  background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
-                  boxShadow: '0 6px 20px rgba(212,146,10,0.3)',
-                }}
+                className="btn-shine w-full py-4 rounded-full font-bold text-sm text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-divine active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>परामर्श फॉर्म भरें</span>
                 <Sparkles className="w-4 h-4" />
@@ -787,10 +780,7 @@ export default function AstrologerDetailPage() {
                     <button
                       type="submit"
                       disabled={bookingSubmitting}
-                      className="px-6 py-3 rounded-xl font-black text-xs text-slate-950 transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
-                      style={{
-                        background: 'linear-gradient(135deg, #f9e07a 0%, #d4920a 60%, #b8760a 100%)',
-                      }}
+                      className="px-6 py-3 rounded-full font-bold text-xs text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
                     >
                       {bookingSubmitting ? 'अनुरोध भेजा जा रहा है...' : 'अनुरोध सबमिट करें 🙏'}
                     </button>

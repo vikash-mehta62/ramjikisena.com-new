@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Clock, Star, FilterX, ArrowRight, Shrub, Navigation } from 'lucide-react';
 import MandirImage from '@/components/MandirImage';
@@ -52,29 +53,19 @@ export default function CompactMandirListing() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
+      <PageHero
+        kicker="Explore Divine Destinations"
+        title={<>पावन <span className="text-orange-600">दर्शन</span></>}
+        sub="अयोध्या धाम, काशी विश्वनाथ सहित देश के पवित्र तीर्थों का इतिहास, आरती समय व दर्शन नियम"
+      >
+        <Link href="/mandirs/submit"
+          className="btn-shine inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold text-sm shadow-divine active:scale-95">
+          🛕 मंदिर जोड़ें
+        </Link>
+      </PageHero>
 
-      <main className="max-w-6xl mx-auto px-2 sm:px-6 pt-24 pb-12">
+      <main className="max-w-6xl mx-auto px-2 sm:px-6 pt-8 sm:pt-10 pb-12">
         
-        {/* --- DYNAMIC HEADER --- */}
-        <div className="mb-6 md:mb-10 px-3">
-          <div className="flex items-end justify-between flex-wrap gap-3">
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-              <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-                पावन <span className="text-orange-600 italic">दर्शन</span>
-              </h1>
-              <div className="h-1 w-16 bg-orange-500 mt-3 rounded-full" />
-              <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-                 Explore Divine Destinations
-              </p>
-            </motion.div>
-            <Link href="/mandirs/submit"
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg"
-              style={{ background: 'linear-gradient(135deg, #f9e07a, #d4920a)', color: '#3a0f00' }}>
-              🛕 मंदिर जोड़ें
-            </Link>
-          </div>
-        </div>
-
         {/* --- SMART SEARCH & FILTERS --- */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3 mb-8 px-2">
           <div className="md:col-span-5 relative group">
@@ -97,7 +88,7 @@ export default function CompactMandirListing() {
           </div>
           <button 
             onClick={() => {setSearch(''); setCityFilter('');}}
-            className="md:col-span-3 flex items-center justify-center gap-2 bg-slate-900 text-white py-3.5 rounded-2xl text-xs font-black shadow-lg hover:bg-orange-600 transition-all active:scale-95"
+            className="md:col-span-3 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3.5 rounded-2xl text-xs font-black shadow-lg hover:from-orange-600 hover:to-orange-700 transition-all active:scale-95"
           >
             <FilterX size={16} /> RESET
           </button>

@@ -421,12 +421,12 @@ export default function PublicMandirDetail() {
             {/* History */}
             {mandir.history && (
               <motion.section initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                className="bg-slate-900 rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
+                className="bg-gradient-to-br from-[#7A3410] via-[#9A4A12] to-[#5A2208] border border-orange-300/40 shadow-xl shadow-orange-900/10 rounded-[2rem] p-6 md:p-8 relative overflow-hidden">
                 <History className="absolute -right-8 -top-8 w-48 h-48 opacity-5" />
-                <h2 className="text-xl font-black text-orange-400 mb-5 flex items-center gap-2">
+                <h2 className="text-xl font-black text-amber-200 mb-5 flex items-center gap-2">
                   <History size={20} /> ऐतिहासिक महत्व
                 </h2>
-                <p className="text-orange-100/80 leading-relaxed italic whitespace-pre-line">&quot;{mandir.history}&quot;</p>
+                <p className="text-amber-50/90 leading-relaxed italic whitespace-pre-line">&quot;{mandir.history}&quot;</p>
               </motion.section>
             )}
 

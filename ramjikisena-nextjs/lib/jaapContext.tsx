@@ -22,7 +22,24 @@ export function setGlobalUnsavedJaap(v: boolean) {
   _hasUnsavedJaap = v;
 }
 
+// A "/#section" link while already on that page only needs a scroll. Going through the
+// router re-runs the whole page navigation first, which delayed the scroll by seconds.
+function scrollToSamePageHash(href: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const hashAt = href.indexOf('#');
+  if (hashAt === -1) return false;
+  const path = href.slice(0, hashAt) || window.location.pathname;
+  if (path !== window.location.pathname) return false;
+  const target = document.getElementById(href.slice(hashAt + 1));
+  if (!target) return false;
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  window.history.pushState(window.history.state, '', href);
+  return true;
+}
+
 export function requestGlobalNavigation(href: string, navigate: (h: string) => void) {
+  // Scrolling within the page never leaves unsaved jaap behind, so no warning is needed
+  if (scrollToSamePageHash(href)) return;
   if (_hasUnsavedJaap && _showWarning) {
     _showWarning(href, navigate);
   } else {

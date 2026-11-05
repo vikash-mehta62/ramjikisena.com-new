@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import PageHero from '@/components/PageHero';
 import { motion } from 'framer-motion';
 
 const goals = [
@@ -28,25 +29,15 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-[#FFFAF3] text-slate-900 antialiased selection:bg-orange-200">
       <Navbar showAuthButtons={true} />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+      <PageHero kicker="Jai Shri Ram Naam — Spiritual Portal" title={<>हमारे <span className="text-orange-600">बारे में</span></>} />
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-12">
 
-        <div className="mb-10 text-center md:text-left">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl md:text-6xl font-black tracking-tight text-slate-900 leading-none">
-              हमारे <span className="text-orange-600 italic">बारे में</span>
-            </h1>
-            <div className="h-1 w-16 bg-orange-500 mx-auto md:mx-0 mt-3 rounded-full" />
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mt-3">
-              Jai Shri Ram Naam — Spiritual Portal
-            </p>
-          </motion.div>
-        </div>
 
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          className="bg-slate-900 rounded-[2.5rem] p-10 text-center mb-10">
+          className="relative overflow-hidden bg-gradient-to-br from-[#7A3410] via-[#9A4A12] to-[#5A2208] border border-orange-300/40 shadow-xl shadow-orange-900/10 rounded-[2.5rem] p-10 text-center mb-10">
           <h2 className="text-2xl md:text-4xl font-black text-white mb-4">🚩 Jai Shri Ram Naam 🚩</h2>
-          <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
+          <p className="text-amber-100/90 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
             कलयुग में न जप है न तप है और न योग ही है। सिर्फ राम नाम ही इस कलिकाल में प्राणी मात्र का सहारा है।
             श्री राम चन्द्र जी सहज ही कृपा करने वाले और परम दयालु हैं।
             राम नाम का लिखित जाप सभी पापों को नष्ट कर मुक्ति प्रदान करने वाला है।

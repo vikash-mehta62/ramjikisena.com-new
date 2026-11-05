@@ -11,9 +11,9 @@ const TEMPLE_TYPES = ['Other','Jyotirlinga','Shakti Peeth','Char Dham','Divya De
 const AARTI_PRESETS = ['Mangala Aarti','Shangar Aarti','Rajbhog Aarti','Utthapan Aarti','Bhog Aarti','Sandhya Aarti','Shayan Aarti'];
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Ekadashi','Purnima','Amavasya','All Days'];
 
-const iStyle = { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(200,130,0,0.25)', color: '#f9e07a' };
-const iCls = "w-full px-3 py-2.5 rounded-xl text-sm font-medium focus:outline-none";
-const lStyle = { color: 'rgba(255,200,120,0.55)' };
+const iStyle = {};
+const iCls = "w-full px-3 py-2.5 rounded-xl text-sm font-medium bg-orange-50/40 border border-orange-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-orange-400 focus:ring-2 focus:ring-orange-200";
+const lStyle = { color: '#475569' };
 
 function F({ label, k, form, set, ph, ta, type='text' }: any) {
   return (
@@ -29,17 +29,17 @@ function Chk({ label, k, form, set }: any) {
   return (
     <label className="flex items-center gap-2 cursor-pointer">
       <input type="checkbox" checked={!!form[k]} onChange={e=>set(k,e.target.checked)} className="w-4 h-4 rounded accent-orange-500"/>
-      <span className="text-sm font-bold" style={{color:'rgba(255,200,120,0.7)'}}>{label}</span>
+      <span className="text-sm font-semibold text-slate-700">{label}</span>
     </label>
   );
 }
 
 function Sec({ icon, title, children }: any) {
   return (
-    <div className="rounded-2xl p-5 space-y-3" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(200,130,0,0.2)'}}>
-      <div className="flex items-center gap-2 mb-1">
-        <span style={{color:'#f9e07a'}}>{icon}</span>
-        <p className="text-sm font-black text-white">{title}</p>
+    <div className="rounded-2xl p-5 space-y-3 bg-white border border-orange-100 shadow-sm">
+      <div className="flex items-center gap-2 mb-1 pb-2 border-b border-orange-100">
+        <span className="text-orange-600">{icon}</span>
+        <p className="text-sm font-bold text-slate-900">{title}</p>
       </div>
       {children}
     </div>
@@ -117,21 +117,19 @@ export default function SubmitMandirPage() {
   };
 
   if (submitted) return (
-    <div className="min-h-screen flex flex-col" style={{background:'#0f0500'}}>
+    <div className="min-h-screen flex flex-col bg-[#FFFCF7]">
       <Navbar/>
       <div className="flex-1 flex items-center justify-center p-6">
         <motion.div initial={{scale:0.8,opacity:0}} animate={{scale:1,opacity:1}} className="text-center max-w-md">
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
-            style={{background:'rgba(22,163,74,0.15)',border:'2px solid rgba(22,163,74,0.4)'}}>
-            <CheckCircle2 className="w-10 h-10 text-green-400"/>
+            style={{background:'rgba(22,163,74,0.1)',border:'2px solid rgba(22,163,74,0.35)'}}>
+            <CheckCircle2 className="w-10 h-10 text-green-600"/>
           </div>
-          <h2 className="text-2xl font-black text-white mb-3">सबमिट हो गया! 🙏</h2>
-          <p className="text-sm mb-6" style={{color:'rgba(255,200,120,0.6)'}}>Admin approval के बाद आपका मंदिर सार्वजनिक रूप से दिखेगा।</p>
+          <h2 className="text-2xl font-serif font-black text-[#3D2A1E] mb-3">सबमिट हो गया! 🙏</h2>
+          <p className="text-sm mb-6 text-slate-600">Admin approval के बाद आपका मंदिर सार्वजनिक रूप से दिखेगा।</p>
           <div className="flex gap-3 justify-center">
-            <button onClick={()=>router.push('/mandirs')} className="px-6 py-2.5 rounded-xl font-black text-sm"
-              style={{background:'linear-gradient(135deg,#f9e07a,#d4920a)',color:'#3a0f00'}}>मंदिर देखें</button>
-            <button onClick={()=>setSubmitted(false)} className="px-6 py-2.5 rounded-xl font-black text-sm"
-              style={{background:'rgba(255,255,255,0.08)',color:'rgba(255,200,120,0.7)',border:'1px solid rgba(200,130,0,0.3)'}}>और सबमिट करें</button>
+            <button onClick={()=>router.push('/mandirs')} className="px-6 py-2.5 rounded-full font-bold text-sm text-white bg-gradient-to-r from-orange-500 to-orange-600 shadow-divine">मंदिर देखें</button>
+            <button onClick={()=>setSubmitted(false)} className="px-6 py-2.5 rounded-full font-bold text-sm bg-white text-orange-700 border border-orange-300">और सबमिट करें</button>
           </div>
         </motion.div>
       </div>
@@ -141,29 +139,28 @@ export default function SubmitMandirPage() {
   const fp = {form, set};
   const addBtn = (onClick:()=>void, label:string) => (
     <button type="button" onClick={onClick} className="flex items-center gap-2 text-xs font-black px-3 py-2 rounded-xl"
-      style={{background:'rgba(200,130,0,0.15)',color:'#f9e07a',border:'1px dashed rgba(200,130,0,0.4)'}}>
+      style={{background:'#FFF3E2',color:'#C2410C',border:'1px dashed #FDBA74'}}>
       <Plus className="w-3.5 h-3.5"/> {label}
     </button>
   );
   const delBtn = (onClick:()=>void) => (
     <button type="button" onClick={onClick} className="p-2 rounded-xl flex-shrink-0"
-      style={{background:'rgba(239,68,68,0.15)',color:'#f87171'}}><X className="w-4 h-4"/></button>
+      style={{background:'#FEF2F2',color:'#DC2626'}}><X className="w-4 h-4"/></button>
   );
 
   return (
-    <div className="min-h-screen" style={{background:'#0f0500'}}>
+    <div className="min-h-screen bg-gradient-to-b from-[#FFF3E2] via-[#FFFCF7] to-[#FFFCF7]">
       <Navbar/>
       <div className="max-w-2xl mx-auto px-4 pt-24 pb-16">
-        <button onClick={()=>router.back()} className="flex items-center gap-2 text-sm mb-6" style={{color:'rgba(255,200,120,0.5)'}}>
+        <button onClick={()=>router.back()} className="flex items-center gap-2 text-sm font-semibold mb-6 text-orange-700 hover:text-orange-800">
           <ArrowLeft className="w-4 h-4"/> वापस जाएं
         </button>
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 text-[10px] font-black px-3 py-1.5 rounded-full mb-3 uppercase tracking-widest"
-            style={{background:'rgba(200,130,0,0.2)',border:'1px solid rgba(200,130,0,0.3)',color:'#f9e07a'}}>
+          <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase text-orange-600 mb-2">
             🛕 मंदिर सबमिट करें
-          </div>
-          <h1 className="text-2xl font-black text-white">अपने मंदिर की पूरी जानकारी दें</h1>
-          <p className="text-sm mt-1" style={{color:'rgba(255,200,120,0.5)'}}>Admin approval के बाद सार्वजनिक रूप से दिखेगा</p>
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-serif font-black text-[#3D2A1E]">अपने मंदिर की पूरी जानकारी दें</h1>
+          <p className="text-sm mt-1 text-slate-600">Admin approval के बाद सार्वजनिक रूप से दिखेगा</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -175,7 +172,7 @@ export default function SubmitMandirPage() {
               <div>
                 <label className="text-xs font-black mb-1 block" style={lStyle}>मंदिर प्रकार</label>
                 <select value={form.templeType} onChange={e=>set('templeType',e.target.value)} className={iCls} style={iStyle}>
-                  {TEMPLE_TYPES.map(t=><option key={t} value={t} style={{background:'#1a0800'}}>{t}</option>)}
+                  {TEMPLE_TYPES.map(t=><option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <F label="निर्माण वर्ष / शताब्दी" k="builtYear" ph="जैसे: 12th Century" {...fp}/>
@@ -345,7 +342,7 @@ export default function SubmitMandirPage() {
 
           <button type="submit" disabled={submitting||!form.name||!form['location.city']||!form['location.state']}
             className="w-full py-3.5 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-            style={{background:'linear-gradient(135deg,#f9e07a 0%,#d4920a 50%,#b8760a 100%)',color:'#3a0f00',boxShadow:'0 8px 24px rgba(180,100,0,0.35)'}}>
+            style={{background:'linear-gradient(90deg,#F97316,#EA580C)',color:'#fff',boxShadow:'0 10px 30px -10px rgba(212,175,55,0.45)'}}>
             <Send className="w-4 h-4"/>
             {submitting ? 'सबमिट हो रहा है...' : 'मंदिर सबमिट करें 🙏'}
           </button>

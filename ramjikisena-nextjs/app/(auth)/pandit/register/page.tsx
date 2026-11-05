@@ -3,6 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { User, AtSign, Phone, Mail, MapPin, Map, Award, BookOpen, Languages, Lock } from 'lucide-react';
+import AuthShell, { AuthField, AuthError, AuthSubmit } from '@/components/AuthShell';
+
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-4">
+      <h3 className="text-sm font-bold text-orange-700 uppercase tracking-wider pb-2 border-b border-orange-100">{title}</h3>
+      {children}
+    </div>
+  );
+}
 
 export default function PanditRegisterPage() {
   const router = useRouter();
@@ -66,7 +77,7 @@ export default function PanditRegisterPage() {
         // Save token and pandit info to localStorage
         localStorage.setItem('panditToken', data.token);
         localStorage.setItem('pandit', JSON.stringify(data.pandit));
-        
+
         // Redirect to pandit dashboard
         router.push('/pandit/dashboard');
       } else {
@@ -81,252 +92,76 @@ export default function PanditRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 py-12 px-4">
-      <div className="w-full max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-block p-4 bg-gradient-to-br from-orange-500 to-red-600 rounded-full mb-4 shadow-xl">
-            <span className="text-5xl">🕉️</span>
+    <AuthShell
+      wide
+      kicker="Pandit Registration"
+      title={<>पुरोहित <span className="text-orange-600">पंजीकरण</span></>}
+      sub="हमारे मंच से जुड़ें और भक्तों की सेवा करें"
+      sideImage="/home/pandit.jpg"
+      sideQuote="ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात्"
+      sideAuthor="गायत्री मंत्र"
+    >
+      {error && <AuthError>{error}</AuthError>}
+
+      <form onSubmit={handleSubmit} className="space-y-7">
+        <FormSection title="Basic Information">
+          <div className="grid md:grid-cols-2 gap-4">
+            <AuthField label="Full Name *" icon={User} type="text" value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Pandit Shri..." required />
+            <AuthField label="Username *" icon={AtSign} type="text" value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase() })} placeholder="panditji123" required
+              hint="Unique username for login" />
+            <AuthField label="Phone Number *" icon={Phone} type="tel" value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })} placeholder="10 digit mobile number" required />
+            <AuthField label="Email (Optional)" icon={Mail} type="email" value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="your.email@example.com" />
           </div>
-          <h1 className="text-3xl font-black text-orange-900 mb-2">Pandit Registration</h1>
-          <p className="text-gray-600">Join our platform and serve devotees</p>
-        </div>
+        </FormSection>
 
-        {/* Registration Form */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 border border-orange-100">
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Info Section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold text-orange-900 border-b-2 border-orange-200 pb-2">
-                Basic Information
-              </h3>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Pandit Shri..."
-                    required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Username <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase() })}
-                    placeholder="panditji123"
-                    required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Unique username for login</p>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Phone Number <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="10 digit mobile number"
-                    required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Email (Optional)
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="your.email@example.com"
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Location Section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold text-orange-900 border-b-2 border-orange-200 pb-2">
-                Location
-              </h3>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    City <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    placeholder="Your city"
-                    required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    State <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.state}
-                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    placeholder="Your state"
-                    required
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Professional Details */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold text-orange-900 border-b-2 border-orange-200 pb-2">
-                Professional Details
-              </h3>
-              
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Experience (Years)
-                </label>
-                <input
-                  type="number"
-                  value={formData.experience}
-                  onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                  placeholder="Years of experience"
-                  min="0"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Specialization
-                </label>
-                <input
-                  type="text"
-                  value={formData.specialization}
-                  onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
-                  placeholder="e.g., Vedic Rituals, Marriage, Griha Pravesh (comma separated)"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                />
-                <p className="text-xs text-gray-500 mt-1">Separate multiple specializations with commas</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Languages
-                </label>
-                <input
-                  type="text"
-                  value={formData.languages}
-                  onChange={(e) => setFormData({ ...formData, languages: e.target.value })}
-                  placeholder="e.g., Hindi, Sanskrit, English (comma separated)"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                />
-                <p className="text-xs text-gray-500 mt-1">Separate multiple languages with commas</p>
-              </div>
-            </div>
-
-            {/* Password Section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold text-orange-900 border-b-2 border-orange-200 pb-2">
-                Security
-              </h3>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Password <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Create a strong password"
-                    required
-                    minLength={6}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Confirm Password <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    placeholder="Re-enter password"
-                    required
-                    minLength={6}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white font-black rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Registering...' : 'Register as Pandit'}
-            </button>
-          </form>
-
-          {/* Links */}
-          <div className="mt-6 text-center space-y-3">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link href="/pandit/login" className="text-orange-600 font-bold hover:text-orange-700">
-                Login
-              </Link>
-            </p>
-            <p className="text-sm text-gray-600">
-              Are you a user?{' '}
-              <Link href="/register" className="text-orange-600 font-bold hover:text-orange-700">
-                User Registration
-              </Link>
-            </p>
+        <FormSection title="Location">
+          <div className="grid md:grid-cols-2 gap-4">
+            <AuthField label="City *" icon={MapPin} type="text" value={formData.city}
+              onChange={(e) => setFormData({ ...formData, city: e.target.value })} placeholder="Your city" required />
+            <AuthField label="State *" icon={Map} type="text" value={formData.state}
+              onChange={(e) => setFormData({ ...formData, state: e.target.value })} placeholder="Your state" required />
           </div>
-        </div>
+        </FormSection>
 
-        {/* Back to Home */}
-        <div className="text-center mt-6">
-          <Link href="/" className="text-sm text-gray-600 hover:text-orange-600 font-bold">
-            ← Back to Home
-          </Link>
-        </div>
+        <FormSection title="Professional Details">
+          <AuthField label="Experience (Years)" icon={Award} type="number" value={formData.experience}
+            onChange={(e) => setFormData({ ...formData, experience: e.target.value })} placeholder="Years of experience" min="0" />
+          <AuthField label="Specialization" icon={BookOpen} type="text" value={formData.specialization}
+            onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
+            placeholder="e.g., Vedic Rituals, Marriage, Griha Pravesh (comma separated)"
+            hint="Separate multiple specializations with commas" />
+          <AuthField label="Languages" icon={Languages} type="text" value={formData.languages}
+            onChange={(e) => setFormData({ ...formData, languages: e.target.value })}
+            placeholder="e.g., Hindi, Sanskrit, English (comma separated)"
+            hint="Separate multiple languages with commas" />
+        </FormSection>
+
+        <FormSection title="Security">
+          <div className="grid md:grid-cols-2 gap-4">
+            <AuthField label="Password *" icon={Lock} type="password" value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })} placeholder="Create a strong password" required minLength={6} />
+            <AuthField label="Confirm Password *" icon={Lock} type="password" value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} placeholder="Re-enter password" required minLength={6} />
+          </div>
+        </FormSection>
+
+        <AuthSubmit loading={loading} loadingText="Registering...">🕉️ Register as Pandit</AuthSubmit>
+      </form>
+
+      <div className="mt-6 pt-5 border-t border-orange-100 space-y-2 text-center text-sm text-slate-600">
+        <p>
+          Already have an account?{' '}
+          <Link href="/pandit/login" className="font-bold text-orange-600 hover:text-orange-700 hover:underline">Login</Link>
+        </p>
+        <p>
+          Are you a user?{' '}
+          <Link href="/register" className="font-bold text-orange-600 hover:text-orange-700 hover:underline">User Registration</Link>
+        </p>
       </div>
-    </div>
+    </AuthShell>
   );
 }
